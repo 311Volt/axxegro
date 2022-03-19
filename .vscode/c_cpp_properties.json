@@ -4,8 +4,8 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "deps/include",
-                "include"
+                "${workspaceFolder}/deps/include",
+                "${workspaceFolder}/include"
             ],
             "defines": [
                 "_DEBUG",
@@ -16,7 +16,7 @@
             "cStandard": "c99",
             "cppStandard": "c++17",
             "intelliSenseMode": "windows-gcc-x86",
-            "configurationProvider": "ms-vscode.cmake-tools"
+            "configurationProvider": "ms-vscode.cpptools"
         }
     ],
     "version": 4

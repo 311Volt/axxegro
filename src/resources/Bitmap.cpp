@@ -177,3 +177,14 @@ al::Bitmap al::Bitmap::clone() const
 {
 	return Bitmap(al_clone_bitmap(ptr));
 }
+
+al::BitmapHandleImgFile::BitmapHandleImgFile(const std::string& filename)
+	: filename(filename)
+{
+	
+}
+
+void al::BitmapHandleImgFile::load()
+{
+	resource = std::make_unique<Bitmap>(filename);
+}

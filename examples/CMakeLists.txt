@@ -4,6 +4,7 @@ target_link_libraries(example1 PUBLIC axxegro)
 
 set(CMAKE_FIND_DEBUG_MODE TRUE)
 
+find_library(FMTLIB "fmt" "../deps/lib")
 find_library(ALLEGRO "allegro_monolith-static" "../deps/lib")
 
-target_link_libraries(example1 LINK_PUBLIC ${ALLEGRO})
+target_link_libraries(example1 LINK_PUBLIC ${ALLEGRO} ${FMTLIB})

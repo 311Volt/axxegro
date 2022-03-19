@@ -2,6 +2,8 @@
 #define INCLUDE_AXXEGRO_DISPLAY_DISPLAY
 
 #include "../math/math.hpp"
+#include "../io/Mouse.hpp"
+
 #include <string>
 #include <vector>
 
@@ -37,8 +39,18 @@ namespace al {
 		bool setClipboardText(const std::string& text);
 
 		void setTitle(const std::string& title);
+		bool setCursor(mouse::Cursor& cur);
+		bool setSystemCursor(int id);
+		void hideCursor();
+		void showCursor();
+
+		void grabMouse();
+		void ungrabMouse();
 
 		ALLEGRO_DISPLAY* alPtr();
+
+		static void Flip();
+		static void Clear(Color color);
 	private:
 		ALLEGRO_DISPLAY* disp;
 	};

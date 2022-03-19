@@ -20,7 +20,7 @@ namespace al {
 	public:
 		Resource(){}
 		Resource(Resource&) = delete;
-		virtual ~Resource() = 0;
+		~Resource(){}//virtual ~Resource() = 0;
 	};
 }
 

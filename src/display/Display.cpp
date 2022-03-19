@@ -96,3 +96,14 @@ void al::Display::setTitle(const std::string& title)
 {
 	al_set_window_title(disp, title.c_str());
 }
+
+void al::Display::Flip()
+{
+	al_flip_display();
+}
+
+
+void al::Display::Clear(al::Color color)
+{
+	al_clear_to_color(color.get());
+}

@@ -2,6 +2,7 @@
 #define INCLUDE_AXXEGRO_RESOURCES_BITMAP
 
 #include "Resource.hpp"
+#include "ResourceHandle.hpp"
 
 #include <allegro5/allegro.h>
 #include <algorithm>
@@ -58,6 +59,18 @@ namespace al {
 		 */
 		ALLEGRO_BITMAP* alPtr();
 
+	#ifdef AXXEGRO_TRUSTED
+		/**
+		 * @brief Returns the Allegro pointer and expects the user to not change
+		 * the bitmap. This method should not be available to the user - axxegro
+		 * should aim to make every non-bitmap-chaging operation in allegro
+		 * possible to do with a const Bitmap - if it doesn't, something's missing
+		 * 
+		 * @return A pointer to the underlying Allegro5 bitmap structure. 
+		 */
+		ALLEGRO_BITMAP* alPtr() const {return ptr;}
+	#endif
+
 		/// @return The width of the bitmap in pixels.
 		int width() const;
 
@@ -75,7 +88,7 @@ namespace al {
 		Rect rect() const;
 
 		/* note: I left out the flags parameter. al_draw_xxx_bitmap is
-		   always called with flags=0. use transforms for flipping. */
+		   always called with flags=0. use transforms/texcoords for flipping. */
 
 		/// @brief Corresponds to al_draw_bitmap(). Refer to Allegro5 documentation for more info on this and other drawX() methods.
 		void draw(Point p0) const;
@@ -109,8 +122,14 @@ namespace al {
 
 	protected:
 		ALLEGRO_BITMAP* ptr;
+	};
 
-		friend class BitmapLockedRegion;
+	class BitmapHandleImgFile: public ResourceHandle<Bitmap> {
+	public:
+		BitmapHandleImgFile(const std::string& filename);
+		virtual void load() override;
+	private:
+		std::string filename;
 	};
 
 	class ScopedTargetBitmap {
@@ -135,6 +154,7 @@ namespace al {
 	class BitmapLockedRegion {
 	public:
 		BitmapLockedRegion(Bitmap& bmp);
+		//TODO
 	};
 }
 

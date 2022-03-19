@@ -71,11 +71,11 @@ void al::Font::draw(const std::string& text, al::Color color, al::Point pos) con
 void al::Font::draw(const std::string& text, al::Color color, al::Point pos, int align) const
 {
 	UStr ustr(text);
-	al_draw_ustr(ptr, color.get(), pos.x, pos.y, align, ustr.alPtr());
+	al_draw_ustr(ptr, color.get(), pos.x, pos.y, align | ALLEGRO_ALIGN_INTEGER, ustr.alPtr());
 }
 
 void al::Font::drawJustified(const std::string& text, al::Color color, al::Point pos, float xMax, float diffMax) const
 {
 	UStr ustr(text);
-	al_draw_justified_ustr(ptr, color.get(), pos.x, xMax, pos.y, diffMax, 0, ustr.alPtr());
+	al_draw_justified_ustr(ptr, color.get(), pos.x, xMax, pos.y, diffMax, ALLEGRO_ALIGN_INTEGER, ustr.alPtr());
 }
