@@ -39,7 +39,7 @@ bool al::mouse::IsButtonDown(State state, Btn btn)
 
 bool al::mouse::SetPos(Point p)
 {
-	al_set_mouse_xy(al_get_current_display(), int(p.x), int(p.y));
+	return al_set_mouse_xy(al_get_current_display(), int(p.x), int(p.y));
 }
 al::Point al::mouse::GetPos()
 {

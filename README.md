@@ -13,7 +13,7 @@ that features needed for lpg-gui are prioritized.
 # how to build
 1. build [Allegro5](https://github.com/liballeg/allegro5) and [{fmt}](https://github.com/fmtlib/fmt) first 
 
-     *(note: a build of allegro5 is needed for the example programs, but not for the library itself - the user links agains a5 separately)*
+     *(note: a build of allegro5 is needed for the example programs, but not for the library itself - the user links against a5 separately)*
 
 2. place the built libraries in deps/lib and headers in deps/include
 
