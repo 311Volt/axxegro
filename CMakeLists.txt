@@ -11,8 +11,9 @@ include_directories("include")
 
 file(GLOB_RECURSE AXXEGRO_SOURCES "src/*.cpp")
 
-set(CMAKE_CXX_FLAGS "-m32")
-
+if(WIN32)
+	set(CMAKE_CXX_FLAGS "-m32")
+endif()
 
 add_library(${PROJECT_NAME} ${AXXEGRO_SOURCES})
 
