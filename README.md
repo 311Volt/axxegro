@@ -17,7 +17,7 @@ that features needed for lpg-gui are prioritized.
 
 2. place the built libraries in deps/lib and headers in deps/include
 
-3. use `cmake . && cd build && make`
+3. use `cmake -Bbuild -H. && cd build && make`
 
 For Windows builds, the most recent MinGW-w64 based build of [TDM-GCC](https://jmeubank.github.io/tdm-gcc/download/) is recommended.
 
