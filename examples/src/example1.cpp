@@ -17,7 +17,7 @@ int main()
 	loop.initDefaultDispatcher();
 
 	al::Point txtPos {320, 240};
-	std::string txtTest = "This is a test";
+	std::string txtTest = fmt::format("kbstate size = {}, mstate size = {}", sizeof(ALLEGRO_KEYBOARD_STATE), sizeof(ALLEGRO_MOUSE_STATE));
 
 	loop.loopBody = [&](){
 		al::Display::Clear(al::Color::RGB(0,0,0));

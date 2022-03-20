@@ -33,7 +33,7 @@ namespace al {
 		};
 		constexpr int BtnBit(Btn btn)
 			{return 1<<(int(btn)-1);}
-
+		
 		unsigned GetNumAxes();
 		unsigned GetNumButtons();
 

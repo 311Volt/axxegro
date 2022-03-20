@@ -1,4 +1,5 @@
 #include <axxegro/display/Display.hpp>
+#include <stdexcept>
 
 al::Display::Display(int w, int h)
 	: Display(w, h, 0)
@@ -6,11 +7,11 @@ al::Display::Display(int w, int h)
 
 }
 al::Display::Display(int w, int h, int flags)
-	: Display(w, h, flags, {}, {})
+	: Display(w, h, flags, {}, {}, {})
 {
 
 }
-al::Display::Display(int w, int h, int flags, std::vector<Option> requiredOptions, std::vector<Option> suggestedOptions)
+al::Display::Display(int w, int h, int flags, std::vector<Option> requiredOptions, std::vector<Option> suggestedOptions, std::vector<Option> dontCareOptions)
 {
 	al_reset_new_display_options();
 	for(const auto& [opt, val]: requiredOptions) {
@@ -19,8 +20,15 @@ al::Display::Display(int w, int h, int flags, std::vector<Option> requiredOption
 	for(const auto& [opt, val]: suggestedOptions) {
 		al_set_new_display_option(opt, val, ALLEGRO_SUGGEST);
 	}
+	for(const auto& [opt, val]: dontCareOptions) {
+		al_set_new_display_option(opt, val, ALLEGRO_DONTCARE);
+	}
 	al_set_new_bitmap_flags(flags);
+
 	disp = al_create_display(w, h);
+	if(!disp) {
+		throw std::runtime_error("Could not create an Allegro display.");
+	}
 	al_reset_new_display_options();
 }
 al::Display::~Display()
@@ -82,9 +90,14 @@ int al::Display::getFlags() const
 
 std::string al::Display::getClipboardText() const
 {
+	std::string ret;
 	char* buf = al_get_clipboard_text(disp);
-	std::string ret(buf);
-	al_free(buf);
+	if(buf) {
+		ret = {buf};
+		al_free(buf);
+	} else {
+		ret = "";
+	}
 	return ret;
 }
 bool al::Display::setClipboardText(const std::string& text)
