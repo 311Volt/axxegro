@@ -1,10 +1,12 @@
 #include <axxegro/time/Timer.hpp>
 
 al::Timer::Timer(double period)
+	: evSrc(nullptr)
 {
 	ptr = al_create_timer(period);
-	evSrc = std::make_unique<EventSource>(al_get_timer_event_source(ptr));
+	evSrc = EventSource(al_get_timer_event_source(ptr));
 }
+
 al::Timer::~Timer()
 {
 	al_destroy_timer(ptr);
@@ -42,12 +44,12 @@ bool al::Timer::isStarted()
 	return al_get_timer_started(ptr);
 }
 
-al::EventSource& al::Timer::getEventSource()
+const al::EventSource& al::Timer::getEventSource() const
 {
-	return *evSrc;
+	return evSrc;
 }
 
-int64_t al::Timer::getCount()
+int64_t al::Timer::getCount() const
 {
 	return al_get_timer_count(ptr);
 }
@@ -56,7 +58,7 @@ void al::Timer::setCount(int64_t value)
 	al_set_timer_count(ptr, value);
 }
 
-double al::Timer::getPeriod()
+double al::Timer::getPeriod() const
 {
 	return al_get_timer_speed(ptr);
 }
@@ -65,7 +67,7 @@ void al::Timer::setPeriod(double value)
 	al_set_timer_speed(ptr, value);
 }
 
-double al::Timer::getFreq()
+double al::Timer::getFreq() const
 {
 	return PeriodToFreq(getPeriod());
 }

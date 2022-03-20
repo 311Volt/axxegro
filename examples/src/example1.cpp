@@ -10,42 +10,55 @@ int main()
 	al::FullInit();
 	al::Display disp(800, 600);
 	al::Bitmap bg("data/bg.jpg");
-	al::Font fn("data/roboto.ttf", 24);
+	al::Font font("data/roboto.ttf", 24);
 
-	al::EventQueue eqIn;
-	al::EventQueue eqClk;
-	al::Timer clk = al::Timer::Freq(60);
-	eqIn.registerSource(al::mouse::GetEventSource());
-	eqIn.registerSource(al::keyb::GetEventSource());
-	eqIn.registerSource(disp.getEventSource());
-	eqClk.registerSource(clk.getEventSource());
-	
+	al::EventLoop loop;
+	loop.initDefaultEventQueue();
+	loop.initDefaultDispatcher();
 
-	clk.start();
 	al::Point txtPos {320, 240};
+	std::string txtTest = "This is a test";
 
-	while(1) {
-		eqClk.wait();
-		eqClk.clear();
-		while(!eqIn.empty()) {
-			auto ev = eqIn.pop();	
-			if(ev.type == ALLEGRO_EVENT_KEY_DOWN) {
-				if(ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {
-					return 0;
-				}
-			} else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-				return 0;
-			} else if(ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
-				txtPos = {ev.mouse.x, ev.mouse.y};
-			}
-			
-		}
+	loop.loopBody = [&](){
 		al::Display::Clear(al::Color::RGB(0,0,0));
 		bg.draw({0, 0});
-		fn.draw(fmt::format("This is a test. tick={}", clk.getCount()), al::Color::RGB(255,255,255), txtPos);
+		font.draw(
+			fmt::format("{}. tick={}", txtTest, loop.getTick()), 
+			al::Color::RGB(255,255,255), 
+			txtPos
+		);
 		al::Display::Flip();
+	};
 
-	}
+	loop.eventDispatcher.setEventTypeHandler(
+		ALLEGRO_EVENT_MOUSE_BUTTON_DOWN, 
+		[&](const ALLEGRO_EVENT& ev){
+			txtPos = {ev.mouse.x, ev.mouse.y};
+		}
+	);
+
+	auto keycodeDiscr = loop.eventDispatcher.addDiscretizer({
+		ALLEGRO_EVENT_KEY_DOWN,
+		[&](const ALLEGRO_EVENT& ev) {
+			return ev.keyboard.keycode;
+		}
+	});
+
+	loop.eventDispatcher.setEventValueHandler(keycodeDiscr, ALLEGRO_KEY_UP, [&](const ALLEGRO_EVENT& ev) {
+		txtTest = "UP was pressed";
+	});
+	loop.eventDispatcher.setEventValueHandler(keycodeDiscr, ALLEGRO_KEY_DOWN, [&](const ALLEGRO_EVENT& ev) {
+		txtTest = "DOWN was pressed";
+	});
+	loop.eventDispatcher.setEventValueHandler(keycodeDiscr, ALLEGRO_KEY_LEFT, [&](const ALLEGRO_EVENT& ev) {
+		txtTest = "LEFT was pressed";
+	});
+	loop.eventDispatcher.setEventValueHandler(keycodeDiscr, ALLEGRO_KEY_RIGHT, [&](const ALLEGRO_EVENT& ev) {
+		txtTest = "RIGHT was pressed";
+	});
+
+	loop.enableClock(60);
+	loop.run();
 
 	return 0;
 }

@@ -7,6 +7,7 @@ namespace al {
 	//TODO user event sources
 	class EventSource {
 	public:
+		EventSource() {}
 		EventSource(ALLEGRO_EVENT_SOURCE* ptr);
 		~EventSource();
 

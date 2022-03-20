@@ -1,0 +1,88 @@
+#include <axxegro/event/EventDispatcher.hpp>
+
+#include <random>
+#include <stdexcept>
+#include <limits>
+
+#include <fmt/format.h>
+
+al::EventDispatcher::EventDispatcher()
+{
+	defaultHandler = [](const auto&){};
+}
+al::EventDispatcher::~EventDispatcher()
+{
+
+}
+
+void al::EventDispatcher::setDefaultHandler(EventHandler handler)
+{
+	defaultHandler = handler;
+}
+void al::EventDispatcher::setEventTypeHandler(ALLEGRO_EVENT_TYPE evType, al::EventHandler handler)
+{
+	eventTypeHandler[evType] = handler;
+}
+void al::EventDispatcher::setEventValueHandler(al::EventDispatcher::EventDiscretizerId discrId, int64_t value, al::EventHandler handler)
+{
+	if(!discretizers.count(discrId)) {
+		throw std::runtime_error(fmt::format("al::EventDispatcher: cannot set value handler: discretizer with id={} does not exist", discrId));
+	}
+	eventValueHandler[discrId][value] = handler;
+}
+
+al::EventDispatcher::EventDiscretizerId al::EventDispatcher::addDiscretizer(al::EventDispatcher::EventDiscretizer discretizer)
+{
+	auto newId = createDiscretizerId();
+	discretizers[newId] = discretizer;
+	typeDiscretizers[discretizer.type].insert(newId);
+	return newId;
+}
+void al::EventDispatcher::removeDiscretizer(al::EventDispatcher::EventDiscretizerId id)
+{
+	typeDiscretizers[discretizers[id].type].erase(id);
+	discretizers.erase(id);
+	eventValueHandler.erase(id);
+}
+
+al::EventDispatcher::EventDiscretizerId al::EventDispatcher::createDiscretizerId()
+{
+	static std::random_device rd;
+	static std::mt19937 gen(rd());
+
+	EventDiscretizerId newId = 1;
+	while(discretizers.count(newId)) {
+		if(newId >= std::numeric_limits<EventDiscretizerId>::max() / 3) {
+			throw std::runtime_error("al::EventDispatcher::createDiscretizerId(): it's time to rewrite this you lazy bitch");
+		}
+		std::uniform_int_distribution<EventDiscretizerId> dist(newId+1, newId*3);
+		newId = dist(gen);
+	}
+	return newId;
+}
+
+al::EventDispatcher::DispatchLevel al::EventDispatcher::dispatch(const ALLEGRO_EVENT& event)
+{
+	//try level 2 (match by type and discretized value)
+	if(typeDiscretizers.count(event.type)) {
+		for(const auto& discretizerId: typeDiscretizers[event.type]) {
+			int64_t value = discretizers[discretizerId].fn(event);
+			if(eventValueHandler.count(discretizerId)) {
+				if(eventValueHandler[discretizerId].count(value)) {
+					eventValueHandler[discretizerId][value](event);
+					return DispatchLevel::MATCHED_VALUE;
+				}
+			}
+		}
+	}
+
+	//if no match, try level 1 (match by event type)
+	if(eventTypeHandler.count(event.type) && eventTypeHandler[event.type]) {
+		eventTypeHandler[event.type](event);
+		return DispatchLevel::MATCHED_TYPE;
+	}
+
+	//if no match, call default handler (level 0)
+	defaultHandler(event);
+	return DispatchLevel::DEFAULT;
+}

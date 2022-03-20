@@ -11,11 +11,16 @@ parallel to [lpg-gui](https://github.com/311Volt/lpg-gui) (repo coming soon), wh
 that features needed for lpg-gui are prioritized.
 
 # how to build
-1. build [Allegro5](https://github.com/liballeg/allegro5) and [{fmt}](https://github.com/fmtlib/fmt) first 
+1. build or install [Allegro5](https://github.com/liballeg/allegro5) and [{fmt}](https://github.com/fmtlib/fmt) first 
 
      *(note: a build of allegro5 is needed for the example programs, but not for the library itself - the user links against a5 separately)*
 
-2. place the built libraries in deps/lib and headers in deps/include
+2. where necessary, place:
+    - library files in `deps/lib`
+    - headers in `deps/include`
+    - shared libraries in `examples/dll`
+
+###
 
 3. use `cmake -Bbuild -H. && cd build && make`
 

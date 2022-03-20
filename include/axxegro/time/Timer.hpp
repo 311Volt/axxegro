@@ -26,18 +26,18 @@ namespace al {
 
 		bool isStarted();
 
-		EventSource& getEventSource();
+		const EventSource& getEventSource() const;
 
-		int64_t getCount();
+		int64_t getCount() const;
 		void setCount(int64_t value);
 
-		double getPeriod();
+		double getPeriod() const;
 		void setPeriod(double value);
 
-		double getFreq();
+		double getFreq() const;
 		void setFreq(double value);
 	private:
-		std::unique_ptr<EventSource> evSrc;
+		EventSource evSrc;
 		ALLEGRO_TIMER* ptr;
 	};
 }

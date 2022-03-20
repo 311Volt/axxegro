@@ -7,6 +7,7 @@
 #include "display/Display.hpp"
 #include "resources/Bitmap.hpp"
 #include "resources/Font.hpp"
+#include "event/EventDispatcher.hpp"
 #include "event/EventLoop.hpp"
 #include "event/EventQueue.hpp"
 #include "event/EventSource.hpp"
