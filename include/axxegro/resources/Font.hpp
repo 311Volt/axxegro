@@ -36,7 +36,6 @@ namespace al {
 		void draw(const std::string& text, Color color, Point pos, int align) const;
 
 		void drawJustified(const std::string& text, Color color, Point pos, float xMax, float diffMax) const;
-
 	private:
 		ALLEGRO_FONT* ptr;
 	};

@@ -3,6 +3,7 @@
 
 #include "../math/math.hpp"
 #include "../io/Mouse.hpp"
+#include "../event/EventSource.hpp"
 
 #include <string>
 #include <vector>
@@ -49,11 +50,14 @@ namespace al {
 
 		ALLEGRO_DISPLAY* alPtr();
 
+		EventSource getEventSource();
+
 		static void Flip();
 		static void Clear(Color color);
 	private:
 		ALLEGRO_DISPLAY* disp;
 	};
+	
 }
 
 #endif /* INCLUDE_AXXEGRO_DISPLAY_DISPLAY */

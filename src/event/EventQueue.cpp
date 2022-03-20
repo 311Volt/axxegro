@@ -60,6 +60,11 @@ bool al::EventQueue::drop()
 
 void al::EventQueue::clear()
 {
+	flush();
+}
+
+void al::EventQueue::flush()
+{
 	al_flush_event_queue(ptr);
 }
 

@@ -19,7 +19,7 @@ that features needed for lpg-gui are prioritized.
 
 3. use `cmake -Bbuild -H. && cd build && make`
 
-For Windows builds, the most recent MinGW-w64 based build of [TDM-GCC](https://jmeubank.github.io/tdm-gcc/download/) is recommended.
+For Windows builds, the most recent MinGW-w64 based build of [TDM-GCC](https://jmeubank.github.io/tdm-gcc/download/) is recommended. (Hint for VSCode users: make a copy of the toolset's `mingw32-make.exe` and call it `make.exe` so that `cmake.generator` can be set automatically)
 
 # how to use
 Link against this library as well as Allegro5 itself.

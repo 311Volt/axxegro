@@ -97,11 +97,15 @@ void al::Display::setTitle(const std::string& title)
 	al_set_window_title(disp, title.c_str());
 }
 
+al::EventSource al::Display::getEventSource()
+{
+	return EventSource(al_get_display_event_source(disp));
+}
+
 void al::Display::Flip()
 {
 	al_flip_display();
 }
-
 
 void al::Display::Clear(al::Color color)
 {

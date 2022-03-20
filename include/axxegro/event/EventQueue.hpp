@@ -40,13 +40,20 @@ namespace al {
 		///@brief Clears the queue.
 		void clear();
 
-		///@brief Blocks execution while the queue is empty.
+		///@brief Clears the queue.
+		void flush();
+
+		/**
+		 * @brief Blocks execution while the queue is empty.
+		 * When an event appears, it is popped and returned.
+		 * @return The event.
+		 */
 		ALLEGRO_EVENT wait();
 
 		/**
 		 * @brief Does the same as wait() until a timeout.
-		 * @return true on success (queue non-empty)
-		 * @return false on failure (timeout)
+		 * @return The event (on success)
+		 * @return std::nullopt (on timeout)
 		 */
 		std::optional<ALLEGRO_EVENT> waitFor(double seconds);
 		

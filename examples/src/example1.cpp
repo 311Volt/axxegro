@@ -9,14 +9,15 @@ int main()
 {
 	al::FullInit();
 	al::Display disp(800, 600);
-	al::Bitmap bg("xp.jpg");
-	al::Font fn("roboto.ttf", 24);
+	al::Bitmap bg("data/bg.jpg");
+	al::Font fn("data/roboto.ttf", 24);
 
 	al::EventQueue eqIn;
 	al::EventQueue eqClk;
 	al::Timer clk = al::Timer::Freq(60);
 	eqIn.registerSource(al::mouse::GetEventSource());
 	eqIn.registerSource(al::keyb::GetEventSource());
+	eqIn.registerSource(disp.getEventSource());
 	eqClk.registerSource(clk.getEventSource());
 	
 
@@ -32,6 +33,8 @@ int main()
 				if(ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {
 					return 0;
 				}
+			} else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+				return 0;
 			} else if(ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
 				txtPos = {ev.mouse.x, ev.mouse.y};
 			}

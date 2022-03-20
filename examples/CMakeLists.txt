@@ -2,7 +2,7 @@
 add_executable(example1 "src/example1.cpp")
 target_link_libraries(example1 PUBLIC axxegro)
 
-set(CMAKE_FIND_DEBUG_MODE TRUE)
+#set(CMAKE_FIND_DEBUG_MODE TRUE)
 
 find_library(FMTLIB "fmt" "../deps/lib")
 
@@ -40,5 +40,12 @@ target_link_libraries(example1 LINK_PUBLIC
 
 add_custom_command(TARGET example1 POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/examples/resources/ $<TARGET_FILE_DIR:example1>
+    ${CMAKE_SOURCE_DIR}/examples/data/ $<TARGET_FILE_DIR:example1>/data
 )
+
+if(WIN32)
+    add_custom_command(TARGET example1 POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/examples/dll/ $<TARGET_FILE_DIR:example1>
+    )
+endif()
