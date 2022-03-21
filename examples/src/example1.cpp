@@ -13,6 +13,18 @@ int main()
 	al::BitmapHandleImgFile bg("data/bg.jpg");
 	al::Font font("data/roboto.ttf", 24);
 
+	al::Config cfg("data/samplecfg.ini");
+	
+	for(auto& section: cfg.sections()) {
+		fmt::print("{}: \n", section);
+		for(auto& key: cfg.keys(section)) {
+			al::Config::SectionSelector ss(cfg, section);
+			fmt::print("\t{} -> {}\n", key, cfg.getValue(key));
+		}
+		fmt::print("\n\n");
+	}
+
+
 	al::EventLoop loop;
 	loop.initDefaultEventQueue();
 	loop.initDefaultDispatcher();

@@ -36,7 +36,7 @@ set(AXXEGRO_EXAMPLE_LIBS
     ${FMTLIB}
 )
 
-add_custom_target(axxegro_examples)
+add_custom_target(axxegro_examples ALL)
 
 add_custom_command(TARGET axxegro_examples POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory

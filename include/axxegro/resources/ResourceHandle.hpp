@@ -6,9 +6,17 @@
 #include <memory>
 
 namespace al {
+
+	class IResourceHandle {
+	public:
+		virtual void load() = 0;
+		virtual void unload() = 0;
+		bool isLoaded();
+		double timeSinceLastUse();
+	};
 	
 	template<typename T>
-	class ResourceHandle {
+	class ResourceHandle: public IResourceHandle {
 	public:
 		ResourceHandle() : lastUsed(-1437.0f) {}
 		virtual ~ResourceHandle() {}
