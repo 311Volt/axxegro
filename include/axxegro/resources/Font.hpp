@@ -48,7 +48,7 @@ namespace al {
 	private:
 		std::string filename;
 		int size;
-	}
+	};
 };
 
 #endif /* INCLUDE_AXXEGRO_RESOURCES_FONT */

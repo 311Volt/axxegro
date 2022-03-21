@@ -13,6 +13,8 @@ file(GLOB_RECURSE AXXEGRO_SOURCES "src/*.cpp")
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
+set(AXXEGRO_DEPS_LIB "deps/lib")
+
 if(WIN32)
 	set(CMAKE_C_FLAGS "-m32")
 	set(CMAKE_CXX_FLAGS "-m32")

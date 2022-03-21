@@ -58,7 +58,7 @@ int main()
 		txtTest = "RIGHT was pressed";
 	});
 
-	//loop.enableClock(60);
+	loop.enableClock(165);
 	loop.run();
 
 	return 0;
