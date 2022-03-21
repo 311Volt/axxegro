@@ -11,7 +11,7 @@ include_directories("include")
 
 file(GLOB_RECURSE AXXEGRO_SOURCES "src/*.cpp")
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
+# set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(AXXEGRO_DEPS_LIB "deps/lib")
 
@@ -23,8 +23,8 @@ endif()
 add_library(${PROJECT_NAME} ${AXXEGRO_SOURCES})
 
 
-option(BUILD_EXAMPLES "Build example programs" ON)
-if(BUILD_EXAMPLES)
+option(AXXEGRO_BUILD_EXAMPLES "Build example programs" ON)
+if(AXXEGRO_BUILD_EXAMPLES)
 	add_subdirectory("examples")
 endif()
 

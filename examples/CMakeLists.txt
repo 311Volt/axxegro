@@ -36,15 +36,15 @@ set(AXXEGRO_EXAMPLE_LIBS
     ${FMTLIB}
 )
 
-add_custom_target(examples)
+add_custom_target(axxegro_examples)
 
-add_custom_command(TARGET examples POST_BUILD
+add_custom_command(TARGET axxegro_examples POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_SOURCE_DIR}/examples/data/ ${CMAKE_CURRENT_BINARY_DIR}/data
 )
 
 if(WIN32)
-    add_custom_command(TARGET examples POST_BUILD
+    add_custom_command(TARGET axxegro_examples POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/examples/dll/ ${CMAKE_CURRENT_BINARY_DIR}
     )
@@ -52,7 +52,7 @@ endif()
 
 function(axxegro_add_example name)
     add_executable(${name} "src/${name}.cpp")
-    add_dependencies(examples ${name})
+    add_dependencies(axxegro_examples ${name})
     target_link_libraries(${name} LINK_PUBLIC ${AXXEGRO_EXAMPLE_LIBS})
 endfunction()
 
