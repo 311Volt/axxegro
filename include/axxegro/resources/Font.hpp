@@ -2,6 +2,7 @@
 #define INCLUDE_AXXEGRO_RESOURCES_FONT
 
 #include "Resource.hpp"
+#include "ResourceHandle.hpp"
 #include "../math/math.hpp"
 #include "../Color.hpp"
 #include "Bitmap.hpp"
@@ -39,6 +40,15 @@ namespace al {
 	private:
 		ALLEGRO_FONT* ptr;
 	};
+
+	class FontHandleFile : public ResourceHandle<Font> {
+	public:
+		FontHandleFile(const std::string& filename, int size);
+		virtual Font* loader() override;
+	private:
+		std::string filename;
+		int size;
+	}
 };
 
 #endif /* INCLUDE_AXXEGRO_RESOURCES_FONT */

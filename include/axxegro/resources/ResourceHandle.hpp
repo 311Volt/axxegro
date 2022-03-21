@@ -11,13 +11,18 @@ namespace al {
 	class ResourceHandle {
 	public:
 		ResourceHandle() : lastUsed(-1437.0f) {}
-		virtual ~ResourceHandle() {unload();}
+		virtual ~ResourceHandle() {}
 
-		virtual void load() = 0;
+		virtual T* loader() = 0;
+
+		void load()
+		{
+			resource = std::shared_ptr<T>(loader());
+		}
 
 		void unload()
 		{
-			resource = std::unique_ptr<T>();
+			resource.reset();
 		}
 
 		bool isLoaded()
@@ -25,13 +30,13 @@ namespace al {
 			return resource.get();
 		}
 
-		T* getPtr()
+		std::shared_ptr<T> getPtr()
 		{
 			if(!isLoaded()) {
 				load();
 			}
 			lastUsed = al_get_time();
-			return resource.get();
+			return resource;
 		}
 
 		T& get()
@@ -43,8 +48,13 @@ namespace al {
 		{
 			return al_get_time() - lastUsed;
 		}
+
+		long refCount()
+		{
+			return resource.use_count();
+		}
 	protected:
-		std::unique_ptr<T> resource;
+		std::shared_ptr<T> resource;
 		double lastUsed;
 	};
 }

@@ -61,8 +61,10 @@ void al::EventLoop::run()
 			ALLEGRO_EVENT ev = eventQueue.pop();
 			eventDispatcher.dispatch(ev);
 		}
-		clockEventQueue.wait();
-		clockEventQueue.flush();
+		if(clockTimer) {
+			clockEventQueue.wait();
+			clockEventQueue.flush();
+		}
 		loopBody();
 		tick++;
 	}

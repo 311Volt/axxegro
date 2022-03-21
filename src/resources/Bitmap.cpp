@@ -184,7 +184,7 @@ al::BitmapHandleImgFile::BitmapHandleImgFile(const std::string& filename)
 	
 }
 
-void al::BitmapHandleImgFile::load()
+al::Bitmap* al::BitmapHandleImgFile::loader()
 {
-	resource = std::make_unique<Bitmap>(filename);
+	return new Bitmap(filename);
 }

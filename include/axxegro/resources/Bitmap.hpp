@@ -13,11 +13,14 @@
 
 /**
  * @file
- * An ALLEGRO_BITMAP wrapper.
+ * An ALLEGRO_BITMAP wrapper plus utilities.
  */
 
 namespace al {
 
+	/**
+	 * @brief Wraps around ALLEGRO_BITMAP.
+	 */
 	class Bitmap: public Resource {
 	public:
 		Bitmap() = delete;
@@ -124,10 +127,13 @@ namespace al {
 		ALLEGRO_BITMAP* ptr;
 	};
 
+	/**
+	 * @brief Implements ResourceHandle<Bitmap> 
+	 */
 	class BitmapHandleImgFile: public ResourceHandle<Bitmap> {
 	public:
 		BitmapHandleImgFile(const std::string& filename);
-		virtual void load() override;
+		virtual Bitmap* loader() override;
 	private:
 		std::string filename;
 	};

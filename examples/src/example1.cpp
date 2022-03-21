@@ -9,7 +9,8 @@ int main()
 {
 	al::FullInit();
 	al::Display disp(800, 600);
-	al::Bitmap bg("data/bg.jpg");
+	//al::Bitmap bg("data/bg.jpg");
+	al::BitmapHandleImgFile bg("data/bg.jpg");
 	al::Font font("data/roboto.ttf", 24);
 
 	al::EventLoop loop;
@@ -17,11 +18,11 @@ int main()
 	loop.initDefaultDispatcher();
 
 	al::Point txtPos {320, 240};
-	std::string txtTest = fmt::format("kbstate size = {}, mstate size = {}", sizeof(ALLEGRO_KEYBOARD_STATE), sizeof(ALLEGRO_MOUSE_STATE));
+	std::string txtTest = fmt::format("kb {}B, m {}B", sizeof(ALLEGRO_KEYBOARD_STATE), sizeof(ALLEGRO_MOUSE_STATE));
 
 	loop.loopBody = [&](){
 		al::Display::Clear(al::Color::RGB(0,0,0));
-		bg.draw({0, 0});
+		bg.get().draw({0, 0});
 		font.draw(
 			fmt::format("{}. tick={}", txtTest, loop.getTick()), 
 			al::Color::RGB(255,255,255), 
@@ -44,20 +45,20 @@ int main()
 		}
 	});
 
-	loop.eventDispatcher.setEventValueHandler(keycodeDiscr, ALLEGRO_KEY_UP, [&](const ALLEGRO_EVENT& ev) {
+	loop.eventDispatcher.setEventValueHandler(keycodeDiscr, ALLEGRO_KEY_UP, [&](const auto& ev) {
 		txtTest = "UP was pressed";
 	});
-	loop.eventDispatcher.setEventValueHandler(keycodeDiscr, ALLEGRO_KEY_DOWN, [&](const ALLEGRO_EVENT& ev) {
+	loop.eventDispatcher.setEventValueHandler(keycodeDiscr, ALLEGRO_KEY_DOWN, [&](const auto& ev) {
 		txtTest = "DOWN was pressed";
 	});
-	loop.eventDispatcher.setEventValueHandler(keycodeDiscr, ALLEGRO_KEY_LEFT, [&](const ALLEGRO_EVENT& ev) {
+	loop.eventDispatcher.setEventValueHandler(keycodeDiscr, ALLEGRO_KEY_LEFT, [&](const auto& ev) {
 		txtTest = "LEFT was pressed";
 	});
-	loop.eventDispatcher.setEventValueHandler(keycodeDiscr, ALLEGRO_KEY_RIGHT, [&](const ALLEGRO_EVENT& ev) {
+	loop.eventDispatcher.setEventValueHandler(keycodeDiscr, ALLEGRO_KEY_RIGHT, [&](const auto& ev) {
 		txtTest = "RIGHT was pressed";
 	});
 
-	loop.enableClock(60);
+	//loop.enableClock(60);
 	loop.run();
 
 	return 0;

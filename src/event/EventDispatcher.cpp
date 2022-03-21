@@ -47,18 +47,8 @@ void al::EventDispatcher::removeDiscretizer(al::EventDispatcher::EventDiscretize
 
 al::EventDispatcher::EventDiscretizerId al::EventDispatcher::createDiscretizerId()
 {
-	static std::random_device rd;
-	static std::mt19937 gen(rd());
-
-	EventDiscretizerId newId = 1;
-	while(discretizers.count(newId)) {
-		if(newId >= std::numeric_limits<EventDiscretizerId>::max() / 3) {
-			throw std::runtime_error("al::EventDispatcher::createDiscretizerId(): it's time to rewrite this you lazy bitch");
-		}
-		std::uniform_int_distribution<EventDiscretizerId> dist(newId+1, newId*3);
-		newId = dist(gen);
-	}
-	return newId;
+	static EventDiscretizerId counter = 1;
+	return counter++;
 }
 
 al::EventDispatcher::DispatchLevel al::EventDispatcher::dispatch(const ALLEGRO_EVENT& event)
