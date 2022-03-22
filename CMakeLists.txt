@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.8.0)
 project(axxegro VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -13,7 +13,7 @@ file(GLOB_RECURSE AXXEGRO_SOURCES "src/*.cpp")
 
 # set(CMAKE_VERBOSE_MAKEFILE ON)
 
-set(AXXEGRO_DEPS_LIB "deps/lib")
+get_filename_component(AXXEGRO_DEPS_LIB "deps/lib" REALPATH)
 
 if(WIN32)
 	set(CMAKE_C_FLAGS "-m32")

@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include <axxegro/resources/Resource.hpp>
+
 #include <unordered_map>
 
 /**
@@ -14,9 +16,10 @@
  */
 
 namespace al {
-	class Config {
+	class Config: public Resource {
 	public:
 		Config();
+		Config(ALLEGRO_CONFIG* cfg);
 		Config(const std::string& filename);
 		~Config();
 
@@ -96,6 +99,16 @@ namespace al {
 		 */
 		void setValue(const std::string& section, const std::string& key, const std::string& value);
 
+		/**
+		 * @brief Adds a comment in the current section.
+		 */
+		void addComment(const std::string& comment);
+
+		/**
+		 * @brief Adds a comment in a given section.
+		 */
+		void addComment(const std::string& section, const std::string& comment);
+
 		///@returns A list of all keys in the currently selected section.
 		std::vector<std::string> keys() const;
 
@@ -104,8 +117,7 @@ namespace al {
 
 		/**
 		 * @returns A list of all section names in the configuration file, including the global section ("").
-		 * The return of an empty string at the beginning is guaranteed, unlike in Allegro5
-		 * ()
+		 * The return of an empty string at the beginning is guaranteed, unlike in Allegro5.
 		 */
 		std::vector<std::string> sections() const;
 
@@ -125,6 +137,31 @@ namespace al {
 		 * @throws std::runtime_error on failure
 		 */
 		void saveToDisk(const std::string& filename) const;
+
+		/**
+		 * @brief Merges two configs, with values in `other` overriding those in `*this`.
+		 */
+		void merge(const Config& other);
+
+		
+		/**
+		 * @brief Merges two configs, with values in `source` overriding those in `master`.
+		 */
+		static Config Merge(const Config& master, const Config& source);
+
+		/**
+		 * @brief Clones the configuration structure.
+		 * There is no `al_clone_config`, so this is done by merging
+		 * with an empty config.
+		 */
+		Config clone();
+
+		ALLEGRO_CONFIG* alPtr();
+
+	#ifdef AXXEGRO_TRUSTED
+		ALLEGRO_CONFIG* alPtr() const {return ptrConfig;};
+	#endif
+
 	private:
 		std::string filename;
 		std::string currentSection;

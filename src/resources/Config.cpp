@@ -1,3 +1,5 @@
+#define AXXEGRO_TRUSTED
+
 #include <axxegro/resources/Config.hpp>
 #include <stdexcept>
 #include <unordered_set>
@@ -15,6 +17,11 @@ al::Config::Config(const std::string& filename)
 		throw std::runtime_error("Cannot load config file: "+filename);
 	}
 	currentSection = "";
+}
+al::Config::Config(ALLEGRO_CONFIG* cfg)
+	: Config()
+{
+	ptrConfig = cfg;
 }
 al::Config::~Config()
 {
@@ -84,6 +91,16 @@ void al::Config::setValue(const std::string& section, const std::string& key, co
 	al_set_config_value(ptrConfig, section.c_str(), key.c_str(), value.c_str());
 }
 
+
+void al::Config::addComment(const std::string& comment)
+{
+	addComment(currentSection, comment);
+}
+void al::Config::addComment(const std::string& section, const std::string& comment)
+{
+	al_add_config_comment(ptrConfig, section.c_str(), comment.c_str());
+}
+
 std::vector<std::string> al::Config::keys() const
 {
 	return keys(currentSection);
@@ -97,7 +114,8 @@ std::vector<std::string> al::Config::keys(const std::string& section) const
 	const char* entry = al_get_first_config_entry(ptrConfig, section.c_str(), &iterator);
 	if(!entry) {
 		/* if the first entry does not exist (NULL) then the iterator
-		 * is not valid (as I write this, this behavior is not documented) */
+		 * is not valid, nor will it be set to NULL
+		 * (as I write this, this behavior is not documented) */
 		return {};
 	}
 	while(iterator) {
@@ -144,4 +162,23 @@ void al::Config::saveToDisk(const std::string& filename) const
 	if(!al_save_config_file(filename.c_str(), ptrConfig)) {
 		throw std::runtime_error("cannot save config file to "+filename);
 	}
+}
+
+ALLEGRO_CONFIG* al::Config::alPtr()
+{
+	return ptrConfig;
+}
+
+void al::Config::merge(const Config& other)
+{
+	al_merge_config_into(ptrConfig, other.alPtr());
+}
+al::Config al::Config::Merge(const Config& master, const Config& source)
+{
+	ALLEGRO_CONFIG* newCfg = al_merge_config(master.alPtr(), source.alPtr());
+	return Config(newCfg);
+}
+al::Config al::Config::clone()
+{
+	return Merge(*this, Config());
 }

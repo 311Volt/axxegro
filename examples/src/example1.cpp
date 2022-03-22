@@ -14,7 +14,7 @@ int main()
 	al::Font font("data/roboto.ttf", 24);
 
 	al::Config cfg("data/samplecfg.ini");
-	
+
 	for(auto& section: cfg.sections()) {
 		fmt::print("{}: \n", section);
 		for(auto& key: cfg.keys(section)) {

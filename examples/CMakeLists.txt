@@ -51,9 +51,9 @@ if(WIN32)
 endif()
 
 function(axxegro_add_example name)
-    add_executable(${name} "src/${name}.cpp")
-    add_dependencies(axxegro_examples ${name})
-    target_link_libraries(${name} LINK_PUBLIC ${AXXEGRO_EXAMPLE_LIBS})
+    add_executable("axx_ex_${name}" "src/${name}.cpp")
+    add_dependencies("axx_ex_${name}" axxegro_examples)
+    target_link_libraries("axx_ex_${name}" LINK_PUBLIC ${AXXEGRO_EXAMPLE_LIBS})
 endfunction()
 
 
