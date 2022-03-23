@@ -11,8 +11,9 @@ namespace al {
 	public:
 		virtual void load() = 0;
 		virtual void unload() = 0;
-		bool isLoaded();
-		double timeSinceLastUse();
+		virtual bool isLoaded() = 0;
+		virtual bool isUsed() = 0;
+		virtual double timeSinceLastUse() = 0;
 	};
 	
 	template<typename T>
@@ -23,22 +24,22 @@ namespace al {
 
 		virtual T* loader() = 0;
 
-		void load()
+		virtual void load() override
 		{
 			resource = std::shared_ptr<T>(loader());
 		}
 
-		void unload()
+		virtual void unload() override
 		{
 			resource.reset();
 		}
 
-		bool isLoaded()
+		virtual bool isLoaded() override
 		{
 			return resource.get();
 		}
 
-		std::shared_ptr<T> getPtr()
+		std::shared_ptr<T> ptr()
 		{
 			if(!isLoaded()) {
 				load();
@@ -49,25 +50,20 @@ namespace al {
 
 		T& operator*()
 		{
-			return *(getPtr().get());
+			return *(ptr().get());
 		}
 
 		T* operator->()
 		{
-			return getPtr().get();
+			return ptr().get();
 		}
 
-		T& get()
-		{
-			return *getPtr();
-		}
-
-		double timeSinceLastUse()
+		virtual double timeSinceLastUse() override
 		{
 			return al_get_time() - lastUsed;
 		}
 
-		bool isUsed()
+		virtual bool isUsed() override
 		{
 			return !resource.unique();
 		}

@@ -11,6 +11,7 @@ int main()
 	al::Display disp(800, 600);
 	//al::Bitmap bg("data/bg.jpg");
 	al::BitmapHandleImgFile bg("data/bg.jpg");
+	al::BitmapHandleImgFile bg1("data/bg.jpg");
 	al::Font font("data/roboto.ttf", 24);
 
 	al::Config cfg("data/samplecfg.ini");
@@ -31,12 +32,20 @@ int main()
 
 	al::Point txtPos {320, 240};
 	std::string txtTest = fmt::format("kb {}B, m {}B", sizeof(ALLEGRO_KEYBOARD_STATE), sizeof(ALLEGRO_MOUSE_STATE));
-
+	bg1->draw({0,0});
+	std::shared_ptr<al::Bitmap> hu1;
 	loop.loopBody = [&](){
+		if(loop.getTick() % 100 == 0) {
+			if((loop.getTick()/100) & 1) {
+				hu1 = bg1.ptr();
+			} else {
+				hu1.reset();
+			}
+		}
 		al::Display::Clear(al::Color::RGB(0,0,0));
-		bg.get().draw({0, 0});
+		bg->draw({0, 0});
 		font.draw(
-			fmt::format("{}. tick={}", txtTest, loop.getTick()), 
+			fmt::format("{}. tick={} bgt={:.3f} bg1u={}", txtTest, loop.getTick(), bg1.timeSinceLastUse(), bg1.isUsed()), 
 			al::Color::RGB(255,255,255), 
 			txtPos
 		);
