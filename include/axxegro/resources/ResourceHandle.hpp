@@ -47,6 +47,16 @@ namespace al {
 			return resource;
 		}
 
+		T& operator*()
+		{
+			return *(getPtr().get());
+		}
+
+		T* operator->()
+		{
+			return getPtr().get();
+		}
+
 		T& get()
 		{
 			return *getPtr();
@@ -55,6 +65,11 @@ namespace al {
 		double timeSinceLastUse()
 		{
 			return al_get_time() - lastUsed;
+		}
+
+		bool isUsed()
+		{
+			return !resource.unique();
 		}
 
 		long refCount()
