@@ -9,6 +9,7 @@ namespace al {
 
 	class IResourceHandle {
 	public:
+		virtual ~IResourceHandle() {}
 		virtual void load() = 0;
 		virtual void unload() = 0;
 		virtual bool isLoaded() = 0;
@@ -20,7 +21,7 @@ namespace al {
 	class ResourceHandle: public IResourceHandle {
 	public:
 		ResourceHandle() : lastUsed(-1437.0f) {}
-		virtual ~ResourceHandle() {}
+		virtual ~ResourceHandle() override {unload();}
 
 		virtual T* loader() = 0;
 

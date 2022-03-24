@@ -79,3 +79,14 @@ void al::Font::drawJustified(const std::string& text, al::Color color, al::Point
 	UStr ustr(text);
 	al_draw_justified_ustr(ptr, color.get(), pos.x, xMax, pos.y, diffMax, ALLEGRO_ALIGN_INTEGER, ustr.alPtr());
 }
+
+al::FontHandleFile::FontHandleFile(const std::string& filename, int size)
+	: filename(filename), size(size)
+{
+
+}
+
+al::Font* al::FontHandleFile::loader()
+{
+	return new Font(filename, size);
+}
