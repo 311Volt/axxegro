@@ -4,6 +4,7 @@
 #include <allegro5/allegro5.h>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include <axxegro/resources/Resource.hpp>
 
@@ -16,12 +17,17 @@
  */
 
 namespace al {
+
+	class ConfigDeleter {
+	public:
+		void operator()(ALLEGRO_CONFIG* ptr){al_destroy_config(ptr);}
+	};
+
 	class Config: public Resource {
 	public:
 		Config();
 		Config(ALLEGRO_CONFIG* cfg);
 		Config(const std::string& filename);
-		~Config();
 
 		/**
 		 * @brief Provides a RAII-style mechanism for selecting a section to prevent
@@ -159,13 +165,13 @@ namespace al {
 		ALLEGRO_CONFIG* alPtr();
 
 	#ifdef AXXEGRO_TRUSTED
-		ALLEGRO_CONFIG* alPtr() const {return ptrConfig;};
+		ALLEGRO_CONFIG* alPtr() const {return cfg.get();};
 	#endif
 
 	private:
 		std::string filename;
 		std::string currentSection;
-		ALLEGRO_CONFIG* ptrConfig;
+		std::unique_ptr<ALLEGRO_CONFIG, ConfigDeleter> cfg;
 	};
 }
 

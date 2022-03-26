@@ -15,7 +15,14 @@ Classes that derive from Resource shall provide:
 A Resource must point to a valid Allegro object for its entire lifetime.
 */
 
+#include <stdexcept>
+
 namespace al {
+
+	class ResourceLoadError: public std::runtime_error {
+		using std::runtime_error::runtime_error;
+	};
+
 	class Resource {
 	public:
 		Resource(){}

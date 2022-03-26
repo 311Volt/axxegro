@@ -4,28 +4,29 @@
 #include <stdexcept>
 #include <unordered_set>
 
+#include <fmt/format.h>
+
 al::Config::Config()
 {
-	ptrConfig = al_create_config();
+	cfg = decltype(cfg)(al_create_config());
 	filename = "";
 	currentSection = "";
 }
 al::Config::Config(const std::string& filename)
 {
-	ptrConfig = al_load_config_file(filename.c_str());
-	if(!ptrConfig) {
-		throw std::runtime_error("Cannot load config file: "+filename);
+	cfg = decltype(cfg)(al_load_config_file(filename.c_str()));
+	if(!cfg) {
+		throw ResourceLoadError(fmt::format(
+			"Cannot load config from \"{}\" - file missing, corrupted or invalid",
+			filename
+		));
 	}
 	currentSection = "";
 }
 al::Config::Config(ALLEGRO_CONFIG* cfg)
 	: Config()
 {
-	ptrConfig = cfg;
-}
-al::Config::~Config()
-{
-	al_destroy_config(ptrConfig);
+	this->cfg = decltype(this->cfg)(cfg);
 }
 
 al::Config::SectionSelector::SectionSelector(al::Config& cfg, const std::string& sectionName)
@@ -53,12 +54,12 @@ const std::string& al::Config::getSelectedSectionName() const
 
 void al::Config::addSection(const std::string& name)
 {
-	al_add_config_section(ptrConfig, name.c_str());
+	al_add_config_section(cfg.get(), name.c_str());
 }
 
 bool al::Config::removeSection(const std::string& name)
 {
-	return al_remove_config_section(ptrConfig, name.c_str());
+	return al_remove_config_section(cfg.get(), name.c_str());
 }
 
 bool al::Config::isPresent(const std::string& key) const
@@ -68,7 +69,7 @@ bool al::Config::isPresent(const std::string& key) const
 
 bool al::Config::isPresent(const std::string& section, const std::string& key) const
 {
-	return al_get_config_value(ptrConfig, section.c_str(), key.c_str());
+	return al_get_config_value(cfg.get(), section.c_str(), key.c_str());
 }
 
 std::string al::Config::getValue(const std::string& key) const
@@ -78,7 +79,7 @@ std::string al::Config::getValue(const std::string& key) const
 
 std::string al::Config::getValue(const std::string& section, const std::string& key) const
 {
-	return {al_get_config_value(ptrConfig, section.c_str(), key.c_str())};
+	return {al_get_config_value(cfg.get(), section.c_str(), key.c_str())};
 }
 
 void al::Config::setValue(const std::string& key, const std::string& value)
@@ -88,7 +89,7 @@ void al::Config::setValue(const std::string& key, const std::string& value)
 
 void al::Config::setValue(const std::string& section, const std::string& key, const std::string& value)
 {
-	al_set_config_value(ptrConfig, section.c_str(), key.c_str(), value.c_str());
+	al_set_config_value(cfg.get(), section.c_str(), key.c_str(), value.c_str());
 }
 
 
@@ -98,7 +99,7 @@ void al::Config::addComment(const std::string& comment)
 }
 void al::Config::addComment(const std::string& section, const std::string& comment)
 {
-	al_add_config_comment(ptrConfig, section.c_str(), comment.c_str());
+	al_add_config_comment(cfg.get(), section.c_str(), comment.c_str());
 }
 
 std::vector<std::string> al::Config::keys() const
@@ -111,7 +112,7 @@ std::vector<std::string> al::Config::keys(const std::string& section) const
 	ALLEGRO_CONFIG_ENTRY* iterator;
 	std::vector<std::string> ret;
 
-	const char* entry = al_get_first_config_entry(ptrConfig, section.c_str(), &iterator);
+	const char* entry = al_get_first_config_entry(cfg.get(), section.c_str(), &iterator);
 	if(!entry) {
 		/* if the first entry does not exist (NULL) then the iterator
 		 * is not valid, nor will it be set to NULL
@@ -134,7 +135,7 @@ std::vector<std::string> al::Config::sections() const
 	std::vector<std::string> ret = {""};
 	std::unordered_set<std::string> existingValues;
 
-	const char* entry = al_get_first_config_section(ptrConfig, &iterator);
+	const char* entry = al_get_first_config_section(cfg.get(), &iterator);
 	while(iterator) {
 		if(entry) {
 			std::string strEntry(entry);
@@ -159,19 +160,19 @@ void al::Config::saveToDisk() const
 
 void al::Config::saveToDisk(const std::string& filename) const
 {
-	if(!al_save_config_file(filename.c_str(), ptrConfig)) {
+	if(!al_save_config_file(filename.c_str(), cfg.get())) {
 		throw std::runtime_error("cannot save config file to "+filename);
 	}
 }
 
 ALLEGRO_CONFIG* al::Config::alPtr()
 {
-	return ptrConfig;
+	return cfg.get();
 }
 
 void al::Config::merge(const Config& other)
 {
-	al_merge_config_into(ptrConfig, other.alPtr());
+	al_merge_config_into(cfg.get(), other.alPtr());
 }
 al::Config al::Config::Merge(const Config& master, const Config& source)
 {

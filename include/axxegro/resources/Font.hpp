@@ -2,7 +2,6 @@
 #define INCLUDE_AXXEGRO_RESOURCES_FONT
 
 #include "Resource.hpp"
-#include "ResourceHandle.hpp"
 #include "../math/math.hpp"
 #include "../Color.hpp"
 #include "Bitmap.hpp"
@@ -14,15 +13,21 @@
 #include <allegro5/allegro_font.h>
 
 namespace al {
+	class FontDeleter {
+	public:
+		void operator()(ALLEGRO_FONT* ptr){al_destroy_font(ptr);}
+	};
+
 	class Font: public Resource {
 	public:
-		struct CharRange {int begin, end;};
+		struct CharRange {
+			int begin, end;
+		};
 
 		Font();
 		Font(Bitmap& bmp, std::vector<CharRange> ranges);
 		Font(const std::string& filename, int size);
 		Font(const std::string& filename, int size, int flags);
-		~Font();
 
 		ALLEGRO_FONT* alPtr();
 
@@ -38,17 +43,9 @@ namespace al {
 
 		void drawJustified(const std::string& text, Color color, Point pos, float xMax, float diffMax) const;
 	private:
-		ALLEGRO_FONT* ptr;
+		std::unique_ptr<ALLEGRO_FONT, FontDeleter> font;
 	};
 
-	class FontHandleFile : public ResourceHandle<Font> {
-	public:
-		FontHandleFile(const std::string& filename, int size);
-		virtual Font* loader() override;
-	private:
-		std::string filename;
-		int size;
-	};
 };
 
 #endif /* INCLUDE_AXXEGRO_RESOURCES_FONT */
