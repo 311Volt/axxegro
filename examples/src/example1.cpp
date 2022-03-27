@@ -32,7 +32,20 @@ int main()
 	std::string txtTest = fmt::format("kb {}B, m {}B", sizeof(ALLEGRO_KEYBOARD_STATE), sizeof(ALLEGRO_MOUSE_STATE));
 	loop.loopBody = [&](){
 		al::Display::Clear(al::Color::RGB(0,0,0));
+
+		
+		{
+			int y = loop.getTick() % (bg.getHeight()-10);
+			int x = loop.getTick() % (bg.getWidth()-10);
+			al::Point p {x, y};
+			al::Point bb {2, 2};
+			al::BitmapLockedRegion lr(bg, {p, p+bb}, ALLEGRO_PIXEL_FORMAT_ABGR_8888, ALLEGRO_LOCK_READWRITE);
+			lr.rowData(1)[1] = 113;
+		}
+		
+
 		bg.draw({0, 0});
+
 		font.draw(
 			fmt::format("{}. tick={}", txtTest, loop.getTick()), 
 			al::Color::RGB(255,255,255), 

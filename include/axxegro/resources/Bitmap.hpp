@@ -3,6 +3,8 @@
 
 #include "Resource.hpp"
 #include <allegro5/allegro.h>
+
+#include <stdexcept>
 #include <algorithm>
 #include <string>
 #include <memory>
@@ -16,6 +18,8 @@
  */
 
 namespace al {
+
+	class BitmapLockError: public std::runtime_error {using std::runtime_error::runtime_error;};
 
 	///@brief ALLEGRO_BITMAP deleter for C++ smart pointers
 	class BitmapDeleter {
@@ -155,8 +159,23 @@ namespace al {
 	 */
 	class BitmapLockedRegion {
 	public:
-		BitmapLockedRegion(Bitmap& bmp);
-		//TODO
+		BitmapLockedRegion(Bitmap& bmp, int format, int flags);
+		BitmapLockedRegion(Bitmap& bmp, Rect region, int format, int flags);
+		~BitmapLockedRegion();
+		
+		BitmapLockedRegion(BitmapLockedRegion&) = delete;
+		BitmapLockedRegion(BitmapLockedRegion&&) = delete;
+		BitmapLockedRegion& operator=(BitmapLockedRegion&) = delete;
+		BitmapLockedRegion& operator=(BitmapLockedRegion&&) = delete;
+
+		uint8_t* data();
+		uint8_t* rowData(unsigned rowIndex);
+		int getFormat();
+		int getPitch();
+		int getPixelSize();
+	private:
+		ALLEGRO_LOCKED_REGION* reg;
+		ALLEGRO_BITMAP* bmp;
 	};
 }
 

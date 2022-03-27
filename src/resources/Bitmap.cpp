@@ -179,3 +179,50 @@ al::Bitmap al::Bitmap::clone() const
 {
 	return Bitmap(al_clone_bitmap(bmp.get()));
 }
+
+al::BitmapLockedRegion::BitmapLockedRegion(Bitmap& bmp, int format, int flags)
+{
+	this->bmp = bmp.alPtr();
+	reg = al_lock_bitmap(this->bmp, format, flags);
+	if(!reg) {
+		throw BitmapLockError("Error while locking bitmap. Make sure the bitmap isn't locked already and that you have specified a correct format.");
+	}
+}
+
+al::BitmapLockedRegion::BitmapLockedRegion(Bitmap& bmp, Rect region, int format, int flags)
+{
+	this->bmp = bmp.alPtr();
+	if(region.a.x < 0 || region.a.y < 0 || region.b.x >= bmp.getWidth() || region.b.y >= bmp.getHeight()) {
+		throw BitmapLockError("Can't lock a region that extends past the bitmap");
+	}
+	reg = al_lock_bitmap_region(this->bmp, region.a.x, region.a.y, region.getWidth(), region.getHeight(), format, flags);
+	if(!reg) {
+		throw BitmapLockError("Error while locking bitmap. Make sure the bitmap isn't locked already and that you have specified a correct format.");
+	}
+}
+
+al::BitmapLockedRegion::~BitmapLockedRegion()
+{
+	al_unlock_bitmap(bmp);
+}
+
+uint8_t* al::BitmapLockedRegion::data()
+{
+	return (uint8_t*)reg->data;
+}
+uint8_t* al::BitmapLockedRegion::rowData(unsigned rowIndex)
+{
+	return data() + getPitch()*rowIndex;
+}
+int al::BitmapLockedRegion::getFormat()
+{
+	return reg->format;
+}
+int al::BitmapLockedRegion::getPitch()
+{
+	return reg->pitch;
+}
+int al::BitmapLockedRegion::getPixelSize()
+{
+	return reg->pixel_size;
+}
