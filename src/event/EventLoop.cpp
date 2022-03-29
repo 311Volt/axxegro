@@ -37,14 +37,14 @@ void al::EventLoop::initDefaultEventQueue()
 }
 void al::EventLoop::initDefaultDispatcher()
 {
-	eventDispatcher.setEventTypeHandler(ALLEGRO_EVENT_DISPLAY_CLOSE, [this](const ALLEGRO_EVENT& ev){
+	eventDispatcher.setEventTypeHandler(ALLEGRO_EVENT_DISPLAY_CLOSE, [this](const ALLEGRO_EVENT&){
 		exitFlag = true;
 	});
 	auto keycodeDiscretizer = eventDispatcher.addDiscretizer({ALLEGRO_EVENT_KEY_DOWN, [this](const ALLEGRO_EVENT& ev){
 		return ev.keyboard.keycode;
 	}});
 	
-	eventDispatcher.setEventValueHandler(keycodeDiscretizer, ALLEGRO_KEY_ESCAPE, [this](const ALLEGRO_EVENT& ev){
+	eventDispatcher.setEventValueHandler(keycodeDiscretizer, ALLEGRO_KEY_ESCAPE, [this](const ALLEGRO_EVENT&){
 		exitFlag = true;
 	});
 }

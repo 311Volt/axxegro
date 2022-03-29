@@ -45,7 +45,7 @@ namespace al {
 
 		///@return This keyboard's event source.
 		EventSource GetEventSource();
-	};
+	}
 }
 
 #endif /* INCLUDE_AXXEGRO_IO_KEYBOARD */

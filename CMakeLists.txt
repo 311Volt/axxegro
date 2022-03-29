@@ -17,7 +17,7 @@ get_filename_component(AXXEGRO_DEPS_LIB "deps/lib" REALPATH)
 
 if(WIN32)
 	set(CMAKE_C_FLAGS "-m32")
-	set(CMAKE_CXX_FLAGS "-m32")
+	set(CMAKE_CXX_FLAGS "-m32 -Wall -Wextra -pedantic")
 endif()
 
 add_library(${PROJECT_NAME} ${AXXEGRO_SOURCES})

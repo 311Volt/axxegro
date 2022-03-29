@@ -46,6 +46,6 @@ namespace al {
 		std::unique_ptr<ALLEGRO_FONT, FontDeleter> font;
 	};
 
-};
+}
 
 #endif /* INCLUDE_AXXEGRO_RESOURCES_FONT */
