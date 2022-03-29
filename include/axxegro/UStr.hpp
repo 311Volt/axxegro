@@ -34,7 +34,15 @@ namespace al {
 		 * @param str UTF-32 input.
 		 * @return UTF-8 output.
 		 */
-		static std::string EncodeUTF8(const std::u32string_view str);
+		static std::string EncodeToUTF8(const std::u32string_view str);
+
+		/**
+		 * @brief Converts UTF-8 to UTF-32 using Allegro.
+		 * 
+		 * @param str UTF-8 input
+		 * @return UTF-32 output. 
+		 */
+		static std::u32string DecodeToUTF32(const std::string_view str);
 
 		///@return A pointer to the underlying ALLEGRO_USTR.
 		ALLEGRO_USTR* alPtr();
