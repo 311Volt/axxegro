@@ -1,13 +1,13 @@
 # axxegro
 
 A C++17 wrapper for [Allegro5](https://github.com/liballeg/allegro5) that aims to combine
-Allegro's straightforward and intuitive UI with modern C++ safety and lifetime management
+Allegro's straightforward and intuitive API with modern C++ safety and lifetime management
 techniques. It is not a complete wrapper and exposes the Allegro API to the user rather
 than redefining every `struct` and `define`; however, the goal for 1.0 is to completely 
 eliminate the need to call any Allegro functions directly.
 
 Barely anything in here yet, this is work in progress. This library is developed in
-parallel to [lpg-gui](https://github.com/311Volt/lpg-gui) (repo coming soon), which means
+parallel to [lpg-gui](https://github.com/311Volt/lpg-gui), which means
 that features needed for lpg-gui are prioritized.
 
 # how to build
