@@ -1,6 +1,7 @@
 #include <axxegro/axxegro.hpp>
 
 #include <allegro5/allegro.h>
+#include <allegro5/allegro_primitives.h>
 #include <fmt/format.h>
 
 #include <cmath>
@@ -33,7 +34,10 @@ int main()
 	loop.loopBody = [&](){
 		al::Display::Clear(al::Color::RGB(0,0,0));
 
-		
+		double txtMaxWidth = 10.0 + (0.5+0.5*std::sin(al::GetTime())) * 300.0;
+		std::string txtTest1 = fmt::format("{}. tick={}", txtTest, loop.getTick());
+		std::string txtTestCut = txtTest.substr(0, font.calcCutoffPoint(txtTest1, txtMaxWidth));
+
 		{
 			int y = loop.getTick() % (bg.getHeight()-10);
 			int x = loop.getTick() % (bg.getWidth()-10);
@@ -46,8 +50,10 @@ int main()
 
 		bg.draw({0, 0});
 
+		al_draw_line(txtPos.x, txtPos.y, txtPos.x+txtMaxWidth, txtPos.y, al_map_rgb(255,0,0), 4.0);
+
 		font.draw(
-			fmt::format("{}. tick={}", txtTest, loop.getTick()), 
+			txtTestCut,
 			al::Color::RGB(255,255,255), 
 			txtPos
 		);

@@ -212,7 +212,7 @@ uint8_t* al::BitmapLockedRegion::data()
 }
 uint8_t* al::BitmapLockedRegion::rowData(unsigned rowIndex)
 {
-	return data() + getPitch()*rowIndex;
+	return data() + ((int)rowIndex*reg->pitch);
 }
 int al::BitmapLockedRegion::getFormat()
 {

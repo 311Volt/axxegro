@@ -73,6 +73,37 @@ al::Rect al::Font::getTextDimensions(const std::string& text) const
 	return {pos, pos+size};
 }
 
+int al::Font::getGlyphAdvance(char32_t codepoint1, char32_t codepoint2)
+{
+	return al_get_glyph_advance(font.get(), codepoint1, codepoint2);
+}
+
+size_t al::Font::calcCutoffPoint(std::u32string_view str, int maxWidth)
+{
+	int pos = 0;
+	size_t ret = 0;
+
+	for(size_t i=0; i<str.size(); i++) {
+		auto cp1 = str[i];
+		auto cp2 = (i+1 == str.size()) ? ALLEGRO_NO_KERNING : str[i+1];
+
+		pos += getGlyphAdvance(cp1, cp2);
+		if(pos <= maxWidth) {
+			ret++;
+		} else {
+			break;
+		}
+	}
+	return ret;
+}
+
+size_t al::Font::calcCutoffPoint(std::string_view str, int maxWidth)
+{
+	UStr ustr(str);
+	auto cpOff = calcCutoffPoint(UStr::DecodeToUTF32(str), maxWidth);
+	return al_ustr_offset(ustr.alPtr(), cpOff);
+}
+
 void al::Font::draw(const std::string& text, al::Color color, al::Point pos) const
 {
 	draw(text, color, pos, ALLEGRO_ALIGN_LEFT);
