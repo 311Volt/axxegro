@@ -85,7 +85,10 @@ size_t al::Font::calcCutoffPoint(std::u32string_view str, int maxWidth)
 
 	for(size_t i=0; i<str.size(); i++) {
 		auto cp1 = str[i];
-		auto cp2 = (i+1 == str.size()) ? ALLEGRO_NO_KERNING : str[i+1];
+		auto cp2 = str[i+1];
+		if(i == str.size()-1) {
+			cp2 = ALLEGRO_NO_KERNING;
+		}
 
 		pos += getGlyphAdvance(cp1, cp2);
 		if(pos <= maxWidth) {
