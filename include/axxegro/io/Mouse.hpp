@@ -24,6 +24,12 @@ namespace al {
 
 		};
 
+		class MouseEventSource: public EventSource {
+		public:
+			ALLEGRO_EVENT_SOURCE* ptr() const override
+				{return al_get_mouse_event_source();}
+		};
+
 		using State = ALLEGRO_MOUSE_STATE;
 
 		enum class Btn: int {
@@ -46,7 +52,7 @@ namespace al {
 		Point GetPos();
 		Point GetDesktopPos();
 
-		EventSource GetEventSource();
+		const EventSource& GetEventSource();
 	}
 }
 

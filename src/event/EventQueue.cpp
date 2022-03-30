@@ -25,7 +25,7 @@ void al::EventQueue::registerSource(ALLEGRO_EVENT_SOURCE* src)
 }
 void al::EventQueue::registerSource(const al::EventSource& src)
 {
-	al_register_event_source(ptr, src.alPtr());
+	al_register_event_source(ptr, src.ptr());
 }
 
 bool al::EventQueue::empty()

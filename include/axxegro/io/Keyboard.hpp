@@ -16,6 +16,12 @@ namespace al {
 	namespace keyb {
 		using State = ALLEGRO_KEYBOARD_STATE;
 
+		class KeyboardEventSource: public EventSource {
+		public:
+			ALLEGRO_EVENT_SOURCE* ptr() const override
+				{return al_get_keyboard_event_source();}
+		};
+
 		///@return Current keyboard state.
 		State GetState();
 
@@ -44,7 +50,7 @@ namespace al {
 		std::string KeycodeToName(int keycode);
 
 		///@return This keyboard's event source.
-		EventSource GetEventSource();
+		const EventSource& GetEventSource();
 	}
 }
 

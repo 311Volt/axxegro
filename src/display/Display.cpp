@@ -3,6 +3,16 @@
 #include <axxegro/display/Display.hpp>
 #include <stdexcept>
 
+ALLEGRO_BITMAP* al::DisplayBackbuffer::getPointer() const
+{
+	return al_get_backbuffer(disp.ptr());
+}
+
+ALLEGRO_EVENT_SOURCE* al::DisplayEventSource::ptr() const
+{
+	return al_get_display_event_source(disp.ptr());
+}
+
 al::Display::Display(int w, int h)
 	: Display(w, h, 0)
 {
@@ -33,12 +43,13 @@ al::Display::Display(int w, int h, int flags, std::vector<Option> requiredOption
 		throw std::runtime_error("Could not create an Allegro display.");
 	}
 	al_reset_new_display_options();
-
-	ptrBackbuffer = std::make_unique<DisplayBackbuffer>(ptr());
+	initPointers();
 }
-al::Display::~Display()
+
+void al::Display::initPointers()
 {
-	al_destroy_display(ptr());
+	ptrBackbuffer = std::make_unique<DisplayBackbuffer>(*this);
+	ptrEventSource = std::make_unique<DisplayEventSource>(*this);
 }
 
 int al::Display::width() const
@@ -53,6 +64,11 @@ int al::Display::height() const
 al::Vec2 al::Display::getSize() const
 {
 	return {width(), height()};
+}
+
+al::Rect al::Display::getRect() const
+{
+	return {{0,0}, getSize()};
 }
 
 int al::Display::getRefreshRate() const
@@ -115,9 +131,9 @@ void al::Display::setTitle(const std::string& title)
 	al_set_window_title(ptr(), title.c_str());
 }
 
-al::EventSource al::Display::getEventSource()
+const al::EventSource& al::Display::eventSource()
 {
-	return EventSource(al_get_display_event_source(ptr()));
+	return *ptrEventSource;
 }
 
 const al::Bitmap& al::Display::backbuffer() const

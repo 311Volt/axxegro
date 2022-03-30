@@ -5,18 +5,14 @@
 
 namespace al {
 	//TODO user event sources
+
 	class EventSource {
 	public:
-		EventSource() {}
-		EventSource(ALLEGRO_EVENT_SOURCE* ptr);
-		~EventSource();
-
-		ALLEGRO_EVENT_SOURCE* alPtr();
-	#ifdef AXXEGRO_TRUSTED
-		ALLEGRO_EVENT_SOURCE* alPtr() const {return ptr;}
-	#endif
-	private:
-		ALLEGRO_EVENT_SOURCE* ptr;
+		virtual ALLEGRO_EVENT_SOURCE* ptr() const = 0;
+	};
+	
+	class UserEventSource: public EventSource {
+		//TODO
 	};
 }
 

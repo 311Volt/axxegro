@@ -21,7 +21,9 @@ std::string al::keyb::KeycodeToName(int keycode)
 	return std::string(al_keycode_to_name(keycode));
 }
 
-al::EventSource al::keyb::GetEventSource()
+al::keyb::KeyboardEventSource axxKeyboardEventSource;
+
+const al::EventSource& al::keyb::GetEventSource()
 {
-	return EventSource(al_get_keyboard_event_source());
+	return axxKeyboardEventSource;
 }
