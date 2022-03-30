@@ -1,3 +1,5 @@
+#define AXXEGRO_TRUSTED
+
 #include <axxegro/resources/Bitmap.hpp>
 #include <axxegro/Color.hpp>
 
@@ -6,8 +8,14 @@
 #include <fmt/format.h>
 
 al::Bitmap::Bitmap(int w, int h)
+	: Resource(al_create_bitmap(w,h))
 {
-	bmp = decltype(bmp)(al_create_bitmap(w, h));
+	if(!ptr()) {
+		throw ResourceLoadError(fmt::format(
+			"Error while creating a {}x{} bitmap", 
+			w, h
+		));
+	}
 }
 al::Bitmap::Bitmap(int w, int h, al::Color color)
 	: Bitmap(w,h)
@@ -15,31 +23,24 @@ al::Bitmap::Bitmap(int w, int h, al::Color color)
 	clearToColor(color);
 }
 al::Bitmap::Bitmap(const std::string& filename)
-{
-	bmp = decltype(bmp)(al_load_bitmap(filename.c_str()));
-	if(!bmp) {
+	: Resource(al_load_bitmap(filename.c_str()))
+{	
+	if(!ptr()) {
 		throw ResourceLoadError(fmt::format(
 			"Cannot load bitmap from \"{}\" - file missing, corrupted or invalid",
 			filename
 		));
 	}
 }
-al::Bitmap::Bitmap(ALLEGRO_BITMAP* ptr)
-{
-	bmp = decltype(bmp)(ptr);
-}
 
-ALLEGRO_BITMAP* al::Bitmap::alPtr()
-{
-	return bmp.get();
-}
+
 int al::Bitmap::getWidth() const
 {
-	return al_get_bitmap_width(bmp.get());
+	return al_get_bitmap_width(ptr());
 }
 int al::Bitmap::getHeight() const
 {
-	return al_get_bitmap_height(bmp.get());
+	return al_get_bitmap_height(ptr());
 }
 al::Vec2 al::Bitmap::getSize() const
 {
@@ -52,16 +53,16 @@ al::Rect al::Bitmap::getRect() const
 
 void al::Bitmap::draw(al::Point p0) const
 {
-	al_draw_bitmap(bmp.get(), p0.x, p0.y, 0);
+	al_draw_bitmap(ptr(), p0.x, p0.y, 0);
 }
 void al::Bitmap::drawTinted(al::Point p0, al::Color tint) const
 {
-	al_draw_tinted_bitmap(bmp.get(), tint.get(), p0.x, p0.y, 0);
+	al_draw_tinted_bitmap(ptr(), tint.get(), p0.x, p0.y, 0);
 }
 void al::Bitmap::drawRegion(al::Rect srcRegion, al::Point dst) const
 {
 	al_draw_bitmap_region(
-		bmp.get(), 
+		ptr(), 
 		srcRegion.a.x, srcRegion.a.y, 
 		srcRegion.getWidth(), srcRegion.getHeight(),
 		dst.x, dst.y,
@@ -71,7 +72,7 @@ void al::Bitmap::drawRegion(al::Rect srcRegion, al::Point dst) const
 void al::Bitmap::drawScaled(al::Rect srcRect, al::Rect dstRect) const
 {
 	al_draw_scaled_bitmap(
-		bmp.get(), 
+		ptr(), 
 		srcRect.a.x, srcRect.a.y,
 		srcRect.getWidth(), srcRect.getHeight(),
 		dstRect.a.x, dstRect.a.y,
@@ -82,7 +83,7 @@ void al::Bitmap::drawScaled(al::Rect srcRect, al::Rect dstRect) const
 void al::Bitmap::drawRotated(al::Point centerSrc, al::Point centerDst, float angle) const
 {
 	al_draw_rotated_bitmap(
-		bmp.get(),
+		ptr(),
 		centerSrc.x, centerSrc.y,
 		centerDst.x, centerDst.y,
 		angle,
@@ -92,7 +93,7 @@ void al::Bitmap::drawRotated(al::Point centerSrc, al::Point centerDst, float ang
 void al::Bitmap::drawTintedScaled(al::Color tint, al::Rect srcRect, al::Rect dstRect) const
 {
 	al_draw_tinted_scaled_bitmap(
-		bmp.get(),
+		ptr(),
 		tint.get(),
 		srcRect.a.x, srcRect.a.y,
 		srcRect.getWidth(), srcRect.getHeight(),
@@ -104,7 +105,7 @@ void al::Bitmap::drawTintedScaled(al::Color tint, al::Rect srcRect, al::Rect dst
 void al::Bitmap::drawTintedRegion(al::Rect srcRegion, al::Point dst, al::Color tint) const
 {
 	al_draw_tinted_bitmap_region(
-		bmp.get(),
+		ptr(),
 		tint.get(),
 		srcRegion.a.x, srcRegion.a.y,
 		srcRegion.getWidth(), srcRegion.getHeight(),
@@ -115,7 +116,7 @@ void al::Bitmap::drawTintedRegion(al::Rect srcRegion, al::Point dst, al::Color t
 void al::Bitmap::drawTintedRotated(al::Color tint, al::Point centerSrc, al::Point centerDst, float angle) const
 {
 	al_draw_tinted_rotated_bitmap(
-		bmp.get(),
+		ptr(),
 		tint.get(),
 		centerSrc.x, centerSrc.y,
 		centerDst.x, centerDst.y,
@@ -126,7 +127,7 @@ void al::Bitmap::drawTintedRotated(al::Color tint, al::Point centerSrc, al::Poin
 void al::Bitmap::drawScaledRotated(al::Point centerSrc, al::Point centerDst, Vec2 scale, float angle) const
 {
 	al_draw_scaled_rotated_bitmap(
-		bmp.get(),
+		ptr(),
 		centerSrc.x, centerSrc.y,
 		centerDst.x, centerDst.y,
 		scale.x, scale.y,
@@ -137,7 +138,7 @@ void al::Bitmap::drawScaledRotated(al::Point centerSrc, al::Point centerDst, Vec
 void al::Bitmap::drawTintedScaledRotated(al::Color tint, al::Point centerSrc, al::Point centerDst, Vec2 scale, float angle) const
 {
 	al_draw_tinted_scaled_rotated_bitmap(
-		bmp.get(),
+		ptr(),
 		tint.get(),
 		centerSrc.x, centerSrc.y,
 		centerDst.x, centerDst.y,
@@ -149,7 +150,7 @@ void al::Bitmap::drawTintedScaledRotated(al::Color tint, al::Point centerSrc, al
 void al::Bitmap::drawTintedScaledRotatedRegion(al::Rect srcRegion, al::Color tint, al::Point centerSrc, al::Point centerDst, Vec2 scale, float angle) const
 {
 	al_draw_tinted_scaled_rotated_bitmap_region(
-		bmp.get(),
+		ptr(),
 		srcRegion.a.x, srcRegion.a.y,
 		srcRegion.getWidth(), srcRegion.getHeight(),
 		tint.get(),
@@ -163,7 +164,7 @@ void al::Bitmap::drawTintedScaledRotatedRegion(al::Rect srcRegion, al::Color tin
 
 void al::Bitmap::convertMaskToAlpha(al::Color maskColor)
 {
-	al_convert_mask_to_alpha(bmp.get(), maskColor.get());
+	al_convert_mask_to_alpha(ptr(), maskColor.get());
 }
 void al::Bitmap::clearToColor(al::Color color)
 {
@@ -173,16 +174,16 @@ void al::Bitmap::clearToColor(al::Color color)
 
 void al::Bitmap::saveToFile(const std::string& filename) const
 {
-	al_save_bitmap(filename.c_str(), bmp.get());
+	al_save_bitmap(filename.c_str(), ptr());
 }
 al::Bitmap al::Bitmap::clone() const
 {
-	return Bitmap(al_clone_bitmap(bmp.get()));
+	return Bitmap(al_clone_bitmap(ptr()));
 }
 
 al::BitmapLockedRegion::BitmapLockedRegion(Bitmap& bmp, int format, int flags)
 {
-	this->bmp = bmp.alPtr();
+	this->bmp = bmp.ptr();
 	reg = al_lock_bitmap(this->bmp, format, flags);
 	if(!reg) {
 		throw BitmapLockError("Error while locking bitmap. Make sure the bitmap isn't locked already and that you have specified a correct format.");
@@ -191,7 +192,7 @@ al::BitmapLockedRegion::BitmapLockedRegion(Bitmap& bmp, int format, int flags)
 
 al::BitmapLockedRegion::BitmapLockedRegion(Bitmap& bmp, Rect region, int format, int flags)
 {
-	this->bmp = bmp.alPtr();
+	this->bmp = bmp.ptr();
 	if(region.a.x < 0 || region.a.y < 0 || region.b.x >= bmp.getWidth() || region.b.y >= bmp.getHeight()) {
 		throw BitmapLockError("Can't lock a region that extends past the bitmap");
 	}

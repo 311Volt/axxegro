@@ -19,8 +19,9 @@ namespace al {
 		void operator()(ALLEGRO_FONT* ptr){al_destroy_font(ptr);}
 	};
 
-	class Font: public Resource {
+	class Font: public Resource<ALLEGRO_FONT, FontDeleter> {
 	public:
+		using Resource::Resource;
 		struct CharRange {
 			int begin, end;
 		};
@@ -29,8 +30,6 @@ namespace al {
 		Font(Bitmap& bmp, std::vector<CharRange> ranges);
 		Font(const std::string& filename, int size);
 		Font(const std::string& filename, int size, int flags);
-
-		ALLEGRO_FONT* alPtr();
 
 		int getLineHeight() const;
 		int getAscent() const;
@@ -48,7 +47,6 @@ namespace al {
 
 		void drawJustified(const std::string& text, Color color, Point pos, float xMax, float diffMax) const;
 	private:
-		std::unique_ptr<ALLEGRO_FONT, FontDeleter> font;
 	};
 
 }

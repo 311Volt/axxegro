@@ -5,14 +5,37 @@
 #include "../io/Mouse.hpp"
 #include "../event/EventSource.hpp"
 
+#include "../resources/Resource.hpp"
+#include "../resources/Bitmap.hpp"
+
 #include <string>
 #include <vector>
 
 #include <allegro5/allegro.h>
 
 namespace al {
-	class Display {
+	class DisplayDeleter {
 	public:
+		void operator()(ALLEGRO_DISPLAY* p){al_destroy_display(p);}
+	};
+
+	class DisplayBackbuffer: public Bitmap {
+	public:
+		DisplayBackbuffer(ALLEGRO_DISPLAY* disp)
+			: Bitmap(nullptr), disp(disp)
+		{}
+	private:
+		virtual ALLEGRO_BITMAP* getPointer() const override
+		{
+			return al_get_backbuffer(disp);
+		}
+
+		ALLEGRO_DISPLAY* disp;
+	};
+
+	class Display: public Resource<ALLEGRO_DISPLAY, DisplayDeleter> {
+	public:
+		using Resource::Resource;
 		using Option = struct{int option, value;};
 
 		/**
@@ -160,20 +183,35 @@ namespace al {
 		///@brief Reverses the effect of a grabMouse() call.
 		void ungrabMouse();
 
-		ALLEGRO_DISPLAY* alPtr();
+		///@returns A reference to the display's backbuffer bitmap.
+		const Bitmap& backbuffer() const;
 
 		///@brief Returns the display's event source.
 		EventSource getEventSource();
 
-		///@brief Flips the current display's backbuffer.
-		static void Flip();
-
-		///@brief Clears the current display to a given color.
-		static void Clear(Color color);
 	private:
-		ALLEGRO_DISPLAY* disp;
+		std::unique_ptr<DisplayBackbuffer> ptrBackbuffer;
 	};
 	
+	class CCurrentDisplay: public Display {
+	public:
+		CCurrentDisplay() : Display(nullptr) {}
+		
+		void flip();
+		void flip(Rect rect);
+		void clearToColor(Color color);
+		bool waitForVsync();
+		void convertMemoryBitmaps();
+
+		void setTargetBitmap(Bitmap& bmp);
+	private:
+		virtual ALLEGRO_DISPLAY* getPointer() const override
+		{
+			return al_get_current_display();
+		}
+	};
+
+	CCurrentDisplay& CurrentDisplay();
 }
 
 #endif /* INCLUDE_AXXEGRO_DISPLAY_DISPLAY */

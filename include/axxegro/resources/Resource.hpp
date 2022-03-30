@@ -2,20 +2,40 @@
 #define __AXXEGRO_RESOURCE_H__
 
 /**
- @file
-Resource is the base class for classes that correspond to Allegro structures 
-that have a create/destroy pair.
-
-Classes that derive from Resource shall provide:
-	- RAII for underlying Allegro objects (ctor -> create, dtor -> delete)
-	- error checking (exceptions in ctors)
-	- methods that correspond to appropriate Allegro functions 
-	   (instead of having the user write al_do_something(res.alPtr(), ...))
-
-A Resource must point to a valid Allegro object for its entire lifetime.
-*/
+ * @file
+ * Resource is the base for classes that wrap around an Allegro object
+ * that has a create/destroy pair, for example bitmaps or fonts.
+ * A Resource is characterized by the following:
+ *     - it provides RAII, obviously
+ *     - it is neither copy-constructible non copy-assignable (but it may
+ *           provide a more explicit way of copying, namely a clone() method)
+ *     - it may not own the resource (details below)
+ *     - it duplicates the Allegro API where applicable (e.g. bmp.draw(...)
+ *           instead of al_draw_bitmap(bmp.ptr(), ...))
+ *     - the above includes convenient ctor overloads, e.g.:
+ *           (al_create_bitmap(800,600) -> al::Bitmap::Bitmap(800,600))
+ *     - it points to a single valid structure for its entire lifetime
+ * 
+ * 
+ * Often, access is needed to objects whose lifetimes are managed by Allegro
+ * rather than the user directly. Examples include target bitmaps, current 
+ * displays or display backbuffers. The axxegro approach to dealing with
+ * these is:
+ *     1. derive from the original wrapper class (e.g. Bitmap -> TargetBitmap)
+ *     2. construct it with alPtr := null and override getPointer() 
+ *            and make it return al_get_* directly
+ *     4. provide access to a Derived object through a func/method that gives
+ *            you a reference
+ *     5. allegro functions that implicitly use such objects can be implemented
+ *            in the derived classes
+ *     6. ?????
+ *     7. profit
+ * 
+ * See CCurrentDisplay or CDisplayBackbuffer in Display.cpp for examples.
+ **/
 
 #include <stdexcept>
+#include <memory>
 
 namespace al {
 
@@ -23,13 +43,39 @@ namespace al {
 		using std::runtime_error::runtime_error;
 	};
 
+	template<typename T, typename Deleter>
 	class Resource {
+		std::unique_ptr<T, Deleter> alPtr;
 	public:
-		Resource(){}
-		Resource(Resource&) = delete;
-		Resource& operator=(Resource& other) = delete;
-		~Resource(){}
+		Resource(T* p)
+		{
+			setPtr(p);
+		}
+
+		T* ptr()
+		{
+			return getPointer();
+		}
+
+#ifndef AXXEGRO_TRUSTED
+	private:
+#endif
+		T* ptr() const
+		{
+			return getPointer();
+		}
+	protected:
+		void setPtr(T* p)
+		{
+			alPtr = decltype(alPtr)(p);
+		}
+	private:
+		virtual T* getPointer() const
+		{
+			return alPtr.get();
+		}
 	};
+
 }
 
 #endif // __AXXEGRO_RESOURCE_H__

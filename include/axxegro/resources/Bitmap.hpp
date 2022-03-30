@@ -30,8 +30,9 @@ namespace al {
 	/**
 	 * @brief Wraps around ALLEGRO_BITMAP.
 	 */
-	class Bitmap: public Resource {
+	class Bitmap: public Resource<ALLEGRO_BITMAP, BitmapDeleter> {
 	public:
+		using Resource::Resource;
 		Bitmap() = delete;
 		
 		/** @brief Creates a bitmap.
@@ -50,34 +51,6 @@ namespace al {
 		 * @param filename Path to the file with the image.
 		 **/
 		Bitmap(const std::string& filename);
-
-		/** 
-		 *  @brief Constructs an object from a given pointer. It is important
-		 *  to note that the dtor behaves the same (i.e. calls al_destroy_bitmap())
-		 *  regardless of the ctor used to create the object. Using this ctor can be 
-		 *  thought of as giving ownership of a bitmap to a new Bitmap object.
-		 **/
-		Bitmap(ALLEGRO_BITMAP* ptr);
-
-		/**
-		 * @brief Returns the Allegro pointer. 
-		 * 
-		 * @return A pointer to the underlying Allegro5 bitmap structure. 
-		 */
-		ALLEGRO_BITMAP* alPtr();
-
-	#ifdef AXXEGRO_TRUSTED
-		/**
-		 * @brief Returns the Allegro pointer and expects the user to not change
-		 * the bitmap. This method should not be available to the user - axxegro
-		 * should aim to make every non-bitmap-changing operation in allegro
-		 * possible to do with a const Bitmap - if it doesn't, something's missing
-		 * from this library.
-		 * 
-		 * @return A pointer to the underlying Allegro5 bitmap structure. 
-		 */
-		ALLEGRO_BITMAP* alPtr() const {return bmp.get();}
-	#endif
 
 		/// @return The width of the bitmap in pixels.
 		int getWidth() const;
@@ -129,7 +102,6 @@ namespace al {
 		Bitmap clone() const;
 
 	protected:
-		std::unique_ptr<ALLEGRO_BITMAP, BitmapDeleter> bmp;
 	};
 
 	/**
@@ -145,7 +117,7 @@ namespace al {
 			al_set_target_bitmap(bmp);
 		}
 		ScopedTargetBitmap(Bitmap& bmp)
-			: ScopedTargetBitmap(bmp.alPtr()) 
+			: ScopedTargetBitmap(bmp.ptr()) 
 		{}
 
 		~ScopedTargetBitmap()
@@ -176,6 +148,16 @@ namespace al {
 	private:
 		ALLEGRO_LOCKED_REGION* reg;
 		ALLEGRO_BITMAP* bmp;
+	};
+
+	class CTargetBitmap: public Bitmap {
+	public:
+		CTargetBitmap() : Bitmap(nullptr) {}
+	private:
+		virtual ALLEGRO_BITMAP* getPointer() const override
+		{
+			return al_get_target_bitmap();
+		}
 	};
 }
 

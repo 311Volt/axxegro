@@ -4,7 +4,7 @@
 
 al::mouse::Cursor::Cursor(const Bitmap& bmp, Point focus)
 {
-	ptr = al_create_mouse_cursor(bmp.alPtr(), focus.x, focus.y);
+	ptr = al_create_mouse_cursor(bmp.ptr(), focus.x, focus.y);
 }
 
 al::mouse::Cursor::~Cursor()

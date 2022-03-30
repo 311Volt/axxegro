@@ -23,10 +23,10 @@ namespace al {
 		void operator()(ALLEGRO_CONFIG* ptr){al_destroy_config(ptr);}
 	};
 
-	class Config: public Resource {
+	class Config: public Resource<ALLEGRO_CONFIG, ConfigDeleter> {
 	public:
+		using Resource::Resource;
 		Config();
-		Config(ALLEGRO_CONFIG* cfg);
 		Config(const std::string& filename);
 
 		/**
@@ -161,17 +161,9 @@ namespace al {
 		 * with an empty config.
 		 */
 		Config clone();
-
-		ALLEGRO_CONFIG* alPtr();
-
-	#ifdef AXXEGRO_TRUSTED
-		ALLEGRO_CONFIG* alPtr() const {return cfg.get();};
-	#endif
-
 	private:
 		std::string filename;
 		std::string currentSection;
-		std::unique_ptr<ALLEGRO_CONFIG, ConfigDeleter> cfg;
 	};
 }
 

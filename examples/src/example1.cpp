@@ -32,7 +32,7 @@ int main()
 	al::Point txtPos {320, 240};
 	std::string txtTest = fmt::format("kb {}B, m {}B", sizeof(ALLEGRO_KEYBOARD_STATE), sizeof(ALLEGRO_MOUSE_STATE));
 	loop.loopBody = [&](){
-		al::Display::Clear(al::Color::RGB(0,0,0));
+		al::CurrentDisplay().clearToColor(al::Color::RGB(0,0,0));
 
 		double txtMaxWidth = 10.0 + (0.5+0.5*std::sin(al::GetTime())) * 300.0;
 		std::string txtTest1 = fmt::format("{}. tick={}", txtTest, loop.getTick());
@@ -57,7 +57,7 @@ int main()
 			al::Color::RGB(255,255,255), 
 			txtPos
 		);
-		al::Display::Flip();
+		al::CurrentDisplay().flip();
 	};
 
 	loop.eventDispatcher.setEventTypeHandler(

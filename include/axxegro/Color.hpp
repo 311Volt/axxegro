@@ -13,6 +13,9 @@
 #include <string_view>
 
 namespace al {
+
+	//TODO literals 
+	
 	class Color {
 	private:
 		float r,g,b,a;
