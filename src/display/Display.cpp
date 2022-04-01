@@ -3,6 +3,8 @@
 #include <axxegro/display/Display.hpp>
 #include <stdexcept>
 
+#include <fmt/format.h>
+
 ALLEGRO_BITMAP* al::DisplayBackbuffer::getPointer() const
 {
 	return al_get_backbuffer(disp.ptr());
@@ -26,6 +28,9 @@ al::Display::Display(int w, int h, int flags)
 al::Display::Display(int w, int h, int flags, std::vector<Option> requiredOptions, std::vector<Option> suggestedOptions, std::vector<Option> dontCareOptions)
 	: Resource(nullptr)
 {
+	if(!al_is_system_installed()) {
+		throw DisplayCreationError("cannot create display (did you forget to initialize allegro?)");
+	}
 	al_reset_new_display_options();
 	for(const auto& [opt, val]: requiredOptions) {
 		al_set_new_display_option(opt, val, ALLEGRO_REQUIRE);
@@ -40,7 +45,7 @@ al::Display::Display(int w, int h, int flags, std::vector<Option> requiredOption
 
 	setPtr(al_create_display(w, h));
 	if(!ptr()) {
-		throw std::runtime_error("Could not create an Allegro display.");
+		throw DisplayCreationError(fmt::format("Could not create a {}x{} Allegro display.", w, h));
 	}
 	al_reset_new_display_options();
 	initPointers();

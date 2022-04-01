@@ -14,6 +14,8 @@
 #include <allegro5/allegro.h>
 
 namespace al {
+	class DisplayCreationError: public std::runtime_error {using std::runtime_error::runtime_error;};
+
 	class DisplayDeleter {
 	public:
 		void operator()(ALLEGRO_DISPLAY* p){al_destroy_display(p);}
