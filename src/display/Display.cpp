@@ -36,10 +36,6 @@ al::Display::Display(int w, int h, int flags, std::vector<Option> requiredOption
 
 	ptrBackbuffer = std::make_unique<DisplayBackbuffer>(ptr());
 }
-al::Display::~Display()
-{
-	al_destroy_display(ptr());
-}
 
 int al::Display::width() const
 {

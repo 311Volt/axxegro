@@ -3,6 +3,8 @@
 #include <axxegro/io/Keyboard.hpp>
 #include <axxegro/io/Mouse.hpp>
 
+#include <axxegro/time/Time.hpp>
+
 #include <fmt/format.h>
 
 al::EventLoop::EventLoop()
@@ -10,6 +12,14 @@ al::EventLoop::EventLoop()
 	exitFlag = false;
 	tick = 0;
 	loopBody = [](){};
+	lastTickTime = 0.01;
+}
+
+al::EventLoop::EventLoop(al::EventLoop::BasicInit)
+	: EventLoop()
+{
+	initDefaultEventQueue();
+	initDefaultDispatcher();
 }
 
 al::EventLoop::~EventLoop()
@@ -49,14 +59,25 @@ void al::EventLoop::initDefaultDispatcher()
 	});
 }
 
+al::EventLoop al::EventLoop::Basic()
+{
+	return EventLoop(BasicInit());
+}
+
 int64_t al::EventLoop::getTick()
 {
 	return tick;
 }
 
+double al::EventLoop::getLastTickTime()
+{
+	return lastTickTime;
+}
+
 void al::EventLoop::run()
 {
 	while(!exitFlag) {
+		double t0 = GetTime();
 		while(!eventQueue.empty()) {
 			ALLEGRO_EVENT ev = eventQueue.pop();
 			eventDispatcher.dispatch(ev);
@@ -66,6 +87,7 @@ void al::EventLoop::run()
 			clockEventQueue.flush();
 		}
 		loopBody();
+		lastTickTime = GetTime() - t0;
 		tick++;
 	}
 	exitFlag = false;

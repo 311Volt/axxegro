@@ -74,7 +74,6 @@ namespace al {
 			std::vector<Option> suggestedOptions, 
 			std::vector<Option> dontCareOptions
 		);
-		~Display();
 
 		///@return Width of the display in pixels.
 		int width() const;

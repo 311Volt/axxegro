@@ -5,12 +5,18 @@
 #include <optional>
 
 #include "EventSource.hpp"
+#include "../resources/Resource.hpp"
+
 
 namespace al {
-	class EventQueue {
+	class EventQueueDeleter {
+	public:
+		void operator()(ALLEGRO_EVENT_QUEUE* q){al_destroy_event_queue(q);}
+	};
+
+	class EventQueue: public Resource<ALLEGRO_EVENT_QUEUE, EventQueueDeleter> {
 	public:
 		EventQueue();
-		~EventQueue();
 
 		/**
 		 * @brief Registers an event source for this queue.
@@ -57,10 +63,7 @@ namespace al {
 		 */
 		std::optional<ALLEGRO_EVENT> waitFor(double seconds);
 		
-		
-		ALLEGRO_EVENT_QUEUE* alPtr();
 	private:
-		ALLEGRO_EVENT_QUEUE* ptr;
 	};
 }
 

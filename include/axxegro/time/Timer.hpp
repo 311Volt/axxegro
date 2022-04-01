@@ -1,5 +1,5 @@
-#ifndef INCLUDE_TIME_TIMER
-#define INCLUDE_TIME_TIMER
+#ifndef INCLUDE_AXXEGRO_TIME_TIMER
+#define INCLUDE_AXXEGRO_TIME_TIMER
 
 #include <allegro5/allegro.h>
 #include <memory>
@@ -42,5 +42,5 @@ namespace al {
 	};
 }
 
-#endif /* INCLUDE_TIME_TIMER */
+#endif /* INCLUDE_AXXEGRO_TIME_TIMER */
 

@@ -14,7 +14,10 @@
 
 namespace al {
 	class EventLoop {
+		class BasicInit{};
+		EventLoop(BasicInit);
 	public:
+
 		EventLoop();
 		~EventLoop();
 		
@@ -29,11 +32,15 @@ namespace al {
 		void initDefaultDispatcher();
 		void run();
 
+		static EventLoop Basic();
+
 		int64_t getTick();
+		double getLastTickTime();
 	private:
 		std::unique_ptr<Timer> clockTimer;
 		EventQueue clockEventQueue;
 		int64_t tick;
+		double lastTickTime;
 		bool exitFlag;
 	};
 }
