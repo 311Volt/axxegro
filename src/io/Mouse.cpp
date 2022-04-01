@@ -53,7 +53,8 @@ al::Point al::mouse::GetDesktopPos()
 	return {x, y};
 }
 
-al::EventSource al::mouse::GetEventSource()
+al::mouse::MouseEventSource axxMouseEventSource;
+const al::EventSource& al::mouse::GetEventSource()
 {
-	return EventSource(al_get_mouse_event_source());
+	return axxMouseEventSource;
 }

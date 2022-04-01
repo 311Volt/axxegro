@@ -3,6 +3,7 @@
 
 #include <allegro5/allegro.h>
 #include <memory>
+#include "../resources/Resource.hpp"
 #include "../event/EventSource.hpp"
 
 
@@ -10,15 +11,29 @@ namespace al {
 	constexpr double PeriodToFreq(double period) {return 1.0 / period;}
 	constexpr double FreqToPeriod(double freq) {return 1.0 / freq;}
 
-	class Timer {
+	class TimerEventSource: public EventSource {
+	public:
+		TimerEventSource(ALLEGRO_TIMER* t)
+			: t(t)
+		{}
+
+		virtual ALLEGRO_EVENT_SOURCE* ptr() const override
+			{return al_get_timer_event_source(t);}
+	private:
+		ALLEGRO_TIMER* t;
+	};
+
+	class TimerDeleter {
+	public:
+		void operator()(ALLEGRO_TIMER* t) {al_destroy_timer(t);}
+	};
+
+	class Timer: public Resource<ALLEGRO_TIMER, TimerDeleter> {
 	public:
 		Timer(double period);
-		~Timer();
 
 		static Timer Freq(double freq);
 		static Timer Period(double period);
-
-		ALLEGRO_TIMER* alPtr();
 
 		void start();
 		void resume();
@@ -37,8 +52,7 @@ namespace al {
 		double getFreq() const;
 		void setFreq(double value);
 	private:
-		EventSource evSrc;
-		ALLEGRO_TIMER* ptr;
+		std::unique_ptr<TimerEventSource> evSrc;
 	};
 }
 

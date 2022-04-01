@@ -19,18 +19,28 @@ namespace al {
 		void operator()(ALLEGRO_DISPLAY* p){al_destroy_display(p);}
 	};
 
+	class Display;
+
 	class DisplayBackbuffer: public Bitmap {
 	public:
-		DisplayBackbuffer(ALLEGRO_DISPLAY* disp)
+		DisplayBackbuffer(Display& disp)
 			: Bitmap(nullptr), disp(disp)
 		{}
 	private:
-		virtual ALLEGRO_BITMAP* getPointer() const override
-		{
-			return al_get_backbuffer(disp);
-		}
+		virtual ALLEGRO_BITMAP* getPointer() const override;
 
-		ALLEGRO_DISPLAY* disp;
+		Display& disp;
+	};
+
+	class DisplayEventSource: public EventSource {
+	public:
+		DisplayEventSource(Display& disp)
+			: disp(disp)
+		{}
+
+		virtual ALLEGRO_EVENT_SOURCE* ptr() const override;
+	private:
+		Display& disp;
 	};
 
 	class Display: public Resource<ALLEGRO_DISPLAY, DisplayDeleter> {
@@ -74,6 +84,7 @@ namespace al {
 			std::vector<Option> suggestedOptions, 
 			std::vector<Option> dontCareOptions
 		);
+		
 
 		///@return Width of the display in pixels.
 		int width() const;
@@ -86,6 +97,9 @@ namespace al {
 
 		///@return Dimensions of the display in pixels.
 		Vec2 getSize() const;
+
+		///@return A rectangle starting at (0,0) and ending at (width,height).
+		Rect getRect() const;
 
 		///@brief See: https://liballeg.org/a5docs/trunk/display.html#al_get_display_option
 		int getOptionValue(int option) const;
@@ -186,15 +200,21 @@ namespace al {
 		const Bitmap& backbuffer() const;
 
 		///@brief Returns the display's event source.
-		EventSource getEventSource();
+		const EventSource& eventSource();
 
+	protected:
+		void initPointers();
 	private:
+		std::unique_ptr<DisplayEventSource> ptrEventSource;
 		std::unique_ptr<DisplayBackbuffer> ptrBackbuffer;
 	};
 	
 	class CCurrentDisplay: public Display {
 	public:
-		CCurrentDisplay() : Display(nullptr) {}
+		CCurrentDisplay() : Display(nullptr) 
+		{
+			initPointers();
+		}
 		
 		void flip();
 		void flip(Rect rect);

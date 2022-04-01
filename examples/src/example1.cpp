@@ -9,7 +9,7 @@
 int main()
 {
 	al::FullInit();
-	al::Display disp(800, 600);
+	al::Display disp(1024, 768, ALLEGRO_MIPMAP|ALLEGRO_MIN_LINEAR|ALLEGRO_MAG_LINEAR);
 	al::Bitmap bg("data/bg.jpg");
 	al::Font font("data/roboto.ttf", 24);
 
@@ -41,14 +41,13 @@ int main()
 		{
 			int y = loop.getTick() % (bg.getHeight()-10);
 			int x = loop.getTick() % (bg.getWidth()-10);
-			al::Point p {x, y};
-			al::Point bb {2, 2};
+			al::Point p{x, y}, bb{2, 2};
 			al::BitmapLockedRegion lr(bg, {p, p+bb}, ALLEGRO_PIXEL_FORMAT_ABGR_8888, ALLEGRO_LOCK_READWRITE);
 			lr.rowData(1)[1] = 113;
 		}
 		
 
-		bg.draw({0, 0});
+		bg.drawScaled(bg.getRect(), al::CurrentDisplay().getRect());
 
 		al_draw_line(txtPos.x, txtPos.y, txtPos.x+txtMaxWidth, txtPos.y, al_map_rgb(255,0,0), 4.0);
 
@@ -89,6 +88,4 @@ int main()
 
 	loop.enableClock(165);
 	loop.run();
-
-	return 0;
 }

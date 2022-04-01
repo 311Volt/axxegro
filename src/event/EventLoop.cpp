@@ -4,6 +4,7 @@
 #include <axxegro/io/Mouse.hpp>
 
 #include <axxegro/time/Time.hpp>
+#include <axxegro/display/Display.hpp>
 
 #include <fmt/format.h>
 
@@ -43,7 +44,7 @@ void al::EventLoop::initDefaultEventQueue()
 {
 	eventQueue.registerSource(keyb::GetEventSource());
 	eventQueue.registerSource(mouse::GetEventSource());
-	eventQueue.registerSource(EventSource(al_get_display_event_source(al_get_current_display())));
+	eventQueue.registerSource(al::CurrentDisplay().eventSource());
 }
 void al::EventLoop::initDefaultDispatcher()
 {
