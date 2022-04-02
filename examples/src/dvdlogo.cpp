@@ -1,6 +1,7 @@
 #include <axxegro/axxegro.hpp>
 
 #include <algorithm>
+#include <fmt/format.h>
 
 /**
  * @file
@@ -15,38 +16,39 @@ int main()
 
 	al::Bitmap dvdLogo("data/dvdlogo.png");
 	
-	//position in px, speed in px/s
-	al::Coord<float> pos(40,70), speed(256, 256);
+	al::Vec2<float> speed(256, 256); // in px/s
+	al::Vec2<float> logoSize(128, 128); // in px
+
+	//screen rectangle ((0,0), (w,h))
+	al::Rect<float> scrRect = al::CurrentDisplay().rect();
+
+	//rectangle for the dvd logo (position/size)
+	al::Rect<float> logoRect = al::Rect<float>::PosSize({40, 70}, logoSize);
 	
-	//size for both the bitmap and the collision box
-	al::Vec2 logoSize {128, 128};
 
 	/* create a basic event loop, which comes pre-configured
 	 * with i/o event sources and a proper handler for the
-	 * window close-event */
+	 * window close event */
 	al::EventLoop evLoop = al::EventLoop::Basic();
-	
+
 	/* create the loop body */
 	evLoop.loopBody = [&](){
 		al::CurrentDisplay().clearToColor(al::Color::RGB(150,180,240));
 
-		//calculate current bounding box
-		al::Rect<float> logoRect = {pos, pos+logoSize};
-		
 		dvdLogo.drawScaled(dvdLogo.rect(), logoRect);
 		
-		pos += speed * evLoop.getLastTickTime();
+		logoRect += speed * evLoop.getLastTickTime();
 
 		//bouncing
-		if(logoRect.b.y > al::CurrentDisplay().height() || logoRect.a.y < 0.0f) {
-			pos.y = std::clamp(pos.y, 0.0f, float(al::CurrentDisplay().height()-logoSize.y));
-			speed.y *= -1.0f;
-		}
-		if(logoRect.b.x > al::CurrentDisplay().width() || logoRect.a.x < 0.0f) {
-			pos.x = std::clamp(pos.x, 0.0f, float(al::CurrentDisplay().width()-logoSize.x));
+		uint8_t test = scrRect.test(logoRect);
+		if(test & al::Rect<>::TEST_X_NOT_IN_RANGE) {
 			speed.x *= -1.0f;
 		}
-		
+		if(test & al::Rect<>::TEST_Y_NOT_IN_RANGE) {
+			speed.y *= -1.0f;
+		}
+		logoRect = scrRect.clamp(logoRect);
+
 		al::CurrentDisplay().flip();
 	};
 

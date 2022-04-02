@@ -5,7 +5,7 @@
 
 namespace al {
 
-	template<typename T>
+	template<typename T = float>
 	class Vec2 {
 	public:
 		T x, y;

@@ -20,13 +20,15 @@ namespace al {
 	};
 
 	class Font: public Resource<ALLEGRO_FONT, FontDeleter> {
+		Font();
 	public:
 		using Resource::Resource;
 		struct CharRange {
 			int begin, end;
 		};
 
-		Font();
+		static Font BuiltinFont();
+		
 		Font(Bitmap& bmp, std::vector<CharRange> ranges);
 		Font(const std::string& filename, int size);
 		Font(const std::string& filename, int size, int flags);

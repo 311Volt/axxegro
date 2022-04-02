@@ -45,6 +45,10 @@ al::Font::Font(const std::string& filename, int size, int flags)
 	}
 }
 
+al::Font al::Font::BuiltinFont()
+{
+	return Font();
+}
 
 int al::Font::getLineHeight() const
 {
