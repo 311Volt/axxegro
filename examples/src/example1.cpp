@@ -36,25 +36,25 @@ int main()
 	loop.initDefaultEventQueue();
 	loop.initDefaultDispatcher();
 
-	al::Point txtPos {320, 240};
+	al::Coord<float> txtPos {320, 240};
 	std::string txtTest = fmt::format("kb {}B, m {}B", sizeof(ALLEGRO_KEYBOARD_STATE), sizeof(ALLEGRO_MOUSE_STATE));
 	loop.loopBody = [&](){
 		al::CurrentDisplay().clearToColor(al::Color::RGB(0,0,0));
 
 		double txtMaxWidth = 10.0 + (0.5+0.5*std::sin(al::GetTime())) * 300.0;
 		std::string txtTest1 = fmt::format("{}. tick={}", txtTest, loop.getTick());
-		std::string txtTestCut = txtTest.substr(0, font.calcCutoffPoint(txtTest1, txtMaxWidth));
+		std::string txtTestCut = txtTest1.substr(0, font.calcCutoffPoint(txtTest1, txtMaxWidth));
 
 		{
-			int y = loop.getTick() % (bg.getHeight()-10);
-			int x = loop.getTick() % (bg.getWidth()-10);
-			al::Point p{x, y}, bb{2, 2};
+			int y = loop.getTick() % (bg.height()-10);
+			int x = loop.getTick() % (bg.width()-10);
+			al::Coord<int> p{x, y}, bb{2, 2};
 			al::BitmapLockedRegion lr(bg, {p, p+bb}, ALLEGRO_PIXEL_FORMAT_ABGR_8888, ALLEGRO_LOCK_READWRITE);
 			lr.rowData(1)[1] = 113;
 		}
 		
 
-		bg.drawScaled(bg.getRect(), al::CurrentDisplay().getRect());
+		bg.drawScaled(bg.rect(), al::CurrentDisplay().rect());
 
 		al_draw_line(txtPos.x, txtPos.y, txtPos.x+txtMaxWidth, txtPos.y, al_map_rgb(255,0,0), 4.0);
 
@@ -69,7 +69,7 @@ int main()
 	loop.eventDispatcher.setEventTypeHandler(
 		ALLEGRO_EVENT_MOUSE_BUTTON_DOWN, 
 		[&](const ALLEGRO_EVENT& ev){
-			txtPos = {ev.mouse.x, ev.mouse.y};
+			txtPos = {float(ev.mouse.x), float(ev.mouse.y)};
 		}
 	);
 

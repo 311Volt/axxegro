@@ -13,7 +13,7 @@ namespace al {
 		class Cursor {
 			ALLEGRO_MOUSE_CURSOR* ptr;
 		public:
-			Cursor(const Bitmap& bmp, Point focus);
+			Cursor(const Bitmap& bmp, Coord<int> focus);
 			~Cursor();
 
 			ALLEGRO_MOUSE_CURSOR* alPtr() {return ptr;}
@@ -48,9 +48,9 @@ namespace al {
 		bool IsButtonDown(Btn btn);
 		bool IsButtonDown(State state, Btn btn);
 
-		bool SetPos(Point p);
-		Point GetPos();
-		Point GetDesktopPos();
+		bool SetPos(Coord<int> p);
+		Coord<int> GetPos();
+		Coord<int> GetDesktopPos();
 
 		const EventSource& GetEventSource();
 	}

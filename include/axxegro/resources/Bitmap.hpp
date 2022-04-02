@@ -53,36 +53,36 @@ namespace al {
 		Bitmap(const std::string& filename);
 
 		/// @return The width of the bitmap in pixels.
-		int getWidth() const;
+		int width() const;
 
 		/// @return The height of the bitmap in pixels.
-		int getHeight() const;
+		int height() const;
 
 		/// @return The dimensions (width x height) of the bitmap in pixels.
-		Vec2 getSize() const;
+		Vec2<int> size() const;
 
 		/**
 		 * @return A rectangle spanning the entire bitmap, with the top left corner at (0, 0)
 		 * and the bottom left corner at (width, height). Useful for the drawScaled() family
 		 * of methods.
 		 **/
-		Rect getRect() const;
+		Rect<int> rect() const;
 
 		/* note: I left out the flags parameter. al_draw_xxx_bitmap is
 		   always called with flags=0. use transforms/texcoords for flipping. */
 
 		/// @brief Corresponds to al_draw_bitmap(). Refer to Allegro5 documentation for more info on this and other drawX() methods.
-		void draw(Point p0) const;
-		void drawTinted(Point p0, Color tint) const;
-		void drawRegion(Rect srcRegion, Point dst) const;
-		void drawScaled(Rect srcRect, Rect dstRect) const;
-		void drawRotated(Point centerSrc, Point centerDst, float angle) const;
-		void drawTintedScaled(Color tint, Rect srcRect, Rect dstRect) const;
-		void drawTintedRegion(Rect srcRegion, Point dst, Color tint) const;
-		void drawTintedRotated(Color tint, Point centerSrc, Point centerDst, float angle) const;
-		void drawScaledRotated(Point centerSrc, Point centerDst, Vec2 scale, float angle) const;
-		void drawTintedScaledRotated(Color tint, Point centerSrc, Point centerDst, Vec2 scale, float angle) const;
-		void drawTintedScaledRotatedRegion(Rect srcRegion, Color tint, Point centerSrc, Point centerDst, Vec2 scale, float angle) const;
+		void draw(Coord<float> p0) const;
+		void drawTinted(Coord<float> p0, Color tint) const;
+		void drawRegion(Rect<float> srcRegion, Coord<float> dst) const;
+		void drawScaled(Rect<float> srcRect, Rect<float> dstRect) const;
+		void drawRotated(Coord<float> centerSrc, Coord<float> centerDst, float angle) const;
+		void drawTintedScaled(Color tint, Rect<float> srcRect, Rect<float> dstRect) const;
+		void drawTintedRegion(Rect<float> srcRegion, Coord<float> dst, Color tint) const;
+		void drawTintedRotated(Color tint, Coord<float> centerSrc, Coord<float> centerDst, float angle) const;
+		void drawScaledRotated(Coord<float> centerSrc, Coord<float> centerDst, Vec2<float> scale, float angle) const;
+		void drawTintedScaledRotated(Color tint, Coord<float> centerSrc, Coord<float> centerDst, Vec2<float> scale, float angle) const;
+		void drawTintedScaledRotatedRegion(Rect<float> srcRegion, Color tint, Coord<float> centerSrc, Coord<float> centerDst, Vec2<float> scale, float angle) const;
 		
 		/// @brief al_convert_mask_to_alpha()
 		void convertMaskToAlpha(Color maskColor);
@@ -132,7 +132,7 @@ namespace al {
 	class BitmapLockedRegion {
 	public:
 		BitmapLockedRegion(Bitmap& bmp, int format, int flags);
-		BitmapLockedRegion(Bitmap& bmp, Rect region, int format, int flags);
+		BitmapLockedRegion(Bitmap& bmp, Rect<int> region, int format, int flags);
 		~BitmapLockedRegion();
 		
 		BitmapLockedRegion(BitmapLockedRegion&) = delete;

@@ -25,7 +25,7 @@ al::Font::Font(Bitmap& bmp, std::vector<CharRange> ranges)
 	if(!ptr()) {
 		throw ResourceLoadError(fmt::format(
 			"Error while grabbing font from a {}x{} bitmap",
-			bmp.getWidth(), bmp.getHeight()
+			bmp.width(), bmp.height()
 		));
 	}
 }
@@ -64,12 +64,12 @@ int al::Font::getTextWidth(const std::string& text) const
 	UStr ustr(text);
 	return al_get_ustr_width(ptr(), ustr.alPtr());
 }
-al::Rect al::Font::getTextDimensions(const std::string& text) const
+al::Rect<int> al::Font::getTextDimensions(const std::string& text) const
 {
 	UStr ustr(text);
 	int x,y,w,h;
 	al_get_ustr_dimensions(ptr(), ustr.alPtr(), &x, &y, &w, &h);
-	Point pos{x,y}, size{w,h};
+	Coord<int> pos{x,y}, size{w,h};
 	return {pos, pos+size};
 }
 
@@ -107,17 +107,17 @@ size_t al::Font::calcCutoffPoint(std::string_view str, int maxWidth)
 	return al_ustr_offset(ustr.alPtr(), cpOff);
 }
 
-void al::Font::draw(const std::string& text, al::Color color, al::Point pos) const
+void al::Font::draw(const std::string& text, al::Color color, al::Coord<float> pos) const
 {
 	draw(text, color, pos, ALLEGRO_ALIGN_LEFT);
 }
-void al::Font::draw(const std::string& text, al::Color color, al::Point pos, int align) const
+void al::Font::draw(const std::string& text, al::Color color, al::Coord<float> pos, int align) const
 {
 	UStr ustr(text);
 	al_draw_ustr(ptr(), color.get(), pos.x, pos.y, align | ALLEGRO_ALIGN_INTEGER, ustr.alPtr());
 }
 
-void al::Font::drawJustified(const std::string& text, al::Color color, al::Point pos, float xMax, float diffMax) const
+void al::Font::drawJustified(const std::string& text, al::Color color, al::Coord<float> pos, float xMax, float diffMax) const
 {
 	UStr ustr(text);
 	al_draw_justified_ustr(ptr(), color.get(), pos.x, xMax, pos.y, diffMax, ALLEGRO_ALIGN_INTEGER, ustr.alPtr());

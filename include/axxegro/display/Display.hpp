@@ -98,10 +98,10 @@ namespace al {
 		int getRefreshRate() const;
 
 		///@return Dimensions of the display in pixels.
-		Vec2 getSize() const;
+		Vec2<int> size() const;
 
 		///@return A rectangle starting at (0,0) and ending at (width,height).
-		Rect getRect() const;
+		Rect<int> rect() const;
 
 		///@brief See: https://liballeg.org/a5docs/trunk/display.html#al_get_display_option
 		int getOptionValue(int option) const;
@@ -131,14 +131,14 @@ namespace al {
 		/**
 		 * @return The position of the display relative to the desktop. 
 		 */
-		Point getPosition() const;
+		Coord<int> getPosition() const;
 
 		/**
 		 * @brief Changes the position of the display (window)
 		 * 
 		 * @param pos Position in pixels, relative to the desktop
 		 */
-		void setPosition(Point pos);
+		void setPosition(Coord<int> pos);
 
 		///@brief See: https://liballeg.org/a5docs/trunk/display.html#al_get_display_flags
 		int getFlags() const;
@@ -219,7 +219,7 @@ namespace al {
 		}
 		
 		void flip();
-		void flip(Rect rect);
+		void flip(Rect<int> rect);
 		void clearToColor(Color color);
 		bool waitForVsync();
 		void convertMemoryBitmaps();

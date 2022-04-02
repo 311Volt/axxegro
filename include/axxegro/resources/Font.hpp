@@ -36,16 +36,16 @@ namespace al {
 		int getDescent() const;
 
 		int getTextWidth(const std::string& text) const;
-		Rect getTextDimensions(const std::string& text) const;
+		Rect<int> getTextDimensions(const std::string& text) const;
 
 		int getGlyphAdvance(char32_t codepoint1, char32_t codepoint2);
 		size_t calcCutoffPoint(std::u32string_view str, int maxWidth);
 		size_t calcCutoffPoint(std::string_view str, int maxWidth);
 
-		void draw(const std::string& text, Color color, Point pos) const;
-		void draw(const std::string& text, Color color, Point pos, int align) const;
+		void draw(const std::string& text, Color color, Coord<float> pos) const;
+		void draw(const std::string& text, Color color, Coord<float> pos, int align) const;
 
-		void drawJustified(const std::string& text, Color color, Point pos, float xMax, float diffMax) const;
+		void drawJustified(const std::string& text, Color color, Coord<float> pos, float xMax, float diffMax) const;
 	private:
 	};
 

@@ -1,42 +1,50 @@
 #ifndef INCLUDE_AXXEGRO_MATH_RECT
 #define INCLUDE_AXXEGRO_MATH_RECT
 
-#include "Point.hpp"
+#include "Vec2.hpp"
 
 namespace al {
+
+	template<typename T>
 	class Rect {
 	public:
-		Point a, b;
+		Vec2<T> a, b;
 
-		Rect(){} // = {Point(),Point()} = {{0,0},{0,0}}
-		constexpr Rect(const Point& a, const Point& b)
+		Rect(){} // = {Vec2<T>(),Vec2<T>()} = {{0,0},{0,0}}
+		constexpr Rect(const Vec2<T>& a, const Vec2<T>& b)
 			:a(a),b(b){}
 		constexpr Rect(float x1, float y1, float x2, float y2)
-			:Rect(Point(x1,y1), Point(x2,y2)){}
+			:Rect(Vec2<T>(x1,y1), Vec2<T>(x2,y2))
+		{}
 
-		constexpr float getWidth() const 
+		template<typename U>
+		constexpr Rect(const Rect<U>& r)
+			: Rect(r.a, r.b)
+		{}
+
+		constexpr float width() const 
 			{return b.x-a.x;}
-		constexpr float getHeight() const 
+		constexpr float height() const 
 			{return b.y-a.y;}
 
-		constexpr Point topLeft() const 
+		constexpr Vec2<T> topLeft() const 
 			{return a;}
-		constexpr Point bottomLeft() const 
+		constexpr Vec2<T> bottomLeft() const 
 			{return {a.x, b.y};}
-		constexpr Point topRight() const 
+		constexpr Vec2<T> topRight() const 
 			{return {a.y, b.x};}
-		constexpr Point topBottom() const 
+		constexpr Vec2<T> topBottom() const 
 			{return b;}
 
-		constexpr Vec2 getSize() const 
-			{return Vec2(getWidth(),getHeight());}
+		constexpr Vec2<T> size() const 
+			{return Vec2<T>(width(),height());}
 
 		constexpr bool operator==(const Rect& rhs) const 
 			{return a==rhs.a && b==rhs.b;}
 		constexpr bool operator!=(const Rect& rhs) const 
 			{return !(*this==rhs);}
 		
-		constexpr bool contains(Point p) const
+		constexpr bool contains(Vec2<T> p) const
 		{
 			return p.x >= a.x && p.x <= b.x && p.y >= a.y && p.y <= b.y;
 		}

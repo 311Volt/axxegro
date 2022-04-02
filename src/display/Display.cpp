@@ -66,14 +66,14 @@ int al::Display::height() const
 	return al_get_display_height(ptr());
 }
 
-al::Vec2 al::Display::getSize() const
+al::Vec2<int> al::Display::size() const
 {
 	return {width(), height()};
 }
 
-al::Rect al::Display::getRect() const
+al::Rect<int> al::Display::rect() const
 {
-	return {{0,0}, getSize()};
+	return {{0,0}, size()};
 }
 
 int al::Display::getRefreshRate() const
@@ -98,13 +98,13 @@ bool al::Display::acknowledgeResize()
 {
 	return al_acknowledge_resize(ptr());
 }
-al::Point al::Display::getPosition() const
+al::Coord<int> al::Display::getPosition() const
 {
 	int x, y;
 	al_get_window_position(ptr(), &x, &y);
 	return {x, y};
 }
-void al::Display::setPosition(al::Point pos)
+void al::Display::setPosition(al::Coord<int> pos)
 {
 	al_set_window_position(ptr(), pos.x, pos.y);
 }
@@ -151,9 +151,9 @@ void al::CCurrentDisplay::flip()
 {
 	al_flip_display();
 }
-void al::CCurrentDisplay::flip(Rect rect)
+void al::CCurrentDisplay::flip(Rect<int> rect)
 {
-	al_update_display_region(rect.a.x, rect.a.y, rect.getWidth(), rect.getHeight());
+	al_update_display_region(rect.a.x, rect.a.y, rect.width(), rect.height());
 }
 void al::CCurrentDisplay::clearToColor(Color color)
 {
