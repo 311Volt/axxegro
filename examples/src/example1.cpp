@@ -39,7 +39,7 @@ int main()
 	loop.loopBody = [&](){
 		al::CurrentDisplay().clearToColor(al::Color::RGB(0,0,0));
 
-		double txtMaxWidth = 10.0 + (0.5+0.5*std::sin(al::GetTime())) * 300.0;
+		float txtMaxWidth = 10.0 + (0.5+0.5*std::sin(al::GetTime())) * 300.0;
 		std::string txtTest1 = fmt::format("{}. tick={}", txtTest, loop.getTick());
 		std::string txtTestCut = txtTest1.substr(0, font.calcCutoffPoint(txtTest1, txtMaxWidth));
 
@@ -59,7 +59,7 @@ int main()
 			al::Transform t;
 			t.translate(txtPos);
 			al::ScopedTransform st(t);
-			al::DrawLine({}, {txtMaxWidth,0}, al::Col::Red, 4.0);
+			al::DrawLine({}, {txtMaxWidth,0.0f}, al::Col::Red, 4.0);
 			font.draw(
 				txtTestCut,
 				al::Color::RGB(255,255,255), 
