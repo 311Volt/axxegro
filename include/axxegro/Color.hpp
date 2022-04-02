@@ -6,11 +6,12 @@
  a color class
 */
 
-#include <allegro5/allegro.h>
 #include <cstdint>
 
 #include <tuple>
 #include <string_view>
+
+#include <allegro5/allegro.h>
 
 namespace al {
 
@@ -116,6 +117,19 @@ namespace al {
 		ALLEGRO_COLOR get() const
 			{return operator()();}
 	};
+
+	///@brief Color constants
+	namespace Col {
+		constexpr Color Black =   Color::U32_RGB(0x000000);
+		constexpr Color Blue =    Color::U32_RGB(0x0000FF);
+		constexpr Color Green =   Color::U32_RGB(0x00FF00);
+		constexpr Color Cyan =    Color::U32_RGB(0x00FFFF);
+		constexpr Color Red =     Color::U32_RGB(0xFF0000);
+		constexpr Color Magenta = Color::U32_RGB(0xFF00FF);
+		constexpr Color Yellow =  Color::U32_RGB(0xFFFF00);
+		constexpr Color White =   Color::U32_RGB(0xFFFFFF);
+		
+	}
 
 	
 }

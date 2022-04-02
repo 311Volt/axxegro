@@ -52,10 +52,10 @@ namespace al {
 			{return (*this - rhs).length();}
 	};
 
-	template<typename T>
+	template<typename T = float>
 	using Coord = Vec2<T>;
 
-	template<typename T>
+	template<typename T = float>
 	using Coord2 = Vec2<T>;
 
 	

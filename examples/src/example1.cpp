@@ -1,7 +1,5 @@
 #include <axxegro/axxegro.hpp>
 
-#include <allegro5/allegro.h>
-#include <allegro5/allegro_primitives.h>
 #include <fmt/format.h>
 
 #include <cmath>
@@ -56,12 +54,12 @@ int main()
 
 		bg.drawScaled(bg.rect(), al::CurrentDisplay().rect());
 
-		al_draw_line(txtPos.x, txtPos.y, txtPos.x+txtMaxWidth, txtPos.y, al_map_rgb(255,0,0), 4.0);
 
 		{
 			al::Transform t;
 			t.translate(txtPos);
 			al::ScopedTransform st(t);
+			al::DrawLine({}, {txtMaxWidth,0}, al::Col::Red, 4.0);
 			font.draw(
 				txtTestCut,
 				al::Color::RGB(255,255,255), 

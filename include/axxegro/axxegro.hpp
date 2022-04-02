@@ -19,5 +19,6 @@
 #include "time/Time.hpp"
 #include "time/Timer.hpp"
 #include "math/math.hpp"
+#include "prim/prim.hpp"
 
 #endif /* INCLUDE_AXXEGRO_AXXEGRO */

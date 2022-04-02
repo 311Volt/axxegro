@@ -52,7 +52,7 @@ namespace al {
 			{return (*this - rhs).length();}
 	};
 
-	template<typename T>
+	template<typename T = float>
 	using Coord3 = Vec3<T>;
 }
 

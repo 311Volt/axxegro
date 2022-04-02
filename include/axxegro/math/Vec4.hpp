@@ -50,7 +50,7 @@ namespace al {
 			{return (*this - rhs).length();}
 	};
 
-	template<typename T>
+	template<typename T = float>
 	using Coord4 = Vec4<T>;
 }
 
