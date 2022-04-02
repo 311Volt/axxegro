@@ -44,10 +44,9 @@ namespace al {
 		constexpr Vec2<T> bottomLeft() const 
 			{return {a.x, b.y};}
 		constexpr Vec2<T> topRight() const 
-			{return {a.y, b.x};}
+			{return {b.x, a.y};}
 		constexpr Vec2<T> bottomRight() const 
 			{return b;}
-
 
 		constexpr Vec2<T> size() const 
 			{return Vec2<T>(width(),height());}
