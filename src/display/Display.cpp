@@ -41,7 +41,7 @@ al::Display::Display(int w, int h, int flags, std::vector<Option> requiredOption
 	for(const auto& [opt, val]: dontCareOptions) {
 		al_set_new_display_option(opt, val, ALLEGRO_DONTCARE);
 	}
-	al_set_new_bitmap_flags(flags);
+	al_set_new_display_flags(flags);
 
 	setPtr(al_create_display(w, h));
 	if(!ptr()) {
@@ -147,34 +147,34 @@ const al::Bitmap& al::Display::backbuffer() const
 }
 
 
-void al::CCurrentDisplay::flip()
+void al::TCurrentDisplay::flip()
 {
 	al_flip_display();
 }
-void al::CCurrentDisplay::flip(Rect<int> rect)
+void al::TCurrentDisplay::flip(Rect<int> rect)
 {
 	al_update_display_region(rect.a.x, rect.a.y, rect.width(), rect.height());
 }
-void al::CCurrentDisplay::clearToColor(Color color)
+void al::TCurrentDisplay::clearToColor(Color color)
 {
 	al_clear_to_color(color.get());
 }
-bool al::CCurrentDisplay::waitForVsync()
+bool al::TCurrentDisplay::waitForVsync()
 {
 	return al_wait_for_vsync();
 }
-void al::CCurrentDisplay::convertMemoryBitmaps()
+void al::TCurrentDisplay::convertMemoryBitmaps()
 {
 	al_convert_memory_bitmaps();
 }
 
-void al::CCurrentDisplay::setTargetBitmap(Bitmap& bmp)
+void al::TCurrentDisplay::setTargetBitmap(Bitmap& bmp)
 {
 	al_set_target_bitmap(bmp.ptr());
 }
 
-al::CCurrentDisplay axxCurrentDisplay;
-al::CCurrentDisplay& al::CurrentDisplay()
+al::TCurrentDisplay axxCurrentDisplay;
+al::TCurrentDisplay& al::CurrentDisplay()
 {
 	return axxCurrentDisplay;
 }

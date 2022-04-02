@@ -101,6 +101,7 @@ namespace al {
 		 */
 		Bitmap clone() const;
 
+		static void SetNewBitmapFlags(int flags);
 	protected:
 	};
 

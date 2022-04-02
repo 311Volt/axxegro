@@ -30,6 +30,7 @@ namespace al {
 
 		void initDefaultEventQueue();
 		void initDefaultDispatcher();
+		void enableEscToQuit();
 		void run();
 
 		static EventLoop Basic();

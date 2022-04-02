@@ -16,7 +16,8 @@
 int main()
 {
 	al::FullInit();
-	al::Display disp(1024, 768, ALLEGRO_MIPMAP|ALLEGRO_MIN_LINEAR|ALLEGRO_MAG_LINEAR);
+	al::Display disp(1024, 768, ALLEGRO_WINDOWED | ALLEGRO_RESIZABLE);
+	al::Bitmap::SetNewBitmapFlags(ALLEGRO_MIPMAP | ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
 	al::Bitmap bg("data/bg.jpg");
 	al::Font font("data/roboto.ttf", 24);
 
@@ -32,9 +33,8 @@ int main()
 	}
 
 
-	al::EventLoop loop;
-	loop.initDefaultEventQueue();
-	loop.initDefaultDispatcher();
+	al::EventLoop loop = al::EventLoop::Basic();
+	loop.enableEscToQuit();
 
 	al::Coord<float> txtPos {320, 240};
 	std::string txtTest = fmt::format("kb {}B, m {}B", sizeof(ALLEGRO_KEYBOARD_STATE), sizeof(ALLEGRO_MOUSE_STATE));
@@ -58,11 +58,17 @@ int main()
 
 		al_draw_line(txtPos.x, txtPos.y, txtPos.x+txtMaxWidth, txtPos.y, al_map_rgb(255,0,0), 4.0);
 
-		font.draw(
-			txtTestCut,
-			al::Color::RGB(255,255,255), 
-			txtPos
-		);
+		{
+			al::Transform t;
+			t.translate(txtPos);
+			al::ScopedTransform st(t);
+			font.draw(
+				txtTestCut,
+				al::Color::RGB(255,255,255), 
+				{0, 0}
+			);
+		}
+		
 		al::CurrentDisplay().flip();
 	};
 

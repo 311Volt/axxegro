@@ -181,6 +181,11 @@ al::Bitmap al::Bitmap::clone() const
 	return Bitmap(al_clone_bitmap(ptr()));
 }
 
+void al::Bitmap::SetNewBitmapFlags(int flags)
+{
+	al_set_new_bitmap_flags(flags);
+}
+
 al::BitmapLockedRegion::BitmapLockedRegion(Bitmap& bmp, int format, int flags)
 {
 	this->bmp = bmp.ptr();

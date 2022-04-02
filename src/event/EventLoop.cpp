@@ -52,7 +52,13 @@ void al::EventLoop::initDefaultDispatcher()
 		exitFlag = true;
 	});
 	
-	/* //this probably doesn't belong here
+	eventDispatcher.setEventTypeHandler(ALLEGRO_EVENT_DISPLAY_RESIZE, [](const ALLEGRO_EVENT&){
+		CurrentDisplay().acknowledgeResize();
+	});
+}
+
+void al::EventLoop::enableEscToQuit()
+{
 	auto keycodeDiscretizer = eventDispatcher.addDiscretizer({ALLEGRO_EVENT_KEY_DOWN, [this](const ALLEGRO_EVENT& ev){
 		return ev.keyboard.keycode;
 	}});
@@ -60,7 +66,6 @@ void al::EventLoop::initDefaultDispatcher()
 	eventDispatcher.setEventValueHandler(keycodeDiscretizer, ALLEGRO_KEY_ESCAPE, [this](const ALLEGRO_EVENT&){
 		exitFlag = true;
 	});
-	*/
 }
 
 al::EventLoop al::EventLoop::Basic()

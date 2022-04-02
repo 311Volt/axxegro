@@ -10,7 +10,7 @@ namespace al {
 	public:
 		T x, y;
 
-		constexpr Vec2():x(0.0f),y(0.0f){}
+		constexpr Vec2():x(T(0)),y(T(0)){}
 		constexpr Vec2(T x, T y):x(x),y(y){}
 
 		template<typename U>
@@ -54,6 +54,11 @@ namespace al {
 
 	template<typename T>
 	using Coord = Vec2<T>;
+
+	template<typename T>
+	using Coord2 = Vec2<T>;
+
+	
 }
 
-#endif /* INCLUDE_AXXEGRO_MATH_POINT */
+#endif /* INCLUDE_AXXEGRO_MATH_VEC3 */

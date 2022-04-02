@@ -211,9 +211,9 @@ namespace al {
 		std::unique_ptr<DisplayBackbuffer> ptrBackbuffer;
 	};
 	
-	class CCurrentDisplay: public Display {
+	class TCurrentDisplay: public Display {
 	public:
-		CCurrentDisplay() : Display(nullptr) 
+		TCurrentDisplay() : Display(nullptr) 
 		{
 			initPointers();
 		}
@@ -232,7 +232,7 @@ namespace al {
 		}
 	};
 
-	CCurrentDisplay& CurrentDisplay();
+	TCurrentDisplay& CurrentDisplay();
 }
 
 #endif /* INCLUDE_AXXEGRO_DISPLAY_DISPLAY */
