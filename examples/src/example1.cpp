@@ -6,6 +6,13 @@
 
 #include <cmath>
 
+/**
+ * @file
+ * The file where I test random things I implement. I guess it can showcase some
+ * axxegro features, but for clearer and better explained examples, see other
+ * files from this folder.
+ */
+
 int main()
 {
 	al::FullInit();
