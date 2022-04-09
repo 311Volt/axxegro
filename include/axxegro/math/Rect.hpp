@@ -91,7 +91,7 @@ namespace al {
 
 		constexpr bool contains(Vec2<T> p) const
 		{
-			return p.x >= a.x && p.x < b.x && p.y >= a.y && p.y < b.y;
+			return p.x >= a.x && p.x <= b.x && p.y >= a.y && p.y <= b.y;
 		}
 
 		constexpr bool contains(const Rect& r) const
@@ -117,7 +117,9 @@ namespace al {
 			);
 		}
 
-		//this desperately needs to be renamed by someone who can into english
+		//everything in here desperately needs to be renamed by someone who can into english
+
+		//test bitfield constants
 		static constexpr uint8_t TEST_X_TOO_LOW = 0x01;
 		static constexpr uint8_t TEST_X_TOO_HIGH = 0x02;
 		static constexpr uint8_t TEST_X_NOT_IN_RANGE = 0x03;
@@ -135,9 +137,26 @@ namespace al {
 			};
 		}
 
+		/**
+		 * @returns the part of other that is contained in *this (can be empty) 
+		 */
 		constexpr Rect intersect(const Rect& outer) const
 		{
 			return {clip(outer.a), clip(outer.b)};
+		}
+
+		/** 
+		 * @returns a rectangle that is just large enough to contain *this and other
+		 * i can't name this "union" bc that is a keyword :(
+		 */
+		constexpr Rect makeUnion(const Rect& other) const
+		{
+			return Rect(
+				std::min(a.x, other.a.x),
+				std::min(a.y, other.a.y),
+				std::max(b.x, other.b.x),
+				std::max(b.y, other.b.y)
+			);
 		}
 
 		constexpr Rect clamp(const Rect& inner) const

@@ -49,7 +49,6 @@ int main()
 			al::BitmapLockedRegion lr(bg, {p, p+bb}, ALLEGRO_PIXEL_FORMAT_ABGR_8888, ALLEGRO_LOCK_READWRITE);
 			lr.rowData(1)[1] = 113;
 		}
-		
 
 		bg.drawScaled(bg.rect(), al::CurrentDisplay().rect());
 
@@ -66,6 +65,14 @@ int main()
 			);
 		}
 		
+		auto r2 = al::Rect<int>::XYWH(70, 30, 80, 80);
+		auto r1 = al::Rect<int>::XYWH(95, 160, 70, 70);
+		auto r3 = r1.makeUnion(r2);
+		al::DrawRectangle(r1, al::Col::Blue);
+		al::DrawRectangle(r2, al::Col::Blue);
+		al::DrawRectangle(r3, al::Col::Magenta);
+		
+
 		al::CurrentDisplay().flip();
 	};
 
