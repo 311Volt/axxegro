@@ -1,6 +1,9 @@
 #ifndef INCLUDE_AXXEGRO_MATH_VEC4
 #define INCLUDE_AXXEGRO_MATH_VEC4
 
+#include <cmath>
+#include <functional>
+
 namespace al {
 
 	template<typename T = float>
@@ -48,6 +51,22 @@ namespace al {
 			{return std::sqrt(x*x + y*y + z*z + w*w);}
 		constexpr T dist(const Vec4& rhs) const
 			{return (*this - rhs).length();}
+		
+		Vec4& apply(std::function<T(T)> fn)
+		{
+			x=fn(x); 
+			y=fn(y); 
+			z=fn(z);
+			w=fn(w);
+			return *this;
+		}
+		
+		Vec4& floor()
+		{
+			return apply([](T v){
+				return std::floor(v);
+			});
+		}
 	};
 
 	template<typename T = float>

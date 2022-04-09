@@ -30,7 +30,6 @@ int main()
 		fmt::print("\n\n");
 	}
 
-
 	al::EventLoop loop = al::EventLoop::Basic();
 	loop.enableEscToQuit();
 

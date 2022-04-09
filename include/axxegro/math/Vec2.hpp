@@ -2,6 +2,7 @@
 #define INCLUDE_AXXEGRO_MATH_VEC2
 
 #include <cmath>
+#include <functional>
 
 namespace al {
 
@@ -50,6 +51,21 @@ namespace al {
 			{return std::sqrt(x*x + y*y);}
 		constexpr T dist(const Vec2& rhs) const
 			{return (*this - rhs).length();}
+		
+		
+		Vec2& apply(std::function<T(T)> fn)
+		{
+			x=fn(x); 
+			y=fn(y); 
+			return *this;
+		}
+		
+		Vec2& floor()
+		{
+			return apply([](T v){
+				return std::floor(v);
+			});
+		}
 	};
 
 	template<typename T = float>

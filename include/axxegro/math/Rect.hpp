@@ -26,7 +26,7 @@ namespace al {
 
 		constexpr static Rect XYWH(T x, T y, T w, T h)
 		{
-			return XYWH({x,y}, {w,h});
+			return PosSize({x,y}, {w,h});
 		}
 
 		template<typename U>
