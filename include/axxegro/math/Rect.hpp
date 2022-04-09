@@ -83,11 +83,12 @@ namespace al {
 			return width()*height();
 		}
 		
-		
+
 		constexpr Rect& limit(const al::Vec2<T>& minSize)
 		{
 			b.x = std::max(b.x, a.x+minSize.x);
 			b.y = std::max(b.y, a.y+minSize.y);
+			return *this;
 		}
 
 		template<typename U>
