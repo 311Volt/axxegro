@@ -223,6 +223,7 @@ namespace al {
 		void clearToColor(Color color);
 		bool waitForVsync();
 		void convertMemoryBitmaps();
+		void setClippingRectangle(al::Rect<int> r);
 
 		void setTargetBitmap(Bitmap& bmp);
 	private:
