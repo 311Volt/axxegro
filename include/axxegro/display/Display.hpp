@@ -224,6 +224,7 @@ namespace al {
 		bool waitForVsync();
 		void convertMemoryBitmaps();
 		void setClippingRectangle(al::Rect<int> r);
+		void resetClippingRectangle();
 
 		void setTargetBitmap(Bitmap& bmp);
 	private:

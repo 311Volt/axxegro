@@ -176,6 +176,11 @@ void al::TCurrentDisplay::setClippingRectangle(al::Rect<int> r)
 {
 	al_set_clipping_rectangle(r.a.x, r.a.y, r.width(), r.height());
 }
+void al::TCurrentDisplay::resetClippingRectangle()
+{
+	al_reset_clipping_rectangle();
+}
+
 
 al::TCurrentDisplay axxCurrentDisplay;
 al::TCurrentDisplay& al::CurrentDisplay()
