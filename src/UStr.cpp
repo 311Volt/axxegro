@@ -38,9 +38,14 @@ std::u32string al::UStr::DecodeToUTF32(const std::string_view str)
 	UStr ustr(str);
 	size_t len = al_ustr_length(ustr.alPtr());
 	std::u32string ret;
-	ret.resize(len);
-	for(size_t i=0; i<len; i++) {
-		ret[i] = al_ustr_get(ustr.alPtr(), i);
+	ret.reserve(len);
+	for(int32_t pos=0; pos>=0;) {
+		int32_t chr = al_ustr_get_next(ustr.alPtr(), &pos);
+		if(chr >= 0) {
+			ret.push_back(chr);
+		} else {
+			break;
+		}
 	}
 	return ret;
 }
