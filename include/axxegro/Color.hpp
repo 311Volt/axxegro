@@ -10,21 +10,33 @@
 
 #include <tuple>
 #include <string_view>
+#include <type_traits>
 
 #include <allegro5/allegro.h>
+#include <allegro5/color.h>
 
 namespace al {
 
 	//TODO literals 
 	
-	class Color {
+	class Color: public ALLEGRO_COLOR {
 	private:
-		float r,g,b,a;
+		#define AXXEGRO_COLOR_ERR "axxegro expects ALLEGRO_COLOR to be the same as struct{float r,g,b,a;};"
+		static_assert(std::is_same<float, decltype(r)>::value, AXXEGRO_COLOR_ERR);	
+		static_assert(std::is_same<float, decltype(g)>::value, AXXEGRO_COLOR_ERR);	
+		static_assert(std::is_same<float, decltype(b)>::value, AXXEGRO_COLOR_ERR);	
+		static_assert(std::is_same<float, decltype(a)>::value, AXXEGRO_COLOR_ERR);	
+		#undef AXXEGRO_COLOR_ERR
 	public:
 
 		constexpr Color(float r, float g, float b, float a)
-			: r(r), g(g), b(b), a(a)
-		{}
+			: ALLEGRO_COLOR()
+		{
+			this->r = r;
+			this->g = g;
+			this->b = b;
+			this->a = a;	
+		}
 		constexpr Color(float r, float g, float b) 
 			: Color(r,g,b,1.0f) 
 		{}
@@ -32,6 +44,7 @@ namespace al {
 		constexpr Color()
 			: Color(0,0,0,0)
 		{}
+
 		/** Creates an opaque Color from a 32-bit number.
 		    @param x A 32-bit number of the form 0xXXRRGGBB (X=don't care).
 		 */

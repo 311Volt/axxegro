@@ -157,7 +157,7 @@ void al::TCurrentDisplay::flip(Rect<int> rect)
 }
 void al::TCurrentDisplay::clearToColor(Color color)
 {
-	al_clear_to_color(color.get());
+	al_clear_to_color(color);
 }
 bool al::TCurrentDisplay::waitForVsync()
 {

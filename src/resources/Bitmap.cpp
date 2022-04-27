@@ -57,7 +57,7 @@ void al::Bitmap::draw(al::Coord<float> p0) const
 }
 void al::Bitmap::drawTinted(al::Coord<float> p0, al::Color tint) const
 {
-	al_draw_tinted_bitmap(ptr(), tint.get(), p0.x, p0.y, 0);
+	al_draw_tinted_bitmap(ptr(), tint, p0.x, p0.y, 0);
 }
 void al::Bitmap::drawRegion(al::Rect<float> srcRegion, al::Coord<float> dst) const
 {
@@ -94,7 +94,7 @@ void al::Bitmap::drawTintedScaled(al::Color tint, al::Rect<float> srcRect, al::R
 {
 	al_draw_tinted_scaled_bitmap(
 		ptr(),
-		tint.get(),
+		tint,
 		srcRect.a.x, srcRect.a.y,
 		srcRect.width(), srcRect.height(),
 		dstRect.a.x, dstRect.a.y,
@@ -106,7 +106,7 @@ void al::Bitmap::drawTintedRegion(al::Rect<float> srcRegion, al::Coord<float> ds
 {
 	al_draw_tinted_bitmap_region(
 		ptr(),
-		tint.get(),
+		tint,
 		srcRegion.a.x, srcRegion.a.y,
 		srcRegion.width(), srcRegion.height(),
 		dst.x, dst.y,
@@ -117,7 +117,7 @@ void al::Bitmap::drawTintedRotated(al::Color tint, al::Coord<float> centerSrc, a
 {
 	al_draw_tinted_rotated_bitmap(
 		ptr(),
-		tint.get(),
+		tint,
 		centerSrc.x, centerSrc.y,
 		centerDst.x, centerDst.y,
 		angle,
@@ -139,7 +139,7 @@ void al::Bitmap::drawTintedScaledRotated(al::Color tint, al::Coord<float> center
 {
 	al_draw_tinted_scaled_rotated_bitmap(
 		ptr(),
-		tint.get(),
+		tint,
 		centerSrc.x, centerSrc.y,
 		centerDst.x, centerDst.y,
 		scale.x, scale.y,
@@ -153,7 +153,7 @@ void al::Bitmap::drawTintedScaledRotatedRegion(al::Rect<float> srcRegion, al::Co
 		ptr(),
 		srcRegion.a.x, srcRegion.a.y,
 		srcRegion.width(), srcRegion.height(),
-		tint.get(),
+		tint,
 		centerSrc.x, centerSrc.y,
 		centerDst.x, centerDst.y,
 		scale.x, scale.y,
@@ -164,12 +164,12 @@ void al::Bitmap::drawTintedScaledRotatedRegion(al::Rect<float> srcRegion, al::Co
 
 void al::Bitmap::convertMaskToAlpha(al::Color maskColor)
 {
-	al_convert_mask_to_alpha(ptr(), maskColor.get());
+	al_convert_mask_to_alpha(ptr(), maskColor);
 }
 void al::Bitmap::clearToColor(al::Color color)
 {
 	ScopedTargetBitmap tb(*this);
-	al_clear_to_color(color.get());
+	al_clear_to_color(color);
 }
 
 void al::Bitmap::saveToFile(const std::string& filename) const

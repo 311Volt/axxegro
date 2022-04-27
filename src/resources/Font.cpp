@@ -118,11 +118,11 @@ void al::Font::draw(const std::string& text, al::Color color, al::Coord<float> p
 void al::Font::draw(const std::string& text, al::Color color, al::Coord<float> pos, int align) const
 {
 	UStr ustr(text);
-	al_draw_ustr(ptr(), color.get(), pos.x, pos.y, align | ALLEGRO_ALIGN_INTEGER, ustr.alPtr());
+	al_draw_ustr(ptr(), color, pos.x, pos.y, align | ALLEGRO_ALIGN_INTEGER, ustr.alPtr());
 }
 
 void al::Font::drawJustified(const std::string& text, al::Color color, al::Coord<float> pos, float xMax, float diffMax) const
 {
 	UStr ustr(text);
-	al_draw_justified_ustr(ptr(), color.get(), pos.x, xMax, pos.y, diffMax, ALLEGRO_ALIGN_INTEGER, ustr.alPtr());
+	al_draw_justified_ustr(ptr(), color, pos.x, xMax, pos.y, diffMax, ALLEGRO_ALIGN_INTEGER, ustr.alPtr());
 }

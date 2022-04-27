@@ -11,7 +11,7 @@ void al::DrawLine(
 	float thickness
 )
 {
-	al_draw_line(a.x, a.y, b.x, b.y, color(), thickness);
+	al_draw_line(a.x, a.y, b.x, b.y, color, thickness);
 }
 
 void al::DrawTriangle(
@@ -22,7 +22,7 @@ void al::DrawTriangle(
 	float thickness
 )
 {
-	al_draw_triangle(a.x, a.y, b.x, b.y, c.x, c.y, color(), thickness);
+	al_draw_triangle(a.x, a.y, b.x, b.y, c.x, c.y, color, thickness);
 }
 
 void al::DrawFilledTriangle(
@@ -32,7 +32,7 @@ void al::DrawFilledTriangle(
 	const Color& color
 )
 {
-	al_draw_filled_triangle(a.x, a.y, b.x, b.y, c.x, c.y, color());
+	al_draw_filled_triangle(a.x, a.y, b.x, b.y, c.x, c.y, color);
 }
 
 void al::DrawRectangle(
@@ -41,7 +41,7 @@ void al::DrawRectangle(
 	float thickness
 )
 {
-	al_draw_rectangle(r.a.x, r.a.y, r.b.x, r.b.y, color(), thickness);
+	al_draw_rectangle(r.a.x, r.a.y, r.b.x, r.b.y, color, thickness);
 }
 
 void al::DrawFilledRectangle(
@@ -49,7 +49,7 @@ void al::DrawFilledRectangle(
 	const Color& color
 )
 {
-	al_draw_filled_rectangle(rect.a.x, rect.a.y, rect.b.x, rect.b.y, color());
+	al_draw_filled_rectangle(rect.a.x, rect.a.y, rect.b.x, rect.b.y, color);
 }
 
 void al::DrawRoundRect(
@@ -62,7 +62,7 @@ void al::DrawRoundRect(
 	al_draw_rounded_rectangle(
 		rect.a.x, rect.a.y, rect.b.x, rect.b.y,
 		radius.x, radius.y,
-		color(), thickness
+		color, thickness
 	);
 }
 
@@ -75,7 +75,7 @@ void al::DrawFilledRoundRect(
 	al_draw_filled_rounded_rectangle(
 		rect.a.x, rect.a.y, rect.b.x, rect.b.y,
 		radius.x, radius.y,
-		color()
+		color
 	);
 }
 
@@ -92,7 +92,7 @@ void al::DrawPieslice(
 		center.x, center.y,
 		radius,
 		startTheta, deltaTheta,
-		color(), thickness
+		color, thickness
 	);
 }
 
@@ -108,7 +108,7 @@ void al::DrawFilledPieslice(
 		center.x, center.y,
 		radius,
 		startTheta, deltaTheta,
-		color()
+		color
 	);
 }
 
@@ -122,7 +122,7 @@ void al::DrawEllipse(
 	al_draw_ellipse(
 		center.x, center.y,
 		radius.x, radius.y,
-		color(), thickness
+		color, thickness
 	);
 }
 
@@ -135,7 +135,7 @@ void al::DrawFilledEllipse(
 	al_draw_filled_ellipse(
 		center.x, center.y,
 		radius.x, radius.y,
-		color()
+		color
 	);
 }
 
@@ -149,7 +149,7 @@ void al::DrawCircle(
 	al_draw_circle(
 		center.x, center.y,
 		radius,
-		color(), thickness
+		color, thickness
 	);
 }
 
@@ -162,7 +162,7 @@ void al::DrawFilledCircle(
 	al_draw_filled_circle(
 		center.x, center.y,
 		radius,
-		color()
+		color
 	);
 }
 
@@ -179,7 +179,7 @@ void al::DrawArc(
 		center.x, center.y,
 		radius,
 		startTheta, deltaTheta,
-		color(), thickness
+		color, thickness
 	);
 }
 
@@ -196,7 +196,7 @@ void al::DrawEllipticalArc(
 		center.x, center.y,
 		radius.x, radius.y,
 		startTheta, deltaTheta,
-		color(), thickness
+		color, thickness
 	);
 }
 
@@ -211,7 +211,7 @@ void al::DrawSpline(
 		pts[i*2 + 0] = points[i].x;
 		pts[i*2 + 1] = points[i].y;
 	}
-	al_draw_spline(pts.data(), color(), thickness);
+	al_draw_spline(pts.data(), color, thickness);
 }
 
 std::vector<al::Coord<>> al::CalculateArc(
