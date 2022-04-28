@@ -36,7 +36,7 @@ int main()
 	al::Coord<float> txtPos {320, 240};
 	std::string txtTest = fmt::format("kb {}B, m {}B", sizeof(ALLEGRO_KEYBOARD_STATE), sizeof(ALLEGRO_MOUSE_STATE));
 	loop.loopBody = [&](){
-		al::CurrentDisplay().clearToColor(al::Color::RGB(0,0,0));
+		al::TargetBitmap.clearToColor(al::Color::RGB(0,0,0));
 
 		float txtMaxWidth = 10.0 + (0.5+0.5*std::sin(al::GetTime())) * 300.0;
 		std::string txtTest1 = fmt::format("{}. tick={}", txtTest, loop.getTick());
@@ -50,7 +50,7 @@ int main()
 			lr.rowData(1)[1] = 113;
 		}
 
-		bg.drawScaled(bg.rect(), al::CurrentDisplay().rect());
+		bg.drawScaled(bg.rect(), al::CurrentDisplay.rect());
 
 
 		{
@@ -73,7 +73,11 @@ int main()
 		al::DrawRectangle(r3, al::Col::Magenta);
 		
 
-		al::CurrentDisplay().flip();
+		for(int i=0; i<16; i++) {
+			al::DrawFilledRectangle(al::Rect<>::XYWH(16*i, 0, 16, 16), al::Color::CGA(i));
+		}
+
+		al::CurrentDisplay.flip();
 	};
 
 	loop.eventDispatcher.setEventTypeHandler(

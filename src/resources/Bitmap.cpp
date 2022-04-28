@@ -7,6 +7,8 @@
 
 #include <fmt/format.h>
 
+al::CTargetBitmap al::TargetBitmap;
+
 al::Bitmap::Bitmap(int w, int h)
 	: Resource(al_create_bitmap(w,h))
 {
@@ -231,4 +233,28 @@ int al::BitmapLockedRegion::getPitch()
 int al::BitmapLockedRegion::getPixelSize()
 {
 	return reg->pixel_size;
+}
+
+void al::CTargetBitmap::clearToColor(al::Color color)
+{
+	al_clear_to_color(color);
+}
+
+void al::CTargetBitmap::clearDepthBuffer(float x)
+{
+	al_clear_depth_buffer(x);
+}
+al::Rect<int> al::CTargetBitmap::getClippingRectangle()
+{
+	int x,y,w,h;
+	al_get_clipping_rectangle(&x, &y, &w, &h);
+	return al::Rect<int>::XYWH(x,y,w,h);
+}
+void al::CTargetBitmap::setClippingRectangle(al::Rect<int> r)
+{
+	al_set_clipping_rectangle(r.a.x, r.a.y, r.width(), r.height());
+}
+void al::CTargetBitmap::resetClippingRectangle()
+{
+	al_reset_clipping_rectangle();
 }

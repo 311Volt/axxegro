@@ -51,9 +51,7 @@ namespace al {
 		 * 
 		 * By default, the global section (i.e. "") is selected.
 		 * 
-		 * It's easy to forget to change the section back so using this
-		 * method directly is a bug waiting to happen. Prefer using
-		 * SectionSelector instead.
+		 * SectionSelector provides a RAII alternative for this method.
 		 */
 		void selectSection(const std::string& name);
 

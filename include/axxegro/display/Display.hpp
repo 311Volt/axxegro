@@ -10,6 +10,7 @@
 
 #include <string>
 #include <vector>
+#include <optional>
 
 #include <allegro5/allegro.h>
 
@@ -149,7 +150,7 @@ namespace al {
 		 * 
 		 * @return Clipboard text, in the context of this display.
 		 */
-		std::string getClipboardText() const;
+		std::optional<std::string> getClipboardText() const;
 
 		/**
 		 * @brief Sets the system clipboard context.
@@ -220,11 +221,8 @@ namespace al {
 		
 		void flip();
 		void flip(Rect<int> rect);
-		void clearToColor(Color color);
 		bool waitForVsync();
 		void convertMemoryBitmaps();
-		void setClippingRectangle(al::Rect<int> r);
-		void resetClippingRectangle();
 
 		void setTargetBitmap(Bitmap& bmp);
 	private:
@@ -234,7 +232,7 @@ namespace al {
 		}
 	};
 
-	TCurrentDisplay& CurrentDisplay();
+	extern TCurrentDisplay CurrentDisplay;
 }
 
 #endif /* INCLUDE_AXXEGRO_DISPLAY_DISPLAY */

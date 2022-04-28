@@ -6,7 +6,7 @@
 #include <axxegro/math/math.hpp>
 
 namespace al {
-	class Transform {
+	class Transform: public ALLEGRO_TRANSFORM {
 	public:
 		Transform();
 		
@@ -58,16 +58,16 @@ namespace al {
 
 		bool checkInverse(float tolerance) const;
 
-		ALLEGRO_TRANSFORM* ptr() {return &t;}
 	#ifdef AXXEGRO_TRUSTED
-		ALLEGRO_TRANSFORM* ptr() const {return const_cast<ALLEGRO_TRANSFORM*>(&t);}
+		const ALLEGRO_TRANSFORM* alPtr(){return this;}
+	#else
+		ALLEGRO_TRANSFORM* alPtr(){return this;}
 	#endif
+
 	private:
 		class NoInit{};
-
-		Transform(const ALLEGRO_TRANSFORM* src);
 		Transform(NoInit) {}
-		ALLEGRO_TRANSFORM t;
+		Transform(const ALLEGRO_TRANSFORM* src);
 		friend class ScopedTransform;
 	};
 

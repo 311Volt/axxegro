@@ -5,6 +5,8 @@
 
 #include <fmt/format.h>
 
+al::TCurrentDisplay al::CurrentDisplay;
+
 ALLEGRO_BITMAP* al::DisplayBackbuffer::getPointer() const
 {
 	return al_get_backbuffer(disp.ptr());
@@ -114,7 +116,7 @@ int al::Display::getFlags() const
 	return al_get_display_flags(ptr());
 }
 
-std::string al::Display::getClipboardText() const
+std::optional<std::string> al::Display::getClipboardText() const
 {
 	std::string ret;
 	char* buf = al_get_clipboard_text(ptr());
@@ -122,7 +124,7 @@ std::string al::Display::getClipboardText() const
 		ret = {buf};
 		al_free(buf);
 	} else {
-		ret = "";
+		return std::nullopt;
 	}
 	return ret;
 }
@@ -155,10 +157,7 @@ void al::TCurrentDisplay::flip(Rect<int> rect)
 {
 	al_update_display_region(rect.a.x, rect.a.y, rect.width(), rect.height());
 }
-void al::TCurrentDisplay::clearToColor(Color color)
-{
-	al_clear_to_color(color);
-}
+
 bool al::TCurrentDisplay::waitForVsync()
 {
 	return al_wait_for_vsync();
@@ -171,19 +170,4 @@ void al::TCurrentDisplay::convertMemoryBitmaps()
 void al::TCurrentDisplay::setTargetBitmap(Bitmap& bmp)
 {
 	al_set_target_bitmap(bmp.ptr());
-}
-void al::TCurrentDisplay::setClippingRectangle(al::Rect<int> r)
-{
-	al_set_clipping_rectangle(r.a.x, r.a.y, r.width(), r.height());
-}
-void al::TCurrentDisplay::resetClippingRectangle()
-{
-	al_reset_clipping_rectangle();
-}
-
-
-al::TCurrentDisplay axxCurrentDisplay;
-al::TCurrentDisplay& al::CurrentDisplay()
-{
-	return axxCurrentDisplay;
 }

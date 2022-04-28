@@ -6,10 +6,9 @@
  a color class
 */
 
-#include <cstdint>
+#include <stdint.h>
 
 #include <tuple>
-#include <string_view>
 #include <type_traits>
 
 #include <allegro5/allegro.h>
@@ -49,7 +48,9 @@ namespace al {
 		    @param x A 32-bit number of the form 0xXXRRGGBB (X=don't care).
 		 */
 		static constexpr al::Color U32_RGB(uint32_t x)
-			{return U32_RGBA(x | 0xFF000000);}
+		{
+			return U32_RGBA(x | 0xFF000000);
+		}
 		
 		/** Creates a Color from a 32-bit number.
 		    @param x A 32-bit number of the form 0xAARRGGBB
@@ -64,39 +65,61 @@ namespace al {
 			return RGBA(r,g,b,a);
 		}
 		
-		/// Creates a Color from three 8-bit channel values.
+		/// @brief Creates a Color from three 8-bit channel values.
 		static constexpr Color RGB(uint8_t r, uint8_t g, uint8_t b)
-			{return RGBA(r, g, b, 255);}
+		{
+			return RGBA(r, g, b, 255);
+		}
 
-		/// Creates a Color from four 8-bit channel values.
+		/// @brief Creates a Color from four 8-bit channel values.
 		static constexpr Color RGBA(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-			{return RGBA_f(r/255.0f, g/255.0f, b/255.0f, a/255.0f);}
+		{
+			constexpr float f_1_255 = 1.0f / 255.0f;
+			return RGBA_f(r*f_1_255, g*f_1_255, b*f_1_255, a*f_1_255);
+		}
 
-		/// Effectively RGBA(r*a, g*a, b*a, a). 
+		/// @brief Effectively RGBA(r*a, g*a, b*a, a). 
 		static constexpr Color PremulRGBA(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-			{return PremulRGBA_f(r/255.0f, g/255.0f, b/255.0f, a/255.0f);}
+		{
+			constexpr float f_1_255 = 1.0f / 255.0f;
+			return PremulRGBA_f(r*f_1_255, g*f_1_255, b*f_1_255, a*f_1_255);
+		}
 		
-		/// Equivalent to Color(r,g,b).
+		/// @brief Equivalent to Color(r,g,b).
 		static constexpr Color RGB_f(float r, float g, float b)
-			{return Color(r,g,b);}
+		{
+			return Color(r,g,b);
+		}
 
-		/// Equivalent to Color(r,g,b,a).
+		/// @brief Equivalent to Color(r,g,b,a).
 		static constexpr Color RGBA_f(float r, float g, float b, float a)
-			{return Color(r,g,b,a);}
+		{
+			return Color(r,g,b,a);
+		}
 		
-		/// Effectively RGBA(r*a, g*a, b*a, a). 
+		/// @brief Effectively RGBA(r*a, g*a, b*a, a). 
 		static constexpr Color PremulRGBA_f(float r, float g, float b, float a)
-			{return Color(r*a,g*a,b*a,a);}
+		{
+			return Color(r*a,g*a,b*a,a);
+		}
 
-		/** Returns all channel values as a tuple of floats.
-		 *  Intended for use with C++17 structured bindings. */
-		constexpr std::tuple<float,float,float,float> rgbaF() const
-			{return {r, g, b, a};}
+		/** @brief Creates the nth color from the 16-color CGA palette.
+		 * The upper 4 bits are ignored. */
+		static constexpr Color CGA(uint8_t c)
+		{
+			uint32_t b = -((c&1) != 0);
+			uint32_t g = -((c&2) != 0);
+			uint32_t r = -((c&4) != 0);
+			uint32_t i = -((c&8) != 0);
+			return U32_RGB((r&0xAA0000) | (g&0x00AA00) | (b&0x0000AA) | (i&0x555555));
+		}
 
 		/** Returns all channel values as a tuple of bytes.
 		 *  Intended for use with C++17 structured bindings. */
 		constexpr std::tuple<uint8_t,uint8_t,uint8_t,uint8_t> rgbaU8() const
-			{return {r*255.0f, g*255.0f, b*255.0f, a*255.0f};}
+		{
+			return {r*255.0f, g*255.0f, b*255.0f, a*255.0f};
+		}
 		
 		///@returns The color as a 32-bit int of the form 0xXXRRGGBB (X=don't care).
 		constexpr uint32_t rgb_u32() const
@@ -120,15 +143,6 @@ namespace al {
 			ret += (uint32_t)b << 0;
 			return ret;
 		}
-
-		Color(ALLEGRO_COLOR color)
-			{al_unmap_rgba_f(color,&r,&g,&b,&a);}
-
-		ALLEGRO_COLOR operator()() const
-			{return al_map_rgba_f(r,g,b,a);}
-		
-		ALLEGRO_COLOR get() const
-			{return operator()();}
 	};
 
 	///@brief Color constants
@@ -141,7 +155,6 @@ namespace al {
 		constexpr Color Magenta = Color::U32_RGB(0xFF00FF);
 		constexpr Color Yellow =  Color::U32_RGB(0xFFFF00);
 		constexpr Color White =   Color::U32_RGB(0xFFFFFF);
-		
 	}
 
 	

@@ -24,12 +24,9 @@
  *     1. derive from the original wrapper class (e.g. Bitmap -> TargetBitmap)
  *     2. construct it with alPtr := null and override getPointer() 
  *            and make it return al_get_* directly
- *     4. provide access to a Derived object through a func/method that gives
- *            you a reference
- *     5. allegro functions that implicitly use such objects can be implemented
+ *     3. provide access to a Derived object globally
+ *     4. allegro functions that implicitly use such objects can be implemented
  *            in the derived classes
- *     6. ?????
- *     7. profit
  * 
  * See CCurrentDisplay or CDisplayBackbuffer in Display.cpp for examples.
  **/

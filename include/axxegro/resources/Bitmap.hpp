@@ -154,12 +154,21 @@ namespace al {
 	class CTargetBitmap: public Bitmap {
 	public:
 		CTargetBitmap() : Bitmap(nullptr) {}
+
+		void clearToColor(Color color);
+		void clearDepthBuffer(float x);
+		void setClippingRectangle(al::Rect<int> r);
+		al::Rect<int> getClippingRectangle();
+		void resetClippingRectangle();
+
 	private:
 		virtual ALLEGRO_BITMAP* getPointer() const override
 		{
 			return al_get_target_bitmap();
 		}
 	};
+
+	extern CTargetBitmap TargetBitmap;
 }
 
 

@@ -44,7 +44,7 @@ void al::EventLoop::initDefaultEventQueue()
 {
 	eventQueue.registerSource(keyb::GetEventSource());
 	eventQueue.registerSource(mouse::GetEventSource());
-	eventQueue.registerSource(al::CurrentDisplay().eventSource());
+	eventQueue.registerSource(al::CurrentDisplay.eventSource());
 }
 void al::EventLoop::initDefaultDispatcher()
 {
@@ -53,7 +53,7 @@ void al::EventLoop::initDefaultDispatcher()
 	});
 	
 	eventDispatcher.setEventTypeHandler(ALLEGRO_EVENT_DISPLAY_RESIZE, [](const ALLEGRO_EVENT&){
-		CurrentDisplay().acknowledgeResize();
+		CurrentDisplay.acknowledgeResize();
 	});
 }
 

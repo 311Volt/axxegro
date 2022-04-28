@@ -20,7 +20,7 @@ int main()
 	al::Vec2<float> logoSize(128, 128); // in px
 
 	//screen rectangle ((0,0), (w,h))
-	al::Rect<float> scrRect = al::CurrentDisplay().rect();
+	al::Rect<float> scrRect = al::CurrentDisplay.rect();
 
 	//rectangle for the dvd logo (position/size)
 	al::Rect<float> logoRect = al::Rect<float>::PosSize({40, 70}, logoSize);
@@ -33,7 +33,7 @@ int main()
 
 	/* create the loop body */
 	evLoop.loopBody = [&](){
-		al::CurrentDisplay().clearToColor(al::Color::RGB(150,180,240));
+		al::TargetBitmap.clearToColor(al::Color::RGB(150,180,240));
 
 		dvdLogo.drawScaled(dvdLogo.rect(), logoRect);
 		
@@ -49,7 +49,7 @@ int main()
 		}
 		logoRect = scrRect.clamp(logoRect);
 
-		al::CurrentDisplay().flip();
+		al::CurrentDisplay.flip();
 	};
 
 	//enable the frame limiter (240 fps)
