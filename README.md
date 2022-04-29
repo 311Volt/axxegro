@@ -2,7 +2,7 @@
 
 A C++17 wrapper for [Allegro5](https://github.com/liballeg/allegro5) that aims to combine
 Allegro's straightforward and intuitive API with modern C++. It is not a complete wrapper and exposes the Allegro API to the user rather
-than redefining every `struct` and `define`; however, the goal for 1.0 is to completely 
+than redefining every constant; however, the goal for 1.0 is to completely 
 eliminate the need to call any Allegro functions directly.
 
 The library is work-in-progress and it is still missing a lot of things, but it's
@@ -17,9 +17,9 @@ lena.draw({0, 0});
 ```
 
 ```c++
-al::EventLoop loop = al::EventLoop::Basic();
+al::EventLoop loop = al::EventLoop::Basic(); //with pre-registered event sources
 loop.loopBody = [](){
-    al::TargetBitmap.clearToColor(al::Col::Black);
+    al::TargetBitmap.clearToColor(al::RGB(0,0,0));
     // draw stuff
     al::CurrentDisplay.flip();
 };
@@ -36,9 +36,7 @@ loop.run(); //will run until window is closed
 2. where necessary, place:
     - library files in `deps/lib`
     - headers in `deps/include`
-    - shared libraries in `examples/dll`
-
-###
+    - (Windows) DLLs in `examples/dll`
 
 3. use `cmake -Bbuild -H. && cd build && make`
 

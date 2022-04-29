@@ -9,19 +9,14 @@
 
 namespace al {
 	namespace mouse {
+		
+		class CursorDeleter {
+			void operator()(ALLEGRO_MOUSE_CURSOR* p){al_destroy_mouse_cursor(p);}
+		};
 
-		class Cursor {
-			ALLEGRO_MOUSE_CURSOR* ptr;
+		class Cursor: public Resource<ALLEGRO_MOUSE_CURSOR, CursorDeleter> {
 		public:
 			Cursor(const Bitmap& bmp, Coord<int> focus);
-			~Cursor();
-
-			ALLEGRO_MOUSE_CURSOR* alPtr() {return ptr;}
-
-		#ifdef AXXEGRO_TRUSTED
-			ALLEGRO_MOUSE_CURSOR* alPtr() const {return ptr;}
-		#endif
-
 		};
 
 		class MouseEventSource: public EventSource {

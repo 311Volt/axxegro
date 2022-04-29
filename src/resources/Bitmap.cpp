@@ -258,3 +258,26 @@ void al::CTargetBitmap::resetClippingRectangle()
 {
 	al_reset_clipping_rectangle();
 }
+
+
+void al::CTargetBitmap::useTransform(const al::Transform& transform)
+{
+	al_use_transform(&transform);
+}
+void al::CTargetBitmap::useProjectionTransform(const al::Transform& transform)
+{
+	al_use_projection_transform(&transform);
+}
+
+al::Transform al::CTargetBitmap::currentTransform()
+{
+	return al_get_current_transform();
+}
+al::Transform al::CTargetBitmap::currentInverseTransform()
+{
+	return al_get_current_inverse_transform();
+}
+al::Transform al::CTargetBitmap::currentProjectionTransform()
+{
+	return al_get_current_projection_transform();
+}

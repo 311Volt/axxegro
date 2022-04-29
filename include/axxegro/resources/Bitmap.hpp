@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "../math/math.hpp"
+#include "../Transform.hpp"
 #include "../Color.hpp"
 
 /**
@@ -154,6 +155,24 @@ namespace al {
 	class CTargetBitmap: public Bitmap {
 	public:
 		CTargetBitmap() : Bitmap(nullptr) {}
+		
+		/**
+		 * @brief Use the transform for subsequent drawing operations
+		 * on the target bitmap.
+		 * https://liballeg.org/a5docs/trunk/transformations.html#al_use_transform
+		 */
+		void useTransform(const Transform& transform);
+
+		/**
+		 * @brief Use the projection transformation for subsequent
+		 * drawing operations on the target bitmap.
+		 * https://liballeg.org/a5docs/trunk/transformations.html#al_use_projection_transform
+		 */
+		void useProjectionTransform(const Transform& transform);
+		
+		Transform currentTransform();
+		Transform currentInverseTransform();
+		Transform currentProjectionTransform();
 
 		void clearToColor(Color color);
 		void clearDepthBuffer(float x);

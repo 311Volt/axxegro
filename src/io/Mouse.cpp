@@ -3,14 +3,11 @@
 #include <axxegro/io/Mouse.hpp>
 
 al::mouse::Cursor::Cursor(const Bitmap& bmp, Coord<int> focus)
+	: Resource(al_create_mouse_cursor(bmp.ptr(), focus.x, focus.y))
 {
-	ptr = al_create_mouse_cursor(bmp.ptr(), focus.x, focus.y);
+	
 }
 
-al::mouse::Cursor::~Cursor()
-{
-	al_destroy_mouse_cursor(ptr);
-}
 
 unsigned al::mouse::GetNumAxes()
 {

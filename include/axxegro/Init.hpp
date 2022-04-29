@@ -9,7 +9,11 @@
 namespace al {
 
 	/* TODO some init jobs can be optional
-	 * (e.g. al_install_audio will fail when there's no sound device) */
+	 * (e.g. al_install_audio will fail when there's no sound device
+	 * and you'd want to handle that) */
+
+	/* TODO maybe throw away this whole thing and initialize things
+	 * automatically as needed */
 
 	class InitJob {
 	public:
@@ -19,17 +23,17 @@ namespace al {
 		void execute();
 	};
 
-	class InitJobFailed: public std::runtime_error {
-	public:
-		InitJobFailed(const std::string& msg) 
-			: std::runtime_error(msg){}
-	};
+	class InitJobFailed: public std::runtime_error {using std::runtime_error::runtime_error;};
 
 	using InitJobList = std::vector<InitJob>;
 
 	void Initialize(InitJobList list);
 	InitJobList FullInitJobList();
 
+	/**
+	 * @brief Initialize Allegro and some addons (acodec, image, font, ttf, native_dialog, primitives)
+	 * 
+	 */
 	void FullInit();
 }
 

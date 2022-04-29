@@ -28,7 +28,7 @@ namespace al {
 		/**
 		 * @brief Checks whether a key is down.
 		 * Keep in mind that this calls al_get_keyboard_state and is
-		 * inefficient. Avoid this function in serious projects.
+		 * inefficient.
 		 * 
 		 * @param keycode Keycode.
 		 * @return true if the key is down
@@ -49,7 +49,7 @@ namespace al {
 		///@brief See: https://liballeg.org/a5docs/trunk/keyboard.html#al_keycode_to_name
 		std::string KeycodeToName(int keycode);
 
-		///@return This keyboard's event source.
+		///@return The keyboard's event source.
 		const EventSource& GetEventSource();
 	}
 }
