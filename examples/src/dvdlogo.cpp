@@ -33,7 +33,7 @@ int main()
 
 	/* create the loop body */
 	evLoop.loopBody = [&](){
-		al::TargetBitmap.clearToColor(al::Color::RGB(150,180,240));
+		al::TargetBitmap.clearToColor(al::RGB(150,180,240));
 
 		dvdLogo.drawScaled(dvdLogo.rect(), logoRect);
 		

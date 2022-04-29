@@ -13,7 +13,7 @@
  */
 
 namespace al {
-	constexpr al::Color PRIM_DEFAULT_COLOR = al::Color::RGB(255,255,255);
+	constexpr al::Color PRIM_DEFAULT_COLOR = al::RGB(255,255,255);
 	constexpr float PRIM_DEFAULT_THICKNESS = 1.0f;
 
 	void DrawLine(

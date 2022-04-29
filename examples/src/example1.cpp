@@ -36,7 +36,7 @@ int main()
 	al::Coord<float> txtPos {320, 240};
 	std::string txtTest = fmt::format("kb {}B, m {}B", sizeof(ALLEGRO_KEYBOARD_STATE), sizeof(ALLEGRO_MOUSE_STATE));
 	loop.loopBody = [&](){
-		al::TargetBitmap.clearToColor(al::Color::RGB(0,0,0));
+		al::TargetBitmap.clearToColor(al::RGB(0,0,0));
 
 		float txtMaxWidth = 10.0 + (0.5+0.5*std::sin(al::GetTime())) * 300.0;
 		std::string txtTest1 = fmt::format("{}. tick={}", txtTest, loop.getTick());
@@ -57,10 +57,10 @@ int main()
 			al::Transform t;
 			t.translate(txtPos);
 			al::ScopedTransform st(t);
-			al::DrawLine({}, {txtMaxWidth,0.0f}, al::Col::Red, 4.0);
+			al::DrawLine({}, {txtMaxWidth,0.0f}, al::Red, 4.0);
 			font.draw(
 				txtTestCut,
-				al::Color::RGB(255,255,255), 
+				al::RGB(255,255,255), 
 				{0, 0}
 			);
 		}
@@ -68,13 +68,13 @@ int main()
 		auto r2 = al::Rect<int>::XYWH(70, 30, 80, 80);
 		auto r1 = al::Rect<int>::XYWH(95, 160, 70, 70);
 		auto r3 = r1.makeUnion(r2);
-		al::DrawRectangle(r1, al::Col::Blue);
-		al::DrawRectangle(r2, al::Col::Blue);
-		al::DrawRectangle(r3, al::Col::Magenta);
+		al::DrawRectangle(r1, al::Blue);
+		al::DrawRectangle(r2, al::Blue);
+		al::DrawRectangle(r3, al::Magenta);
 		
 
 		for(int i=0; i<16; i++) {
-			al::DrawFilledRectangle(al::Rect<>::XYWH(16*i, 0, 16, 16), al::Color::CGA(i));
+			al::DrawFilledRectangle(al::Rect<>::XYWH(16*i, 0, 16, 16), al::CGA(i));
 		}
 
 		al::CurrentDisplay.flip();
