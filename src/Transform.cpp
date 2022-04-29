@@ -1,3 +1,4 @@
+#include "allegro5/transformations.h"
 #define AXXEGRO_TRUSTED
 
 #include <axxegro/Transform.hpp>
@@ -21,15 +22,6 @@ void al::Transform::use() const
 void al::Transform::useProjection() const
 {
 	al_use_projection_transform(this);
-}
-
-al::Transform al::Transform::GetCurrent()
-{
-	return al::Transform(al_get_current_transform());
-}
-al::Transform al::Transform::GetCurrentProjection()
-{
-	return al::Transform(al_get_current_projection_transform());
 }
 
 al::Transform al::Transform::Eye()

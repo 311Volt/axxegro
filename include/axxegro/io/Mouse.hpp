@@ -11,6 +11,7 @@ namespace al {
 	namespace mouse {
 		
 		class CursorDeleter {
+		public:
 			void operator()(ALLEGRO_MOUSE_CURSOR* p){al_destroy_mouse_cursor(p);}
 		};
 
@@ -27,11 +28,14 @@ namespace al {
 
 		using State = ALLEGRO_MOUSE_STATE;
 
+		/// @brief Mouse button numbers used by Allegro
 		enum class Btn: int {
 			LEFT = 1,
 			RIGHT = 2,
 			MIDDLE = 3
 		};
+
+		/// @returns 
 		constexpr int BtnBit(Btn btn)
 			{return 1<<(int(btn)-1);}
 		

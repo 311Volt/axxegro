@@ -29,8 +29,4 @@ if(AXXEGRO_BUILD_EXAMPLES)
 	add_subdirectory("examples")
 endif()
 
-
-
-set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-include(CPack)
+set(CMAKE_EXPORT_COMPILE_COMMANDS 1)

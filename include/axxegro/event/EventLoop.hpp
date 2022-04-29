@@ -14,6 +14,8 @@
 
 namespace al {
 	class EventLoop {
+		
+		//copy elision for Basic()
 		class BasicInit{};
 		EventLoop(BasicInit);
 	public:

@@ -59,3 +59,4 @@ endfunction()
 
 axxegro_add_example("example1")
 axxegro_add_example("dvdlogo")
+axxegro_add_example("userevents")
