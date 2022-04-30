@@ -29,16 +29,28 @@ loop.run(); //will run until window is closed
 
 
 # how to build
-1. build or install [Allegro5](https://github.com/liballeg/allegro5) and [{fmt}](https://github.com/fmtlib/fmt) first 
+Make sure to clone this project with submodules. Use:   
+```bash
+mkdir build
+cd build
+cmake ..
+make # -jXX
+```
+
+Any programs that use axxegro will also need Allegro 5 linked separately, including
+the examples.
+
+1. build or install [Allegro5](https://github.com/liballeg/allegro5)
 
      *(note: a build of allegro5 is needed for the example programs, but not for the library itself - the user links against a5 separately)*
 
 2. where necessary, place:
     - library files in `deps/lib`
     - headers in `deps/include`
-    - (Windows) DLLs in `examples/dll`
+    - (Windows only) DLLs in `examples/dll`
 
-3. use `cmake -Bbuild -H. && cd build && make`
+3. 
+
 
 For Windows builds, the most recent MinGW-w64 based build of [TDM-GCC](https://jmeubank.github.io/tdm-gcc/download/) is recommended. (tip for VSCode users: make a copy of the toolset's `mingw32-make.exe` and call it `make.exe` so that `cmake.generator` can be set automatically)
 

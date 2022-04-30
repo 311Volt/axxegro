@@ -7,7 +7,7 @@
 #include <unordered_set>
 
 /**
- * @file A high-level mechanism for event dispatching.
+ * A high-level mechanism for event dispatching.
  * 
  * this code is some uncanny valley shit and in desperate need of better naming
  * and all-around consistency - do NOT consider anything in here stable at all

@@ -33,4 +33,25 @@ if(AXXEGRO_BUILD_EXAMPLES)
 	add_subdirectory("examples")
 endif()
 
+option(AXXEGRO_BUILD_DOCS "Build documentation" ON)
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+	set(DOXYGEN_GENERATE_HTML YES)
+	set(DOXYGEN_OUTPUT_DIRECTORY "docs")
+	set(DOXYGEN_QUIET YES)
+	set(DOXYGEN_WARN_IF_UNDOCUMENTED NO)
+
+	if(AXXEGRO_BUILD_DOCS)
+		doxygen_add_docs(
+			axxegro_docs
+			${CMAKE_CURRENT_SOURCE_DIR}/"include"
+			ALL
+		)
+	endif()
+	
+else(DOXYGEN_FOUND)
+	message("Doxygen not found, won't generate docs")
+endif(DOXYGEN_FOUND)
+
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
