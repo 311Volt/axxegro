@@ -37,28 +37,20 @@ cmake ..
 make # -jXX
 ```
 
-Any programs that use axxegro will also need Allegro 5 linked separately, including
-the examples.
+Any programs that use axxegro will also need Allegro linked separately, including
+the examples. 
 
-1. build or install [Allegro5](https://github.com/liballeg/allegro5)
+If you're using Linux, you can likely install [Allegro5](https://github.com/liballeg/allegro5) with your distribution's package manager.
 
-     *(note: a build of allegro5 is needed for the example programs, but not for the library itself - the user links against a5 separately)*
-
-2. where necessary, place:
-    - library files in `deps/lib`
-    - headers in `deps/include`
-    - (Windows only) DLLs in `examples/dll`
-
-3. 
+Alternatively, you can supply your own build of Allegro. To do this, place as necessary:
+- library files in `deps/lib`
+- headers in `deps/include`
+- DLLs in `examples/dll` (for Windows)
 
 
 For Windows builds, the most recent MinGW-w64 based build of [TDM-GCC](https://jmeubank.github.io/tdm-gcc/download/) is recommended. (tip for VSCode users: make a copy of the toolset's `mingw32-make.exe` and call it `make.exe` so that `cmake.generator` can be set automatically)
 
-# linking
-Link against this library as well as Allegro5 itself.
-
-
-
 
 # docs
-Documentation in doxygen compatible format is contained within header files.
+Documentation will be generated and placed in `build/docs` if Doxygen is found
+and `AXXEGRO_BUILD_DOCS` is set to ON (which is the default)
