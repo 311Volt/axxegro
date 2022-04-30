@@ -10,6 +10,7 @@ enable_testing()
 include_directories("deps/include")
 include_directories("include")
 
+
 file(GLOB_RECURSE AXXEGRO_SOURCES "src/*.cpp")
 
 # set(CMAKE_VERBOSE_MAKEFILE ON)
@@ -21,8 +22,11 @@ if(WIN32)
 	set(CMAKE_CXX_FLAGS "-m32 -Wall -Wextra -pedantic")
 endif()
 
-add_library(${PROJECT_NAME} ${AXXEGRO_SOURCES})
+add_subdirectory("fmt")
+include_directories("fmt/include")
 
+add_library(${PROJECT_NAME} ${AXXEGRO_SOURCES})
+target_link_libraries(${PROJECT_NAME} LINK_PUBLIC fmt)
 
 option(AXXEGRO_BUILD_EXAMPLES "Build example programs" ON)
 if(AXXEGRO_BUILD_EXAMPLES)

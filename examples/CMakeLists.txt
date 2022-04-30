@@ -2,8 +2,6 @@
 
 #set(CMAKE_FIND_DEBUG_MODE TRUE)
 
-find_library(FMTLIB "fmt" ${AXXEGRO_DEPS_LIB})
-
 find_library(ALLEGRO_CORE "allegro" ${AXXEGRO_DEPS_LIB})
 find_library(ALLEGRO_MAIN "allegro_main" ${AXXEGRO_DEPS_LIB})
 find_library(ALLEGRO_ACODEC "allegro_acodec" ${AXXEGRO_DEPS_LIB})
@@ -19,6 +17,7 @@ find_library(ALLEGRO_TTF "allegro_ttf" ${AXXEGRO_DEPS_LIB})
 find_library(ALLEGRO_VIDEO "allegro_video" ${AXXEGRO_DEPS_LIB})
 
 set(AXXEGRO_EXAMPLE_LIBS 
+    fmt
     axxegro
     ${ALLEGRO_CORE} 
     ${ALLEGRO_MAIN} 
@@ -33,7 +32,6 @@ set(AXXEGRO_EXAMPLE_LIBS
     ${ALLEGRO_PRIMITIVES} 
     ${ALLEGRO_TTF} 
     ${ALLEGRO_VIDEO}
-    ${FMTLIB}
 )
 
 add_custom_target(axxegro_examples ALL)
