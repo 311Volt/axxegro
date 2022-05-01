@@ -54,6 +54,11 @@ namespace al {
 			return getPointer();
 		}
 
+		T* constPtr() const
+		{
+			return getPointer();
+		}
+
 #ifndef AXXEGRO_TRUSTED
 	private:
 #endif

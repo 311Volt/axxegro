@@ -3,6 +3,7 @@
 
 #include <allegro5/allegro.h>
 #include <memory>
+#include <stdexcept>
 #include <type_traits>
 
 namespace al {

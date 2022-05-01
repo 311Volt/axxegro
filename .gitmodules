@@ -1,3 +1,6 @@
 [submodule "fmt"]
 	path = fmt
 	url = https://github.com/fmtlib/fmt.git
+[submodule "tcbspan"]
+	path = tcbspan
+	url = https://github.com/tcbrindle/span.git

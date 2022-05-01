@@ -25,6 +25,8 @@ endif()
 add_subdirectory("fmt")
 include_directories("fmt/include")
 
+include_directories("tcbspan/include")
+
 add_library(${PROJECT_NAME} ${AXXEGRO_SOURCES})
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC fmt)
 
