@@ -14,20 +14,17 @@ struct MyVertex {
 };
 
 struct MyVertexDecl: public al::CustomVertexDecl<MyVertex> {
-    AXXEGRO_VERTEX_ATTR_BEGIN();
-    AXXEGRO_VERTEX_ATTR(x, ALLEGRO_PRIM_POSITION, ALLEGRO_PRIM_FLOAT_2);
-    AXXEGRO_VERTEX_ATTR(u, ALLEGRO_PRIM_TEX_COORD_PIXEL, ALLEGRO_PRIM_FLOAT_2);
+    AXXEGRO_VERTEX_ATTR_BEGIN()
+    AXXEGRO_VERTEX_ATTR(x, ALLEGRO_PRIM_POSITION, ALLEGRO_PRIM_FLOAT_2)
+    AXXEGRO_VERTEX_ATTR(u, ALLEGRO_PRIM_TEX_COORD_PIXEL, ALLEGRO_PRIM_FLOAT_2)
 };
-
-constexpr auto vArr = al::CreateCustomVertexAttrArr<MyVertexDecl>();
 
 int main()
 {
     al::FullInit();
     al::Display disp(800, 600);
-
     al::TargetBitmap.clearToColor(al::RGB(100,100,100));
-
+	al::Bitmap bg("data/bg.jpg");
 
     std::vector<MyVertex> vtxs{
         {1,1, 0,0},
@@ -35,13 +32,8 @@ int main()
         {3,1, 1000,0}
     };
     
-	al::Bitmap bg("data/bg.jpg");
-
-    al::Transform t = al::Transform().scale({100, 100});
-    t.use();
-
-    al::DrawPrim<MyVertexDecl>(vtxs, &bg);
-
+    al::Transform().scale({100, 100}).use();
+    al::DrawPrim<MyVertexDecl>(vtxs, bg);
     al::CurrentDisplay.flip();
 
     al::Sleep(2.0);

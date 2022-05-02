@@ -33,9 +33,13 @@ namespace al {
     class CustomVertexDecl {
     public:
         using VertexT = CustomVertexT;
-        static_assert(std::is_standard_layout_v<CustomVertexT>, "Cannot use non-standard layout types for vertices");
+        static_assert(
+            std::is_standard_layout_v<CustomVertexT>, 
+            "Cannot use non-standard layout types for vertices"
+        );
 
-        #define AXXEGRO_VERTEX_ATTR_BEGIN() template<int attr, typename xd = void> struct Attr {using Type = ::al::VertexElementT<attr, -1, -1>;};
+        #define AXXEGRO_VERTEX_ATTR_BEGIN() template<int attr, typename xd = void> \
+            struct Attr {using Type = ::al::VertexElementT<attr, -1, -1>;};
 
         #define AXXEGRO_VERTEX_ATTR(m, attrid, storage) template<typename xd> struct Attr<attrid, xd> \
             {using Type = ::al::VertexElementT<attrid, storage, offsetof(VertexT, m)>;};
@@ -44,7 +48,7 @@ namespace al {
     /**
      * @brief Create an array of vertex elements 
      * 
-     * @tparam VDecl 
+     * @tparam VDecl A subclass of CustomVertexDecl
      * @return constexpr std::array<ALLEGRO_VERTEX_ELEMENT, MAX_PRIM_ATTR> 
      */
     template<typename VDecl>
@@ -61,14 +65,11 @@ namespace al {
                 ret[k++] = hu##x::Type::Create(); \
             }
         
-        static_assert(MAX_PRIM_ATTR < 20);
+        static_assert(MAX_PRIM_ATTR == 16);
         FINNA_KMS_XD(0); FINNA_KMS_XD(1); FINNA_KMS_XD(2); FINNA_KMS_XD(3);
         FINNA_KMS_XD(4); FINNA_KMS_XD(5); FINNA_KMS_XD(6); FINNA_KMS_XD(7);
         FINNA_KMS_XD(8); FINNA_KMS_XD(9); FINNA_KMS_XD(10); FINNA_KMS_XD(11);
         FINNA_KMS_XD(12); FINNA_KMS_XD(13); FINNA_KMS_XD(14); FINNA_KMS_XD(15);
-        FINNA_KMS_XD(16); FINNA_KMS_XD(17); FINNA_KMS_XD(18); FINNA_KMS_XD(19);
-        
-        ret[k++] = {0,0,0};
         
         return ret;
     }

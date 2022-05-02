@@ -16,6 +16,8 @@
 
 
 namespace al {
+    template<typename T>
+    using OptionalRef = std::optional<std::reference_wrapper<T>>;
     
     class Vertex: public ALLEGRO_VERTEX {
         Vertex(const Vec3<> pos, const Vec2<> tex, Color color);
@@ -33,7 +35,7 @@ namespace al {
 
     inline void DrawPrim(
         const tcb::span<Vertex> vertices, 
-        const Bitmap* texture, 
+        const OptionalRef<Bitmap> texture = std::nullopt, 
         ALLEGRO_PRIM_TYPE type = ALLEGRO_PRIM_TRIANGLE_LIST,
         int start = 0,
         int end = -1
@@ -42,7 +44,7 @@ namespace al {
         al_draw_prim(
             vertices.data(), 
             nullptr, 
-            texture->constPtr(), 
+            texture ? texture->get().constPtr() : nullptr, 
             start, 
             end==-1 ? vertices.size() : end, 
             type
@@ -52,14 +54,14 @@ namespace al {
     inline void DrawIndexedPrim(
         const tcb::span<Vertex> vertices, 
         const tcb::span<int> indices, 
-        const Bitmap* texture, 
+        const OptionalRef<Bitmap> texture = std::nullopt, 
         ALLEGRO_PRIM_TYPE type = ALLEGRO_PRIM_TRIANGLE_LIST
     )
     {
         al_draw_indexed_prim(
             vertices.data(), 
             nullptr, 
-            texture->constPtr(), 
+            texture ? texture->get().constPtr() : nullptr, 
             indices.data(), 
             vertices.size(), 
             type
@@ -69,7 +71,7 @@ namespace al {
     template<typename VDecl>
     void DrawPrim(
         const tcb::span<typename VDecl::VertexT> vertices,
-        const Bitmap* texture,
+        const OptionalRef<Bitmap> texture = std::nullopt,
         ALLEGRO_PRIM_TYPE type = ALLEGRO_PRIM_TRIANGLE_LIST,
         int start = 0,
         int end = -1
@@ -82,7 +84,7 @@ namespace al {
         al_draw_prim(
             vertices.data(), 
             vd->get(), 
-            texture->constPtr(), 
+            texture ? texture->get().constPtr() : nullptr, 
             start, 
             end==-1 ? vertices.size() : end, 
             type
@@ -93,7 +95,7 @@ namespace al {
     void DrawIndexedPrim(
         const tcb::span<typename VDecl::VertexT> vertices,
         const tcb::span<int> indices,
-        const Bitmap* texture,
+        const OptionalRef<Bitmap> texture = std::nullopt,
         ALLEGRO_PRIM_TYPE type = ALLEGRO_PRIM_TRIANGLE_LIST
     )
     {
@@ -104,7 +106,7 @@ namespace al {
         al_draw_indexed_prim(
             vertices.data(), 
             nullptr, 
-            texture->constPtr(), 
+            texture ? texture->get().constPtr() : nullptr, 
             indices.data(), 
             vertices.size(), 
             type
