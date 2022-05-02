@@ -112,28 +112,20 @@ namespace al {
             type
         );
     }
-/*
-    class VertexBufferDeleter {
-    public:
-        void operator()(ALLEGRO_VERTEX_BUFFER* p){al_destroy_vertex_buffer(p);}
-    };
 
-    class IndexBufferDeleter {
-    public:
-        void operator()(ALLEGRO_INDEX_BUFFER* p){al_destroy_index_buffer(p);}
-    };
+    AXXEGRO_DEFINE_DELETER(ALLEGRO_VERTEX_BUFFER, al_destroy_vertex_buffer);
+    AXXEGRO_DEFINE_DELETER(ALLEGRO_INDEX_BUFFER, al_destroy_index_buffer);
 
-    class IndexBuffer: Resource<ALLEGRO_INDEX_BUFFER, IndexBufferDeleter> {
+    class IndexBuffer: Resource<ALLEGRO_INDEX_BUFFER> {
     public:
         IndexBuffer(const tcb::span<int> indices, int flags = ALLEGRO_PRIM_BUFFER_STATIC);
     };
 
-    class VertexBuffer: Resource<ALLEGRO_VERTEX_BUFFER, VertexBufferDeleter> {
+    class VertexBuffer: Resource<ALLEGRO_VERTEX_BUFFER> {
     public:
         VertexBuffer(const tcb::span<Vertex> vertices, int flags = ALLEGRO_PRIM_BUFFER_STATIC);
 
     };
-*/
 
 }
 

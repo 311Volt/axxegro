@@ -66,13 +66,13 @@ int al::Font::getDescent() const
 int al::Font::getTextWidth(const std::string& text) const
 {
 	UStr ustr(text);
-	return al_get_ustr_width(ptr(), ustr.alPtr());
+	return al_get_ustr_width(ptr(), ustr.ptr());
 }
 al::Rect<int> al::Font::getTextDimensions(const std::string& text) const
 {
 	UStr ustr(text);
 	int x,y,w,h;
-	al_get_ustr_dimensions(ptr(), ustr.alPtr(), &x, &y, &w, &h);
+	al_get_ustr_dimensions(ptr(), ustr.ptr(), &x, &y, &w, &h);
 	Coord<int> pos{x,y}, size{w,h};
 	return {pos, pos+size};
 }
@@ -108,7 +108,7 @@ size_t al::Font::calcCutoffPoint(std::string_view str, int maxWidth)
 {
 	UStr ustr(str);
 	auto cpOff = calcCutoffPoint(UStr::DecodeToUTF32(str), maxWidth);
-	return al_ustr_offset(ustr.alPtr(), cpOff);
+	return al_ustr_offset(ustr.ptr(), cpOff);
 }
 
 void al::Font::draw(const std::string& text, al::Color color, al::Coord<float> pos) const
@@ -118,11 +118,11 @@ void al::Font::draw(const std::string& text, al::Color color, al::Coord<float> p
 void al::Font::draw(const std::string& text, al::Color color, al::Coord<float> pos, int align) const
 {
 	UStr ustr(text);
-	al_draw_ustr(ptr(), color, pos.x, pos.y, align | ALLEGRO_ALIGN_INTEGER, ustr.alPtr());
+	al_draw_ustr(ptr(), color, pos.x, pos.y, align | ALLEGRO_ALIGN_INTEGER, ustr.ptr());
 }
 
 void al::Font::drawJustified(const std::string& text, al::Color color, al::Coord<float> pos, float xMax, float diffMax) const
 {
 	UStr ustr(text);
-	al_draw_justified_ustr(ptr(), color, pos.x, xMax, pos.y, diffMax, ALLEGRO_ALIGN_INTEGER, ustr.alPtr());
+	al_draw_justified_ustr(ptr(), color, pos.x, xMax, pos.y, diffMax, ALLEGRO_ALIGN_INTEGER, ustr.ptr());
 }

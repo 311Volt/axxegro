@@ -40,7 +40,17 @@ namespace al {
 		using std::runtime_error::runtime_error;
 	};
 
-	template<typename T, typename Deleter>
+	template<typename T>
+	struct Deleter {
+		static_assert(std::is_same_v<T, void>, "Deleter for T not defined. Use AXXEGRO_DEFINE_DELETER");
+	};
+
+	#define AXXEGRO_DEFINE_DELETER(type, delfn) \
+		template<> struct Deleter<type>{ \
+			void operator()(type* p){delfn(p);} \
+		}
+
+	template<typename T, typename Deleter = ::al::Deleter<T>>
 	class Resource {
 		std::unique_ptr<T, Deleter> alPtr;
 	public:

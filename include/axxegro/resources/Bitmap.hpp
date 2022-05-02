@@ -21,17 +21,12 @@
 namespace al {
 
 	class BitmapLockError: public std::runtime_error {using std::runtime_error::runtime_error;};
-
-	///@brief ALLEGRO_BITMAP deleter for C++ smart pointers
-	class BitmapDeleter {
-	public:
-		void operator()(ALLEGRO_BITMAP* ptr){al_destroy_bitmap(ptr);}
-	};
+	AXXEGRO_DEFINE_DELETER(ALLEGRO_BITMAP, al_destroy_bitmap);
 
 	/**
 	 * @brief Wraps around ALLEGRO_BITMAP.
 	 */
-	class Bitmap: public Resource<ALLEGRO_BITMAP, BitmapDeleter> {
+	class Bitmap: public Resource<ALLEGRO_BITMAP> {
 	public:
 		using Resource::Resource;
 		Bitmap() = delete;

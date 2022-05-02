@@ -6,6 +6,7 @@
 #include "../resources/Resource.hpp"
 #include "UserEvent.hpp"
 
+#include <allegro5/events.h>
 #include <type_traits>
 
 namespace al {
@@ -14,20 +15,23 @@ namespace al {
 	public:
 		virtual ALLEGRO_EVENT_SOURCE* ptr() const = 0;
 	};
-	
-	class UserEventSourceDeleter {
-	public:
-		void operator()(ALLEGRO_EVENT_SOURCE* p){al_destroy_user_event_source(p);}
-	};
 
 	class UserEventSource: public EventSource
 	{
 		ALLEGRO_EVENT_SOURCE evs;
 	public:
+		UserEventSource(const UserEventSource&) = delete;
+		UserEventSource& operator=(const UserEventSource&) = delete;
+
 		UserEventSource()
 		{
 			al_init_user_event_source(&evs);
 			al_set_event_source_data(&evs, (intptr_t)this);
+		}
+
+		~UserEventSource()
+		{
+			al_destroy_user_event_source(&evs);
 		}
 
 		ALLEGRO_EVENT_SOURCE* ptr() const override

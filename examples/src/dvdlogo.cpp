@@ -30,6 +30,7 @@ int main()
 	 * with i/o event sources and a proper handler for the
 	 * window close event */
 	al::EventLoop evLoop = al::EventLoop::Basic();
+	evLoop.enableEscToQuit();
 
 	/* create the loop body */
 	evLoop.loopBody = [&](){

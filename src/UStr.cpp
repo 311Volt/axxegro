@@ -8,13 +8,9 @@ al::UStr::UStr(const std::u32string_view str)
 }
 
 al::UStr::UStr(const std::string_view str)
+	: Resource(al_ustr_new_from_buffer(str.data(), str.size()))
 {
-	ptr = al_ustr_new_from_buffer(str.data(), str.size());
-}
-
-al::UStr::~UStr()
-{
-	al_ustr_free(ptr);
+	
 }
 
 std::string al::UStr::EncodeToUTF8(const std::u32string_view str)
@@ -36,11 +32,11 @@ std::string al::UStr::EncodeToUTF8(const std::u32string_view str)
 std::u32string al::UStr::DecodeToUTF32(const std::string_view str)
 {
 	UStr ustr(str);
-	size_t len = al_ustr_length(ustr.alPtr());
+	size_t len = al_ustr_length(ustr.ptr());
 	std::u32string ret;
 	ret.reserve(len);
 	for(int32_t pos=0; pos>=0;) {
-		int32_t chr = al_ustr_get_next(ustr.alPtr(), &pos);
+		int32_t chr = al_ustr_get_next(ustr.ptr(), &pos);
 		if(chr >= 0) {
 			ret.push_back(chr);
 		} else {
@@ -48,11 +44,4 @@ std::u32string al::UStr::DecodeToUTF32(const std::string_view str)
 		}
 	}
 	return ret;
-}
-
-
-
-ALLEGRO_USTR* al::UStr::alPtr()
-{
-	return ptr;
 }

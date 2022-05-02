@@ -3,19 +3,20 @@
 
 #include <allegro5/allegro.h>
 
+#include <axxegro/resources/Resource.hpp>
+
 #include "../math/math.hpp"
 #include "../event/EventSource.hpp"
 #include "../resources/Bitmap.hpp"
 
 namespace al {
+
+	AXXEGRO_DEFINE_DELETER(ALLEGRO_MOUSE_CURSOR, al_destroy_mouse_cursor);
+	
 	namespace mouse {
 		
-		class CursorDeleter {
-		public:
-			void operator()(ALLEGRO_MOUSE_CURSOR* p){al_destroy_mouse_cursor(p);}
-		};
 
-		class Cursor: public Resource<ALLEGRO_MOUSE_CURSOR, CursorDeleter> {
+		class Cursor: public Resource<ALLEGRO_MOUSE_CURSOR> {
 		public:
 			Cursor(const Bitmap& bmp, Coord<int> focus);
 		};

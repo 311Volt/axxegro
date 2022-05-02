@@ -18,12 +18,9 @@
 
 namespace al {
 
-	class ConfigDeleter {
-	public:
-		void operator()(ALLEGRO_CONFIG* ptr){al_destroy_config(ptr);}
-	};
+	AXXEGRO_DEFINE_DELETER(ALLEGRO_CONFIG, al_destroy_config);
 
-	class Config: public Resource<ALLEGRO_CONFIG, ConfigDeleter> {
+	class Config: public Resource<ALLEGRO_CONFIG> {
 	public:
 		using Resource::Resource;
 		Config();

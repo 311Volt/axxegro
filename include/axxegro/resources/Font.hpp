@@ -14,12 +14,9 @@
 #include <allegro5/allegro_font.h>
 
 namespace al {
-	class FontDeleter {
-	public:
-		void operator()(ALLEGRO_FONT* ptr){al_destroy_font(ptr);}
-	};
+	AXXEGRO_DEFINE_DELETER(ALLEGRO_FONT, al_destroy_font);
 
-	class Font: public Resource<ALLEGRO_FONT, FontDeleter> {
+	class Font: public Resource<ALLEGRO_FONT> {
 		Font();
 	public:
 		using Resource::Resource;

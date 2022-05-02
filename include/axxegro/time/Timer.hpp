@@ -23,12 +23,9 @@ namespace al {
 		ALLEGRO_TIMER* t;
 	};
 
-	class TimerDeleter {
-	public:
-		void operator()(ALLEGRO_TIMER* t) {al_destroy_timer(t);}
-	};
+	AXXEGRO_DEFINE_DELETER(ALLEGRO_TIMER, al_destroy_timer);
 
-	class Timer: public Resource<ALLEGRO_TIMER, TimerDeleter> {
+	class Timer: public Resource<ALLEGRO_TIMER> {
 	public:
 		Timer(double period);
 

@@ -5,6 +5,8 @@
 #include <string>
 #include <string_view>
 
+#include <axxegro/resources/Resource.hpp>
+
 /**
  * @file
  * RAII for ALLEGRO_USTR. This is not a full wrapper and is mostly intended
@@ -15,9 +17,10 @@
  */
 
 namespace al {
-	class UStr {
-	private:
-		ALLEGRO_USTR* ptr;
+	
+	AXXEGRO_DEFINE_DELETER(ALLEGRO_USTR, al_ustr_free);
+
+	class UStr: public Resource<ALLEGRO_USTR> {
 	public:
 		///@brief Initializes the string from a UTF-32 input.
 		UStr(const std::u32string_view str);
@@ -25,8 +28,6 @@ namespace al {
 		///@brief Initializes the string from a UTF-8 input.
 		UStr(const std::string_view str);
 
-		///@brief Destroys the string.
-		~UStr();
 
 		/**
 		 * @brief Converts UTF-32 to UTF-8 using Allegro.
@@ -43,9 +44,6 @@ namespace al {
 		 * @return UTF-32 output. 
 		 */
 		static std::u32string DecodeToUTF32(const std::string_view str);
-
-		///@return A pointer to the underlying ALLEGRO_USTR.
-		ALLEGRO_USTR* alPtr();
 	};
 }
 

@@ -2,6 +2,7 @@
 #define INCLUDE_AXXEGRO_EVENT_EVENTQUEUE
 
 #include <allegro5/allegro.h>
+#include <allegro5/events.h>
 #include <optional>
 
 #include "EventSource.hpp"
@@ -9,12 +10,8 @@
 
 
 namespace al {
-	class EventQueueDeleter {
-	public:
-		void operator()(ALLEGRO_EVENT_QUEUE* q){al_destroy_event_queue(q);}
-	};
-
-	class EventQueue: public Resource<ALLEGRO_EVENT_QUEUE, EventQueueDeleter> {
+	AXXEGRO_DEFINE_DELETER(ALLEGRO_EVENT_QUEUE, al_destroy_event_queue);
+	class EventQueue: public Resource<ALLEGRO_EVENT_QUEUE> {
 	public:
 		EventQueue();
 

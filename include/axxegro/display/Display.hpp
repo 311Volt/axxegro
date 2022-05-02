@@ -8,6 +8,7 @@
 #include "../resources/Resource.hpp"
 #include "../resources/Bitmap.hpp"
 
+#include <allegro5/display.h>
 #include <string>
 #include <vector>
 #include <optional>
@@ -17,10 +18,7 @@
 namespace al {
 	class DisplayCreationError: public std::runtime_error {using std::runtime_error::runtime_error;};
 
-	class DisplayDeleter {
-	public:
-		void operator()(ALLEGRO_DISPLAY* p){al_destroy_display(p);}
-	};
+	AXXEGRO_DEFINE_DELETER(ALLEGRO_DISPLAY, al_destroy_display);
 
 	class Display;
 
@@ -46,7 +44,7 @@ namespace al {
 		Display& disp;
 	};
 
-	class Display: public Resource<ALLEGRO_DISPLAY, DisplayDeleter> {
+	class Display: public Resource<ALLEGRO_DISPLAY> {
 	public:
 		using Resource::Resource;
 		using Option = struct{int option, value;};

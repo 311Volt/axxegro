@@ -75,13 +75,10 @@ namespace al {
     }
 
 
-    class VertexDeclDeleter {
-    public:
-        void operator()(ALLEGRO_VERTEX_DECL* p){al_destroy_vertex_decl(p);}
-    };
+    AXXEGRO_DEFINE_DELETER(ALLEGRO_VERTEX_DECL, al_destroy_vertex_decl);
 
     /// @brief Represents an ALLEGRO_VERTEX_DECL
-    class VertexDecl: public Resource<ALLEGRO_VERTEX_DECL, VertexDeclDeleter> {
+    class VertexDecl: public Resource<ALLEGRO_VERTEX_DECL> {
     public:
         VertexDecl(const ALLEGRO_VERTEX_ELEMENT* elements, int stride)
             : Resource(al_create_vertex_decl(elements, stride))
