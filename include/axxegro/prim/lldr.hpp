@@ -20,10 +20,11 @@ namespace al {
     using OptionalRef = std::optional<std::reference_wrapper<T>>;
     
     class Vertex: public ALLEGRO_VERTEX {
-        Vertex(const Vec3<> pos, const Vec2<> tex, Color color);
+    public:
+        Vertex(const Vec3<> pos, const Vec2<> uv = {0,0}, Color color = al::White);
 
         void setPos(const Vec3<> pos);
-        void setUV(const Vec2<> pos);
+        void setUV(const Vec2<> uv);
         void setColor(const Color color);
 
         Vec3<> getPos() const;

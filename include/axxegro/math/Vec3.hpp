@@ -41,6 +41,20 @@ namespace al {
 			{Vec3 ret=*this; ret*=rhs; return ret;}
 		constexpr Vec3 operator/(T rhs) const 
 			{Vec3 ret=*this; ret/=rhs; return ret;}
+		
+		constexpr Vec3 cross(const Vec3& rhs) const
+		{
+			return {
+				y*rhs.z - z*rhs.y,
+				z*rhs.x - x*rhs.z,
+				x*rhs.y - y*rhs.x,
+			};
+		}
+
+		constexpr Vec3 normalized() const
+		{
+			return (*this) / this->length();
+		}
 
 		constexpr bool operator==(const Vec3& rhs) const 
 			{return x==rhs.x && y==rhs.y && z==rhs.z;}

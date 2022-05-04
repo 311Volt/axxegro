@@ -41,6 +41,14 @@ namespace al {
 			: Color(0,0,0,0)
 		{}
 
+		Color(const ALLEGRO_COLOR& c)
+		{
+			this->r = c.r;
+			this->g = c.g;
+			this->b = c.b;
+			this->a = c.a;
+		}
+
 		/** Returns all channel values as a tuple of bytes. */
 		constexpr std::tuple<uint8_t,uint8_t,uint8_t,uint8_t> rgbaU8() const
 		{

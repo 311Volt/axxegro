@@ -99,6 +99,9 @@ namespace al {
 		///@return Dimensions of the display in pixels.
 		Vec2<int> size() const;
 
+		///@return Aspect ratio of the display (e.g. ~1.33 for 640x480)
+		double aspectRatio() const;
+
 		///@return A rectangle starting at (0,0) and ending at (width,height).
 		Rect<int> rect() const;
 

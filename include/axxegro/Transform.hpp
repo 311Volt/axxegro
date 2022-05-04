@@ -7,7 +7,8 @@
 
 
 namespace al {
-
+	constexpr double RAD2DEG = 180.0 / ALLEGRO_PI;
+	constexpr double DEG2RAD = 1.0 / RAD2DEG;
 	/**
 	 * @brief Wraps around ALLEGRO_TRANSFORM.
 	 * A pointer to al::Transform is also a valid pointer
@@ -39,17 +40,21 @@ namespace al {
 		static Transform Identity();
 
 		/// @brief Shorthand for Eye().rotate(theta).scale(scale).translate(translation).
-		static Transform Build(float theta, const Vec2<float>& scale, const Vec2<float>& translation);
+		static Transform Build(float theta, Vec2<float> scale, Vec2<float> translation);
 
 		/// @brief See al_build_camera_transform.
-		static Transform Camera(const Vec3<float>& pos, const Vec3<float>& look, const Vec3<float>& up);
+		static Transform Camera(Vec3<float> pos, Vec3<float> look, Vec3<float> up);
 
 		/// @brief See al_orthographic_transform.
-		static Transform Orthographic(const Vec2<float>& leftTop, const Vec2<float> rightBottom, float near, float far);
+		static Transform Orthographic(Vec2<float> leftTop, Vec2<float> rightBottom, float near, float far);
 
 		/// @brief See al_perspective_transform.
-		static Transform Perspective(const Vec2<float>& leftTop, const Vec2<float> rightBottom, float near, float far);
+		static Transform Perspective(Vec2<float> leftTop, Vec2<float> rightBottom, float near, float far);
 
+		static Transform PerspectiveHFOV(float aspect, float hFOV, float near, float far);
+
+		static Transform PerspectiveFOV(float aspect, float vFOV, float near, float far);
+		
 		/// @brief Invert the 2D transformation. checkInverse() can be used to check for singularity.
 		Transform& invert();
 
@@ -57,22 +62,22 @@ namespace al {
 		Transform& transpose();
 
 		/// @brief Translates the transformation by a given 2D vector.
-		Transform& translate(const Vec2<float>& v);
+		Transform& translate(Vec2<float> v);
 
 		/// @brief Scales the transformation by a given 2D vector.
-		Transform& scale(const Vec2<float>& scale);
+		Transform& scale(Vec2<float> scale);
 
 		/// @brief Rotates the transformation by a given 2D vector.
 		Transform& rotate(float theta);
 
 		/// @brief Translates the transformation by a given 3D vector.
-		Transform& translate(const Vec3<float>& v);
+		Transform& translate(Vec3<float> v);
 		
 		/// @brief Scales the transformation by a given 3D vector.
-		Transform& scale(const Vec3<float>& scale);
+		Transform& scale(Vec3<float> scale);
 
 		/// @brief Rotates the transformation by a given 3D vector.
-		Transform& rotate(const Vec3<float>& center, float theta);
+		Transform& rotate(Vec3<float> center, float theta);
 		
 		/// @brief Apply a horizontal shear for a 2D transform.
 		Transform& horizontalShear(float theta);
@@ -81,27 +86,27 @@ namespace al {
 		Transform& verticalShear(float theta);
 		
 		/// @brief Transforms 2D coordinates.
-		Coord2<float> transform(const Coord2<float>& v) const;
+		Coord2<float> transform(Coord2<float> v) const;
 
 		/// @brief Transforms 3D coordinates. Use transformProjective() for projection transforms.
-		Coord3<float> transform(const Coord3<float>& v) const;
+		Coord3<float> transform(Coord3<float> v) const;
 
 		/// @brief Transforms 4D coordinates.
-		Coord4<float> transform(const Coord4<float>& v) const;
+		Coord4<float> transform(Coord4<float> v) const;
 
 		/// @brief https://liballeg.org/a5docs/trunk/transformations.html#al_transform_coordinates_3d_projective
-		Coord3<float> transformProjective(const Coord3<float>& v) const;
+		Coord3<float> transformProjective(const Coord3<float> v) const;
 
 		/// @brief Same as transform(Coord2<>).
-		Coord2<float> operator()(const Coord2<float>& v) const 
+		Coord2<float> operator()(Coord2<float> v) const 
 			{return transform(v);}
 
-		/// @brief Same as transform(Coord3<>).
-		Coord3<float> operator()(const Coord3<float>& v) const
+		/// @brief Same as transform(Coord3<>). Use transformProjective() for projection transforms.
+		Coord3<float> operator()(Coord3<float> v) const
 			{return transform(v);}
 
 		/// @brief Same as transform(Coord4<>).
-		Coord4<float> operator()(const Coord4<float>& v) const 
+		Coord4<float> operator()(Coord4<float> v) const 
 			{return transform(v);}
 		
 		/// @brief Multiplies the transformation matrix by `other`.
@@ -113,7 +118,11 @@ namespace al {
 		/// @returns The composition of two transformations.
 		Transform operator*(const Transform& rhs) {Transform n(*this); n*=rhs; return n;}
 
-		/// @brief Check if the transformation is invertible (return 1 if yes, 0 if not)
+		/**
+		 * @brief Check if 2D transform is invertible.
+		 * @return true if transform is invertible
+		 * @return false if transform is not invertible
+		 */
 		bool checkInverse(float tolerance = 1e-7) const;
 
 	#ifdef AXXEGRO_TRUSTED

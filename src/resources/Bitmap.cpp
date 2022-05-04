@@ -183,6 +183,11 @@ al::Bitmap al::Bitmap::clone() const
 	return Bitmap(al_clone_bitmap(ptr()));
 }
 
+int al::Bitmap::GetNewBitmapFlags()
+{
+	return al_get_new_bitmap_flags();
+}
+
 void al::Bitmap::SetNewBitmapFlags(int flags)
 {
 	al_set_new_bitmap_flags(flags);
@@ -267,6 +272,15 @@ void al::CTargetBitmap::useTransform(const al::Transform& transform)
 void al::CTargetBitmap::useProjectionTransform(const al::Transform& transform)
 {
 	al_use_projection_transform(&transform);
+}
+
+void al::CTargetBitmap::resetTransform()
+{
+	useTransform(al::Transform::Identity());
+}
+void al::CTargetBitmap::resetProjection()
+{
+	useProjectionTransform(al::Transform::Orthographic({0,0}, {size()}, -1, 1));
 }
 
 al::Transform al::CTargetBitmap::currentTransform()

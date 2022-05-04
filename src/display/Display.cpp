@@ -78,6 +78,11 @@ al::Rect<int> al::Display::rect() const
 	return {{0,0}, size()};
 }
 
+double al::Display::aspectRatio() const
+{
+	return double(width()) / double(height());
+}
+
 int al::Display::getRefreshRate() const
 {
 	return al_get_display_refresh_rate(ptr());

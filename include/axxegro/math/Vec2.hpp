@@ -52,6 +52,10 @@ namespace al {
 		constexpr T dist(const Vec2& rhs) const
 			{return (*this - rhs).length();}
 		
+		constexpr Vec2 normalized() const
+		{
+			return (*this) / this->length();
+		}
 		
 		Vec2& apply(std::function<T(T)> fn)
 		{

@@ -97,8 +97,26 @@ namespace al {
 		 */
 		Bitmap clone() const;
 
+		static int GetNewBitmapFlags();
 		static void SetNewBitmapFlags(int flags);
 	protected:
+	};
+	
+	/**
+	 * @brief Provides a RAII-style mechanism for setting new bitmap flags.
+	 */
+	class ScopedNewBitmapFlags {
+		int oldFlags;
+	public:
+		ScopedNewBitmapFlags(int newFlags)
+		{
+			oldFlags = Bitmap::GetNewBitmapFlags();
+			Bitmap::SetNewBitmapFlags(newFlags);
+		}
+		~ScopedNewBitmapFlags()
+		{
+			Bitmap::SetNewBitmapFlags(oldFlags);
+		}
 	};
 
 	/**
@@ -165,6 +183,9 @@ namespace al {
 		 */
 		void useProjectionTransform(const Transform& transform);
 		
+		void resetTransform();
+		void resetProjection();
+
 		Transform currentTransform();
 		Transform currentInverseTransform();
 		Transform currentProjectionTransform();
