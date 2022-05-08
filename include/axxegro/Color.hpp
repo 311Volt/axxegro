@@ -12,11 +12,12 @@
 #include <type_traits>
 
 #include <allegro5/allegro.h>
-#include <allegro5/color.h>
+#include <allegro5/allegro_color.h>
+
+#include <axxegro/math/math.hpp>
 
 namespace al {
 
-	//TODO literals 
 	
 	class Color: public ALLEGRO_COLOR {
 	private:
@@ -143,6 +144,9 @@ namespace al {
 	 * The upper 4 bits are ignored. */
 	constexpr Color CGA(uint8_t c)
 	{
+		if(c==6) {
+			return U32_RGB(0xAA5500);
+		}
 		uint32_t b = -((c&1) != 0);
 		uint32_t g = -((c&2) != 0);
 		uint32_t r = -((c&4) != 0);
@@ -150,14 +154,65 @@ namespace al {
 		return U32_RGB((r&0xAA0000) | (g&0x00AA00) | (b&0x0000AA) | (i&0x555555));
 	}
 
-	constexpr Color Black =   U32_RGB(0x000000);
-	constexpr Color Blue =    U32_RGB(0x0000FF);
-	constexpr Color Green =   U32_RGB(0x00FF00);
-	constexpr Color Cyan =    U32_RGB(0x00FFFF);
-	constexpr Color Red =     U32_RGB(0xFF0000);
-	constexpr Color Magenta = U32_RGB(0xFF00FF);
-	constexpr Color Yellow =  U32_RGB(0xFFFF00);
-	constexpr Color White =   U32_RGB(0xFFFFFF);
+	constexpr Color Black = CGA(0);
+	constexpr Color Blue = CGA(1);
+	constexpr Color Green = CGA(2);
+	constexpr Color Cyan = CGA(3);
+	constexpr Color Red = CGA(4);
+	constexpr Color Magenta = CGA(5);
+	constexpr Color Brown = CGA(6);
+	constexpr Color LightGray = CGA(7);
+	
+	constexpr Color DarkGray = CGA(8);
+	constexpr Color LightBlue = CGA(9);
+	constexpr Color LightGreen = CGA(10);
+	constexpr Color LightCyan = CGA(11);
+	constexpr Color LightRed = CGA(12);
+	constexpr Color LightMagenta = CGA(13);
+	constexpr Color Yellow = CGA(14);
+	constexpr Color White = CGA(15);
+	
+	constexpr Color PureBlue =    U32_RGB(0x0000FF);
+	constexpr Color PureGreen =   U32_RGB(0x00FF00);
+	constexpr Color PureCyan =    U32_RGB(0x00FFFF);
+	constexpr Color PureRed =     U32_RGB(0xFF0000);
+	constexpr Color PureMagenta = U32_RGB(0xFF00FF);
+	constexpr Color PureYellow =  U32_RGB(0xFFFF00);
+
+	namespace ColorCoord {
+		
+		struct CMYK: public Vec4<float> {
+			CMYK(Color c){al_color_rgb_to_cmyk(c.r, c.g, c.b, &x, &y, &z, &w);}
+			Color asRGB(){return al_color_cmyk(x, y, z, w);}
+		};
+
+		#define AXXEGRO_COLOR_SPACE(clsname, fnfrom, fnto) struct clsname: public Vec3<float> { \
+			clsname(Color c){fnfrom(c.r, c.g, c.b, &x, &y, &z);} \
+			Color asRGB() {return fnto(x, y, z);} \
+		}
+
+		AXXEGRO_COLOR_SPACE(HSL, al_color_rgb_to_hsl, al_color_hsl);
+		AXXEGRO_COLOR_SPACE(HSV, al_color_rgb_to_hsv, al_color_hsv);
+		AXXEGRO_COLOR_SPACE(XYZ, al_color_rgb_to_xyz, al_color_xyz);
+		AXXEGRO_COLOR_SPACE(XYY, al_color_rgb_to_xyy, al_color_xyy);
+		AXXEGRO_COLOR_SPACE(LAB, al_color_rgb_to_lab, al_color_lab);
+		AXXEGRO_COLOR_SPACE(LCH, al_color_rgb_to_lch, al_color_lch);
+		AXXEGRO_COLOR_SPACE(YUV, al_color_rgb_to_yuv, al_color_yuv);
+
+	//for future 5.2.8 release
+#if ALLEGRO_VERSION_INT >= AL_ID(5,2,8,1)
+		AXXEGRO_COLOR_SPACE(Oklab, al_color_rgb_to_oklab, al_color_oklab);
+		AXXEGRO_COLOR_SPACE(LnearRGB, al_color_rgb_to_linear, al_color_linear);
+#endif
+
+	}
+	
+	namespace ColorLiterals {
+		constexpr Color operator""_RGB(unsigned long long color)
+		{
+			return U32_RGB(color);
+		}
+	}
 }
 
 #endif /* INCLUDE_AXXEGRO_COLOR */

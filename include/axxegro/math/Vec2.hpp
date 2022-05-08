@@ -9,6 +9,9 @@ namespace al {
 	template<typename T = float>
 	class Vec2 {
 	public:
+		static constexpr unsigned NumElements = 2;
+		using ValueType = T;
+
 		T x, y;
 
 		constexpr Vec2():x(T(0)),y(T(0)){}

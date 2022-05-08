@@ -42,6 +42,7 @@ namespace al {
 
 	template<typename T>
 	struct Deleter {
+		//supposed to be always false but this is good enough
 		static_assert(std::is_same_v<T, void>, "Deleter for T not defined. Use AXXEGRO_DEFINE_DELETER");
 	};
 

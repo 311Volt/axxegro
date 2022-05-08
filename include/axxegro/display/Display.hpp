@@ -93,7 +93,7 @@ namespace al {
 		///@return Height of the display in pixels;
 		int height() const;
 
-		///@return Refresh rate of the display in Hz.
+		///@return Refresh rate of the display in Hz. Keep in mind that THIS RETURNS 0 FOR WINDOWED DISPLAYS
 		int getRefreshRate() const;
 
 		///@return Dimensions of the display in pixels.

@@ -5,6 +5,7 @@
 #include "Color.hpp"
 #include "UStr.hpp"
 #include "Transform.hpp"
+#include "Shader.hpp"
 #include "display/Display.hpp"
 #include "resources/Bitmap.hpp"
 #include "resources/Font.hpp"

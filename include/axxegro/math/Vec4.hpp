@@ -9,6 +9,9 @@ namespace al {
 	template<typename T = float>
 	class Vec4 {
 	public:
+		static constexpr unsigned NumElements = 4;
+		using ValueType = T;
+
 		T x, y, z, w;
 
 		constexpr Vec4():x(T(0)),y(T(0)),z(T(0)), w(T(0)){}
