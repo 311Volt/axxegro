@@ -30,6 +30,11 @@ void al::Shader::build()
     }
 }
 
+void al::Shader::Reset()
+{
+    al_use_shader(nullptr);
+}
+
 const char* al::Shader::getLog() const
 {
     return al_get_shader_log(ptr());

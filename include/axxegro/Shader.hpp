@@ -35,6 +35,8 @@ namespace al {
         ALLEGRO_SHADER_PLATFORM getPlatform() const;
         bool use();
 
+        static void Reset();
+
         static inline std::string GetDefaultSource(ALLEGRO_SHADER_PLATFORM platform, ALLEGRO_SHADER_TYPE type)
         {
             const char* src = al_get_default_shader_source(platform, type);
