@@ -2,6 +2,7 @@
 #define AXXEGRO_TRUSTED
 
 #include <axxegro/Transform.hpp>
+#include <axxegro/display/Display.hpp>
 
 #include <allegro5/allegro.h>
 
@@ -78,8 +79,11 @@ al::Transform al::Transform::Perspective(al::Vec2<float> leftTop, al::Vec2<float
 }
 
 
-al::Transform al::Transform::PerspectiveFOV(float aspect, float vFOV, float near, float far)
+al::Transform al::Transform::PerspectiveFOV(float vFOV, float near, float far, float aspect)
 {
+	if(aspect < 0.0f) {
+		aspect = al::CurrentDisplay.aspectRatio();
+	}
 	if(vFOV <= 0.0f || vFOV >= 180.0f) {
 		throw std::invalid_argument(fmt::format("Invalid vertical FOV value: {:.2f} degrees", vFOV));
 	}
@@ -93,8 +97,11 @@ al::Transform al::Transform::PerspectiveFOV(float aspect, float vFOV, float near
 	);
 }
 
-al::Transform al::Transform::PerspectiveHFOV(float aspect, float hFOV, float near, float far)
+al::Transform al::Transform::PerspectiveHFOV(float hFOV, float near, float far, float aspect)
 {
+	if(aspect < 0.0f) {
+		aspect = al::CurrentDisplay.aspectRatio();
+	}
 	if(hFOV <= 0.0f || hFOV >= 180.0f) {
 		throw std::invalid_argument(fmt::format("Invalid horizontal FOV value: {:.2f} degrees", hFOV));
 	}

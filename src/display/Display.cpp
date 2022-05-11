@@ -140,6 +140,16 @@ const al::EventSource& al::Display::eventSource()
 	return *ptrEventSource;
 }
 
+bool al::Display::setCursor(al::MouseCursor &cur)
+{
+	return al_set_mouse_cursor(ptr(), cur.ptr());
+}
+
+bool al::Display::setSystemCursor(ALLEGRO_SYSTEM_MOUSE_CURSOR id)
+{
+	return al_set_system_mouse_cursor(ptr(), id);
+}
+
 const al::Bitmap& al::Display::backbuffer() const
 {
 	return *ptrBackbuffer;
@@ -155,7 +165,10 @@ int al::Display::findFramerateCap()
 			ret = std::max(ret, mode.refresh_rate);
 		}
 	}
-	return std::clamp(ret, 30, 300);
+	if(ret == 0) {
+		return 300;
+	}
+	return std::clamp(ret, 60, 300);
 }
 
 void al::TCurrentDisplay::flip()

@@ -6,12 +6,15 @@ int main()
     std::set_terminate(al::Terminate); //for a nice error message if there's an exception
     al::FullInit();
 
+    //the rest is pretty self-explanatory, I think
+
     al::Display disp(800, 600, ALLEGRO_OPENGL);
 
     auto evLoop = al::EventLoop::Basic();
     evLoop.enableEscToQuit();
 
     al::Shader sh;
+    
     sh.attachPixelShader(R"(
         #ifdef GL_ES
         precision mediump float;
@@ -42,14 +45,14 @@ int main()
         al::TargetBitmap.clearToColor(al::Black);
 
         al::Shader::SetVector("scr_size", al::CurrentDisplay.size());
-        al::Shader::SetVector("mouse_pos", al::mouse::GetPos());
+        al::Shader::SetVector("mouse_pos", al::GetMousePos());
         
         al::DrawFilledRectangle(al::CurrentDisplay.rect());
 
         al::CurrentDisplay.flip();
     };
 
-    evLoop.enableClock(disp.findFramerateCap());
+    evLoop.enableFramerateLimit(disp.findFramerateCap());
     evLoop.run();
 
     return 0;

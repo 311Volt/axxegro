@@ -2,56 +2,52 @@
 
 #include <axxegro/io/Mouse.hpp>
 
-al::mouse::Cursor::Cursor(const Bitmap& bmp, Coord<int> focus)
+al::MouseCursor::MouseCursor(const Bitmap& bmp, Coord<int> focus)
 	: Resource(al_create_mouse_cursor(bmp.ptr(), focus.x, focus.y))
 {
 	
 }
 
 
-unsigned al::mouse::GetNumAxes()
+unsigned al::GetNumAxes()
 {
 	return al_get_mouse_num_axes();
 }
-unsigned al::mouse::GetNumButtons()
+unsigned al::GetNumButtons()
 {
 	return al_get_mouse_num_buttons();
 }
 
-al::mouse::State al::mouse::GetState()
+al::MouseState al::GetMouseState()
 {
-	State ret;
+	MouseState ret;
 	al_get_mouse_state(&ret);
 	return ret;
 }
 
-bool al::mouse::IsButtonDown(Btn btn)
+bool al::IsButtonDown(al::MouseButton btn)
 {
-	return IsButtonDown(GetState(), btn);
-}
-bool al::mouse::IsButtonDown(State state, Btn btn)
-{
-	return al_mouse_button_down(&state, int(btn));
+	return GetMouseState().isButtonDown(btn);
 }
 
-bool al::mouse::SetPos(Coord<int> p)
+bool al::SetMousePos(Coord<int> p)
 {
 	return al_set_mouse_xy(al_get_current_display(), int(p.x), int(p.y));
 }
-al::Coord<int> al::mouse::GetPos()
+al::Coord<int> al::GetMousePos()
 {
-	State st = GetState();
+	MouseState st = GetMouseState();
 	return {st.x, st.y};
 }
-al::Coord<int> al::mouse::GetDesktopPos()
+al::Coord<int> al::GetMouseDesktopPos()
 {
 	int x,y;
 	al_get_mouse_cursor_position(&x, &y);
 	return {x, y};
 }
 
-al::mouse::MouseEventSource axxMouseEventSource;
-const al::EventSource& al::mouse::GetEventSource()
+al::MouseEventSource axxMouseEventSource;
+const al::EventSource& al::GetMouseEventSource()
 {
 	return axxMouseEventSource;
 }

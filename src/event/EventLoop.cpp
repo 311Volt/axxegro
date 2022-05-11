@@ -30,7 +30,7 @@ al::EventLoop::~EventLoop()
 }
 
 
-void al::EventLoop::enableClock(double freq)
+void al::EventLoop::enableFramerateLimit(double freq)
 {
 	clockTimer = std::make_unique<Timer>(FreqToPeriod(freq));
 	clockEventQueue.registerSource(clockTimer->getEventSource());
@@ -43,8 +43,8 @@ void al::EventLoop::disableClock()
 
 void al::EventLoop::initDefaultEventQueue()
 {
-	eventQueue.registerSource(keyb::GetEventSource());
-	eventQueue.registerSource(mouse::GetEventSource());
+	eventQueue.registerSource(GetMouseEventSource());
+	eventQueue.registerSource(GetKeyboardEventSource());
 	eventQueue.registerSource(al::CurrentDisplay.eventSource());
 }
 void al::EventLoop::initDefaultDispatcher()
@@ -60,7 +60,7 @@ void al::EventLoop::initDefaultDispatcher()
 
 void al::EventLoop::enableEscToQuit()
 {
-	auto keycodeDiscretizer = eventDispatcher.addDiscretizer({ALLEGRO_EVENT_KEY_DOWN, [this](const ALLEGRO_EVENT& ev){
+	auto keycodeDiscretizer = eventDispatcher.addDiscretizer({ALLEGRO_EVENT_KEY_DOWN, [](const ALLEGRO_EVENT& ev){
 		return ev.keyboard.keycode;
 	}});
 
@@ -101,4 +101,9 @@ void al::EventLoop::run()
 		tick++;
 	}
 	exitFlag = false;
+}
+
+void al::EventLoop::setExitFlag()
+{
+	exitFlag = true;
 }

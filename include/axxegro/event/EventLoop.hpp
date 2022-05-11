@@ -27,13 +27,15 @@ namespace al {
 		EventDispatcher eventDispatcher;
 		std::function<void(void)> loopBody;
 
-		void enableClock(double freq);
+		void enableFramerateLimit(double freq);
 		void disableClock();
 
 		void initDefaultEventQueue();
 		void initDefaultDispatcher();
 		void enableEscToQuit();
 		void run();
+
+		void setExitFlag();
 
 		static EventLoop Basic();
 

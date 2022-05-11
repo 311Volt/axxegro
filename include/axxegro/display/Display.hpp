@@ -159,7 +159,7 @@ namespace al {
 		 * @return true on success 
 		 * @return false on failure
 		 */
-		bool setCursor(mouse::Cursor& cur);
+		bool setCursor(MouseCursor& cur);
 
 		/**
 		 * @brief Sets the mouse cursor to one of the OS's predefined cursors.
@@ -169,7 +169,7 @@ namespace al {
 		 * @return true 
 		 * @return false 
 		 */
-		bool setSystemCursor(int id);
+		bool setSystemCursor(ALLEGRO_SYSTEM_MOUSE_CURSOR id);
 
 		///@brief Hides the mouse cursor.
 		void hideCursor();
@@ -191,10 +191,11 @@ namespace al {
 
 		/**
 		 * @brief Tries to find a reasonable default for a framerate limiter.
-		 * @returns A number between 30 and 300. If the display is fullscreen,
+		 * @returns A number between 60 and 300. If the display is fullscreen,
 		 * the display's refresh rate is returned. Otherwise, it returns
 		 * the highest refresh rate of any video mode returned by GetDisplayModes().
-		 * The return value is clamped between 30 and 300.
+		 * If that fails, it returns 300.
+		 * The return value is clamped between 60 and 300.
 		 */
 		int findFramerateCap();
 

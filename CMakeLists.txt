@@ -4,10 +4,6 @@ project(axxegro VERSION 0.1.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-include(CTest)
-enable_testing()
-
-
 
 file(GLOB_RECURSE AXXEGRO_SOURCES "src/*.cpp")
 
@@ -15,11 +11,12 @@ file(GLOB_RECURSE AXXEGRO_SOURCES "src/*.cpp")
 
 get_filename_component(AXXEGRO_DEPS_LIB "deps/lib" ABSOLUTE)
 
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -pedantic")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
+
 set(AXXEGRO_WIN64 OFF)
 if(WIN32)
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -pedantic")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
-	
 	if(NOT AXXEGRO_WIN64)
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
@@ -28,7 +25,6 @@ endif()
 
 
 add_library(${PROJECT_NAME} ${AXXEGRO_SOURCES})
-# target_link_libraries(${PROJECT_NAME} LINK_PUBLIC fmt)
 
 target_include_directories(${PROJECT_NAME} PUBLIC "deps/include")
 target_include_directories(${PROJECT_NAME} PUBLIC "include")
@@ -57,6 +53,5 @@ if(DOXYGEN_FOUND)
 else(DOXYGEN_FOUND)
 	message("Doxygen not found, won't generate docs")
 endif(DOXYGEN_FOUND)
-
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)

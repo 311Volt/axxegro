@@ -51,9 +51,9 @@ namespace al {
 		/// @brief See al_perspective_transform.
 		static Transform Perspective(Vec2<float> leftTop, Vec2<float> rightBottom, float near, float far);
 
-		static Transform PerspectiveHFOV(float aspect, float hFOV, float near, float far);
+		static Transform PerspectiveHFOV(float hFOV, float near, float far, float aspect = -1.0f);
 
-		static Transform PerspectiveFOV(float aspect, float vFOV, float near, float far);
+		static Transform PerspectiveFOV(float vFOV, float near, float far, float aspect = -1.0f);
 		
 		/// @brief Invert the 2D transformation. checkInverse() can be used to check for singularity.
 		Transform& invert();
