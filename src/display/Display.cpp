@@ -126,7 +126,7 @@ std::optional<std::string> al::Display::getClipboardText() const
 	std::string ret;
 	char* buf = al_get_clipboard_text(ptr());
 	if(buf) {
-		ret = {buf};
+		ret = buf;
 		al_free(buf);
 	} else {
 		return std::nullopt;

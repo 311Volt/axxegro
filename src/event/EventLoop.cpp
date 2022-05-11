@@ -37,7 +37,7 @@ void al::EventLoop::enableClock(double freq)
 }
 void al::EventLoop::disableClock()
 {
-	clockTimer.release();
+	clockTimer.reset();
 }
 
 void al::EventLoop::initDefaultEventQueue()
