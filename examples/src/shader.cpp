@@ -11,8 +11,8 @@ int main()
     auto evLoop = al::EventLoop::Basic();
     evLoop.enableEscToQuit();
 
-    al::Shader sh(ALLEGRO_SHADER_GLSL);
-    sh.attachSourceCode(R"(
+    al::Shader sh;
+    sh.attachPixelShader(R"(
         #ifdef GL_ES
         precision mediump float;
         #endif
@@ -32,15 +32,14 @@ int main()
             gl_FragColor = tmp;
         }
 
-    )", ALLEGRO_PIXEL_SHADER);
+    )");
     
     sh.build();
-
     sh.use();
 
     evLoop.loopBody = [&](){
         using namespace al::ColorLiterals;
-        al::TargetBitmap.clearToColor(0x001050_RGB);
+        al::TargetBitmap.clearToColor(al::Black);
 
         al::Shader::SetVector("scr_size", al::CurrentDisplay.size());
         al::Shader::SetVector("mouse_pos", al::mouse::GetPos());

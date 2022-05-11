@@ -22,10 +22,30 @@ namespace al {
 
 	class Shader: public Resource<ALLEGRO_SHADER> {
 	public:
-		Shader(ALLEGRO_SHADER_PLATFORM platform);
+		Shader(ALLEGRO_SHADER_PLATFORM platform = ALLEGRO_SHADER_AUTO);
 
 		void attachSourceCode(const std::string& src, ALLEGRO_SHADER_TYPE type);
 		void attachSourceFile(const std::string& filename, ALLEGRO_SHADER_TYPE type);
+
+		inline void attachPixelShader(const std::string& src)
+		{
+			attachSourceCode(src, ALLEGRO_PIXEL_SHADER);
+		}
+
+		inline void attachVertexShader(const std::string& src)
+		{
+			attachSourceCode(src, ALLEGRO_VERTEX_SHADER);
+		}
+
+		inline void attachPixelShaderFile(const std::string& filename)
+		{
+			attachSourceFile(filename, ALLEGRO_PIXEL_SHADER);
+		}
+
+		inline void attachVertexShaderFile(const std::string& filename)
+		{
+			attachSourceFile(filename, ALLEGRO_VERTEX_SHADER);
+		}
 
 		void build();
 

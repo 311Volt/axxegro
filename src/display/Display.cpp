@@ -152,7 +152,6 @@ int al::Display::findFramerateCap()
 		auto modes = GetDisplayModes();
 		ret = 0;
 		for(auto& mode: modes) {
-			int bits = al_get_pixel_format_bits(mode.format);
 			ret = std::max(ret, mode.refresh_rate);
 		}
 	}

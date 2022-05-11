@@ -17,10 +17,12 @@ get_filename_component(AXXEGRO_DEPS_LIB "deps/lib" ABSOLUTE)
 
 set(AXXEGRO_WIN64 OFF)
 if(WIN32)
-	set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -pedantic")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
+	
 	if(NOT AXXEGRO_WIN64)
-		set(CMAKE_C_FLAGS "-m32")
-		set(CMAKE_CXX_FLAGS "-m32")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
 	endif()
 endif()
 
