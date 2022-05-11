@@ -99,7 +99,7 @@ al::Transform al::Transform::PerspectiveHFOV(float aspect, float hFOV, float nea
 		throw std::invalid_argument(fmt::format("Invalid horizontal FOV value: {:.2f} degrees", hFOV));
 	}
 	
-	float vFOV = 2.0f * std::atan(std::tan(vFOV*0.5 * DEG2RAD) / aspect) * RAD2DEG;
+	float vFOV = 2.0f * std::atan(std::tan(hFOV*0.5 * DEG2RAD) / aspect) * RAD2DEG;
 	return PerspectiveFOV(aspect, vFOV, near, far);
 }
 
