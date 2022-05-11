@@ -189,6 +189,15 @@ namespace al {
 		///@brief Returns the display's event source.
 		const EventSource& eventSource();
 
+		/**
+		 * @brief Tries to find a reasonable default for a framerate limiter.
+		 * @returns A number between 30 and 300. If the display is fullscreen,
+		 * the display's refresh rate is returned. Otherwise, it returns
+		 * the highest refresh rate of any video mode returned by GetDisplayModes().
+		 * The return value is clamped between 30 and 300.
+		 */
+		int findFramerateCap();
+
 	protected:
 		void initPointers();
 	private:
@@ -216,7 +225,7 @@ namespace al {
 		}
 	};
 
-	
+
 
 	extern TCurrentDisplay CurrentDisplay;
 }

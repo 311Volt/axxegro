@@ -48,7 +48,7 @@ namespace al {
 
 	#define AXXEGRO_DEFINE_DELETER(type, delfn) \
 		template<> struct Deleter<type>{ \
-			void operator()(type* p){delfn(p);} \
+			inline void operator()(type* p){delfn(p);} \
 		}
 
 	template<typename T, typename Deleter = ::al::Deleter<T>>

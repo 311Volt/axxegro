@@ -1,3 +1,4 @@
+#include "axxegro/display/DisplayModes.hpp"
 #define AXXEGRO_TRUSTED
 
 #include <axxegro/display/Display.hpp>
@@ -144,6 +145,19 @@ const al::Bitmap& al::Display::backbuffer() const
 	return *ptrBackbuffer;
 }
 
+int al::Display::findFramerateCap()
+{
+	int ret = getRefreshRate();
+	if(ret == 0) {
+		auto modes = GetDisplayModes();
+		ret = 0;
+		for(auto& mode: modes) {
+			int bits = al_get_pixel_format_bits(mode.format);
+			ret = std::max(ret, mode.refresh_rate);
+		}
+	}
+	return std::clamp(ret, 30, 300);
+}
 
 void al::TCurrentDisplay::flip()
 {

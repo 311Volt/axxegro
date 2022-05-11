@@ -55,8 +55,8 @@ int main()
 		al::CurrentDisplay.flip();
 	};
 
-	//enable the frame limiter (240 fps)
-	evLoop.enableClock(240);
+	//enable the frame limiter
+	evLoop.enableClock(disp.findFramerateCap());
 
 	evLoop.run();
 }

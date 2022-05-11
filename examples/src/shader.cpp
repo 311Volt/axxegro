@@ -1,32 +1,15 @@
 #include <allegro5/allegro_native_dialog.h>
 #include <axxegro/axxegro.hpp>
 
-void OnError()
-{
-    try {
-        std::rethrow_exception(std::current_exception());
-    } catch(std::exception& e) {
-        al_show_native_message_box(
-            nullptr, 
-            "Error", 
-            "", 
-            e.what(), 
-            "", 
-            ALLEGRO_MESSAGEBOX_ERROR
-        );
-    }
-    std::abort();
-}
-
 int main()
 {
+    std::set_terminate(al::Terminate); //for a nice error message if there's an exception
     al::FullInit();
+
     al::Display disp(800, 600, ALLEGRO_OPENGL);
 
     auto evLoop = al::EventLoop::Basic();
     evLoop.enableEscToQuit();
-
-    std::set_terminate(OnError);
 
     al::Shader sh(ALLEGRO_SHADER_GLSL);
     sh.attachSourceCode(R"(
@@ -67,7 +50,7 @@ int main()
         al::CurrentDisplay.flip();
     };
 
-    evLoop.enableClock(60);
+    evLoop.enableClock(disp.findFramerateCap());
     evLoop.run();
 
     return 0;
