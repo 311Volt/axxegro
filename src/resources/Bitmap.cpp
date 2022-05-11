@@ -5,6 +5,7 @@
 
 #include <stdexcept>
 
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 
 al::CTargetBitmap al::TargetBitmap;

@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <limits>
 
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 
 al::EventDispatcher::EventDispatcher()

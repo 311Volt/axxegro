@@ -4,6 +4,7 @@
 #include <axxegro/UStr.hpp>
 #include <allegro5/allegro_ttf.h>
 
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 
 al::Font::Font()

@@ -1,6 +1,8 @@
 #include <axxegro/axxegro.hpp>
 
 #include <algorithm>
+
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 
 /**

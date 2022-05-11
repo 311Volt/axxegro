@@ -50,23 +50,6 @@ namespace al {
 		using Option = struct{int option, value;};
 
 		/**
-		 * @brief Construct a new Display object with default flags and options.
-		 * 
-		 * @param w Width in pixels.
-		 * @param h Height in pixels.
-		 */
-		Display(int w, int h);
-
-		/**
-		 * @brief Construct a new Display object with custom flags and default options
-		 * 
-		 * @param w Width in pixels.
-		 * @param h Height in pixels.
-		 * @param flags See: https://liballeg.org/a5docs/trunk/display.html#al_set_new_display_flags
-		 */
-		Display(int w, int h, int flags);
-
-		/**
 		 * @brief Construct a new Display object with custom flags and options.
 		 * For possible options, see: https://liballeg.org/a5docs/trunk/display.html#al_set_new_display_option
 		 * 
@@ -80,10 +63,10 @@ namespace al {
 		Display(
 			int w, 
 			int h, 
-			int flags, 
-			std::vector<Option> requiredOptions, 
-			std::vector<Option> suggestedOptions, 
-			std::vector<Option> dontCareOptions
+			int flags = 0, 
+			std::vector<Option> requiredOptions = {}, 
+			std::vector<Option> suggestedOptions = {}, 
+			std::vector<Option> dontCareOptions = {}
 		);
 		
 
@@ -232,6 +215,8 @@ namespace al {
 			return al_get_current_display();
 		}
 	};
+
+	
 
 	extern TCurrentDisplay CurrentDisplay;
 }

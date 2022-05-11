@@ -1,5 +1,6 @@
 #include <axxegro/axxegro.hpp>
 
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 #include <tcb/span.hpp>
 #include <cmath>

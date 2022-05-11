@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <unordered_set>
 
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 
 al::Config::Config()

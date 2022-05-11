@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <string>
 #include <queue>
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 
 /**

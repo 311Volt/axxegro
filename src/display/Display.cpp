@@ -3,6 +3,7 @@
 #include <axxegro/display/Display.hpp>
 #include <stdexcept>
 
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 
 al::TCurrentDisplay al::CurrentDisplay;
@@ -17,16 +18,6 @@ ALLEGRO_EVENT_SOURCE* al::DisplayEventSource::ptr() const
 	return al_get_display_event_source(disp.ptr());
 }
 
-al::Display::Display(int w, int h)
-	: Display(w, h, 0)
-{
-
-}
-al::Display::Display(int w, int h, int flags)
-	: Display(w, h, flags, {}, {}, {})
-{
-
-}
 al::Display::Display(int w, int h, int flags, std::vector<Option> requiredOptions, std::vector<Option> suggestedOptions, std::vector<Option> dontCareOptions)
 	: Resource(nullptr)
 {

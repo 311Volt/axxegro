@@ -7,6 +7,8 @@
 
 #include <cmath>
 #include <stdexcept>
+
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 
 al::Transform::Transform()

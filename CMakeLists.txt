@@ -7,28 +7,29 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 include(CTest)
 enable_testing()
 
-include_directories("deps/include")
-include_directories("include")
 
 
 file(GLOB_RECURSE AXXEGRO_SOURCES "src/*.cpp")
 
 # set(CMAKE_VERBOSE_MAKEFILE ON)
 
-get_filename_component(AXXEGRO_DEPS_LIB "deps/lib" REALPATH)
+get_filename_component(AXXEGRO_DEPS_LIB "deps/lib" ABSOLUTE)
 
+set(AXXEGRO_WIN64 OFF)
 if(WIN32)
-	set(CMAKE_C_FLAGS "-m32")
-	set(CMAKE_CXX_FLAGS "-m32 -Wall -Wextra -pedantic")
+	set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic")
+	if(AXXEGRO_WIN64)
+		set(CMAKE_C_FLAGS "-m32")
+		set(CMAKE_CXX_FLAGS "-m32")
+	endif()
 endif()
 
-add_subdirectory("fmt")
-include_directories("fmt/include")
-
-include_directories("tcbspan/include")
 
 add_library(${PROJECT_NAME} ${AXXEGRO_SOURCES})
-target_link_libraries(${PROJECT_NAME} LINK_PUBLIC fmt)
+# target_link_libraries(${PROJECT_NAME} LINK_PUBLIC fmt)
+
+target_include_directories(${PROJECT_NAME} PUBLIC "deps/include")
+target_include_directories(${PROJECT_NAME} PUBLIC "include")
 
 option(AXXEGRO_BUILD_EXAMPLES "Build example programs" ON)
 if(AXXEGRO_BUILD_EXAMPLES)
@@ -46,7 +47,7 @@ if(DOXYGEN_FOUND)
 	if(AXXEGRO_BUILD_DOCS)
 		doxygen_add_docs(
 			axxegro_docs
-			${CMAKE_CURRENT_SOURCE_DIR}/"include"
+			${CMAKE_CURRENT_SOURCE_DIR}/"include/axxegro"
 			ALL
 		)
 	endif()

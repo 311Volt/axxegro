@@ -28,7 +28,7 @@ loop.run(); //will run until window is closed
 ```
 
 
-# how to build
+# how to build with CMake
 Make sure to clone this project with submodules. Use:   
 ```bash
 mkdir build
@@ -50,6 +50,10 @@ Alternatively, you can supply your own build of Allegro. To do this, place as ne
 
 For Windows builds, the most recent MinGW-w64 based build of [TDM-GCC](https://jmeubank.github.io/tdm-gcc/download/) is recommended. (tip for VSCode users: make a copy of the toolset's `mingw32-make.exe` and call it `make.exe` so that `cmake.generator` can be set automatically)
 
+# using the library without CMake
+You can also ignore the CMake stuff and simply add axxegro's sources and `include`
+as an include directory to your Allegro project. axxegro is ISO C++ and does not,
+nor will it ever need any special build options or code generation scripts.
 
 # docs
 Documentation will be generated and placed in `build/docs` if Doxygen is found

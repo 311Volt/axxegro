@@ -6,6 +6,7 @@
 #include <axxegro/time/Time.hpp>
 #include <axxegro/display/Display.hpp>
 
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 
 al::EventLoop::EventLoop()
