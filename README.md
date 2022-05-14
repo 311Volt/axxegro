@@ -33,13 +33,16 @@ loop.run(); //will run until window is closed
 For more examples, see examples/src.
 
 # how to build with CMake
-Make sure to clone this project with submodules. Use:   
+Use:   
 ```bash
 mkdir build
 cd build
 cmake ..
 make # -jXX
 ```
+
+By default, example programs will be built. Disable `AXXEGRO_BUILD_EXAMPLES`
+or build just the `axxegro` target if you don't want that.
 
 Any programs that use axxegro will also need Allegro linked separately, including
 the examples. 

@@ -24,14 +24,14 @@ int main()
         uniform ivec2 mouse_pos;
 
 
-        //cyan glow around the mouse cursor
+        //green glow around the mouse cursor
         void main()
         {
             vec2 p = gl_FragCoord.xy;
             vec2 mp = vec2(mouse_pos.x, scr_size.y-mouse_pos.y);
             float k = distance(p, mp);
             vec4 tmp = vec4(0.0, 0.0, 0.0, 1.0);
-            tmp.gb = exp(-k/100.0);
+            tmp.g = exp(-k/100.0);
             gl_FragColor = tmp;
         }
 
