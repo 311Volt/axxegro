@@ -78,13 +78,10 @@ namespace al {
 		int end = -1
 	)
 	{
-		static std::optional<VertexDecl> vd = std::nullopt;
-		if(!vd) {
-			vd = VertexDecl::Init<VDecl>();
-		}
+		static VertexDecl vd = VertexDecl::Init<VDecl>();
 		al_draw_prim(
 			vertices.data(), 
-			vd->get(), 
+			vd.ptr(), 
 			texture ? texture->get().constPtr() : nullptr, 
 			start, 
 			end==-1 ? vertices.size() : end, 
@@ -100,13 +97,10 @@ namespace al {
 		ALLEGRO_PRIM_TYPE type = ALLEGRO_PRIM_TRIANGLE_LIST
 	)
 	{
-		static std::optional<VertexDecl> vd = std::nullopt;
-		if(!vd) {
-			vd = VertexDecl::Init<VDecl>();
-		}
+		static VertexDecl vd = VertexDecl::Init<VDecl>();
 		al_draw_indexed_prim(
 			vertices.data(), 
-			nullptr, 
+			vd.ptr(), 
 			texture ? texture->get().constPtr() : nullptr, 
 			indices.data(), 
 			vertices.size(), 

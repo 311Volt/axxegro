@@ -202,7 +202,7 @@ namespace al {
 	//for future 5.2.8 release
 #if ALLEGRO_VERSION_INT >= AL_ID(5,2,8,1)
 		AXXEGRO_COLOR_SPACE(Oklab, al_color_rgb_to_oklab, al_color_oklab);
-		AXXEGRO_COLOR_SPACE(LnearRGB, al_color_rgb_to_linear, al_color_linear);
+		AXXEGRO_COLOR_SPACE(LinearRGB, al_color_rgb_to_linear, al_color_linear);
 #endif
 
 	}
