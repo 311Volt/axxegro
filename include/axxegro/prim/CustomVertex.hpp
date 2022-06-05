@@ -2,7 +2,6 @@
 #define INCLUDE_AXXEGRO_PRIM_CUSTOMVERTEX
 
 #include "axxegro/resources/Resource.hpp"
-#include "fmt/core.h"
 #include "tcb/span.hpp"
 #include <allegro5/allegro_primitives.h>
 #include <type_traits>
