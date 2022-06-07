@@ -35,6 +35,9 @@ namespace al {
 		void setEventTypeHandler(ALLEGRO_EVENT_TYPE evType, EventHandler handler);
 		void setEventValueHandler(EventDiscretizerId discrId, int64_t value, EventHandler handler);
 
+		void deleteEventTypeHandler(ALLEGRO_EVENT_TYPE evType);
+		void deleteEventValueHandler(EventDiscretizerId discrId, int64_t value);
+
 		EventDiscretizerId addDiscretizer(EventDiscretizer discretizer);
 		void removeDiscretizer(EventDiscretizerId id);
 		

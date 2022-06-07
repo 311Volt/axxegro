@@ -32,6 +32,17 @@ void al::EventDispatcher::setEventValueHandler(al::EventDispatcher::EventDiscret
 	eventValueHandler[discrId][value] = handler;
 }
 
+void al::EventDispatcher::deleteEventTypeHandler(ALLEGRO_EVENT_TYPE evType)
+{
+	eventTypeHandler.erase(evType);
+}
+void al::EventDispatcher::deleteEventValueHandler(EventDiscretizerId discrId, int64_t value)
+{
+	if(typeDiscretizers.count(discrId)) {
+		typeDiscretizers[discrId].erase(value);
+	}
+}
+
 al::EventDispatcher::EventDiscretizerId al::EventDispatcher::addDiscretizer(al::EventDispatcher::EventDiscretizer discretizer)
 {
 	auto newId = createDiscretizerId();
