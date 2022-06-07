@@ -9,8 +9,7 @@
 /**
  * A high-level mechanism for event dispatching.
  * 
- * this code is some uncanny valley shit and in desperate need of better naming
- * and all-around consistency - do NOT consider anything in here stable at all
+ * not documenting this because this is due for a complete rewrite
  */
 
 namespace al {
@@ -39,6 +38,7 @@ namespace al {
 		EventDiscretizerId addDiscretizer(EventDiscretizer discretizer);
 		void removeDiscretizer(EventDiscretizerId id);
 		
+		DispatchLevel checkDispatchLevel(const ALLEGRO_EVENT& event);
 		DispatchLevel dispatch(const ALLEGRO_EVENT& event);
 	private:
 		EventDiscretizerId createDiscretizerId();

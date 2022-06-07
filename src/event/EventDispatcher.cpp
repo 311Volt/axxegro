@@ -52,6 +52,24 @@ al::EventDispatcher::EventDiscretizerId al::EventDispatcher::createDiscretizerId
 	return counter++;
 }
 
+al::EventDispatcher::DispatchLevel al::EventDispatcher::checkDispatchLevel(const ALLEGRO_EVENT &event)
+{
+	if(typeDiscretizers.count(event.type)) {
+		for(const auto& discretizerId: typeDiscretizers[event.type]) {
+			int64_t value = discretizers[discretizerId].fn(event);
+			if(eventValueHandler.count(discretizerId)) {
+				if(eventValueHandler[discretizerId].count(value)) {
+					return DispatchLevel::MATCHED_VALUE;
+				}
+			}
+		}
+	}
+	if(eventTypeHandler.count(event.type) && eventTypeHandler[event.type]) {
+		return DispatchLevel::MATCHED_TYPE;
+	}
+	return DispatchLevel::DEFAULT;
+}
+
 al::EventDispatcher::DispatchLevel al::EventDispatcher::dispatch(const ALLEGRO_EVENT& event)
 {
 	//try level 2 (match by type and discretized value)

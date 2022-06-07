@@ -2,7 +2,7 @@
 #include <array>
 
 al::UStr::UStr(const std::u32string_view str)
-	: UStr(EncodeToUTF8(str))
+	: UStr(ToUTF8(str))
 {
 
 }
@@ -13,7 +13,7 @@ al::UStr::UStr(const std::string_view str)
 	
 }
 
-std::string al::UStr::EncodeToUTF8(const std::u32string_view str)
+std::string al::ToUTF8(const std::u32string_view str)
 {
 	std::string ret;
 	size_t rs = 0;
@@ -29,7 +29,7 @@ std::string al::UStr::EncodeToUTF8(const std::u32string_view str)
 	return ret;
 }
 
-std::u32string al::UStr::DecodeToUTF32(const std::string_view str)
+std::u32string al::ToUTF32(const std::string_view str)
 {
 	UStr ustr(str);
 	size_t len = al_ustr_length(ustr.ptr());

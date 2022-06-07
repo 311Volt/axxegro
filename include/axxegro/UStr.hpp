@@ -1,5 +1,5 @@
-#ifndef INCLUDE_AXXEGRO_USTR
-#define INCLUDE_AXXEGRO_USTR
+#ifndef AXXEGRO_INCLUDE_AXXEGRO_USTR
+#define AXXEGRO_INCLUDE_AXXEGRO_USTR
 
 #include <allegro5/allegro.h>
 #include <string>
@@ -9,11 +9,7 @@
 
 /**
  * @file
- * RAII for ALLEGRO_USTR. This is not a full wrapper and is mostly intended
- * to be used by Font::draw(). It is assumed that the user will do all of the
- * text processing using C++ strings which will then only be converted to
- * ALLEGRO_USTR for drawing, with negligible cost compared to the al_draw_ustr
- * call.
+ * RAII for ALLEGRO_USTR (incomplete)
  */
 
 namespace al {
@@ -27,24 +23,25 @@ namespace al {
 
 		///@brief Initializes the string from a UTF-8 input.
 		UStr(const std::string_view str);
-
-
-		/**
-		 * @brief Converts UTF-32 to UTF-8 using Allegro.
-		 * 
-		 * @param str UTF-32 input.
-		 * @return UTF-8 output.
-		 */
-		static std::string EncodeToUTF8(const std::u32string_view str);
-
-		/**
-		 * @brief Converts UTF-8 to UTF-32 using Allegro.
-		 * 
-		 * @param str UTF-8 input
-		 * @return UTF-32 output. 
-		 */
-		static std::u32string DecodeToUTF32(const std::string_view str);
 	};
+
+	
+
+	/**
+	 * @brief Converts UTF-32 to UTF-8 using Allegro.
+	 * 
+	 * @param str UTF-32 input.
+	 * @return UTF-8 output.
+	 */
+	std::string ToUTF8(const std::u32string_view str);
+
+	/**
+	 * @brief Converts UTF-8 to UTF-32 using Allegro.
+	 * 
+	 * @param str UTF-8 input
+	 * @return UTF-32 output. 
+	 */
+	std::u32string ToUTF32(const std::string_view str);
 }
 
-#endif /* INCLUDE_AXXEGRO_USTR */
+#endif /* AXXEGRO_INCLUDE_AXXEGRO_USTR */

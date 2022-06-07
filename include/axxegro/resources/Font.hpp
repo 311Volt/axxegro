@@ -41,6 +41,7 @@ namespace al {
 		size_t calcCutoffPoint(std::u32string_view str, int maxWidth);
 		size_t calcCutoffPoint(std::string_view str, int maxWidth);
 
+		//TODO fastDraw()
 		void draw(const std::string& text, Color color, Coord<float> pos) const;
 		void draw(const std::string& text, Color color, Coord<float> pos, int align) const;
 

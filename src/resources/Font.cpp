@@ -108,7 +108,7 @@ size_t al::Font::calcCutoffPoint(std::u32string_view str, int maxWidth)
 size_t al::Font::calcCutoffPoint(std::string_view str, int maxWidth)
 {
 	UStr ustr(str);
-	auto cpOff = calcCutoffPoint(UStr::DecodeToUTF32(str), maxWidth);
+	auto cpOff = calcCutoffPoint(ToUTF32(str), maxWidth);
 	return al_ustr_offset(ustr.ptr(), cpOff);
 }
 
@@ -118,12 +118,10 @@ void al::Font::draw(const std::string& text, al::Color color, al::Coord<float> p
 }
 void al::Font::draw(const std::string& text, al::Color color, al::Coord<float> pos, int align) const
 {
-	UStr ustr(text);
-	al_draw_ustr(ptr(), color, pos.x, pos.y, align | ALLEGRO_ALIGN_INTEGER, ustr.ptr());
+	al_draw_text(ptr(), color, pos.x, pos.y, align | ALLEGRO_ALIGN_INTEGER, text.c_str());
 }
 
 void al::Font::drawJustified(const std::string& text, al::Color color, al::Coord<float> pos, float xMax, float diffMax) const
 {
-	UStr ustr(text);
-	al_draw_justified_ustr(ptr(), color, pos.x, xMax, pos.y, diffMax, ALLEGRO_ALIGN_INTEGER, ustr.ptr());
+	al_draw_justified_text(ptr(), color, pos.x, xMax, pos.y, diffMax, ALLEGRO_ALIGN_INTEGER, text.c_str());
 }
