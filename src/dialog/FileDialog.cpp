@@ -21,7 +21,7 @@ al::FileDialogResult al::FileDialog::show()
 	int n = al_get_native_file_dialog_count(ptr());
 	std::vector<std::string> paths(n);
 	for(int i=0; i<n; i++) {
-		paths.push_back(al_get_native_file_dialog_path(ptr(), i));
+		paths[i] = al_get_native_file_dialog_path(ptr(), i);
 	}
 	return {paths};
 }
