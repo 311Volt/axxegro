@@ -2,6 +2,7 @@
 #define INCLUDE_AXXEGRO_MATH_VEC2
 
 #include <cmath>
+#include <cstdint>
 #include <functional>
 
 namespace al {
@@ -59,6 +60,9 @@ namespace al {
 		{
 			return (*this) / this->length();
 		}
+
+		constexpr T dot(const Vec2& rhs)
+			{return x*rhs.x + y*rhs.y;}
 		
 		Vec2& apply(std::function<T(T)> fn)
 		{
@@ -73,6 +77,11 @@ namespace al {
 				return std::floor(v);
 			});
 		}
+
+		Vec2 transposed()
+		{
+			return Vec2<T>(y, x);
+		}
 	};
 
 	template<typename T = float>
@@ -81,6 +90,11 @@ namespace al {
 	template<typename T = float>
 	using Coord2 = Vec2<T>;
 
+	using Vec2d = Vec2<double>;
+	using Vec2f = Vec2<float>;
+	using Vec2i = Vec2<int>;
+	using Vec2u = Vec2<unsigned>;
+	using Vec2b = Vec2<uint8_t>;
 	
 }
 

@@ -2,6 +2,7 @@
 #define INCLUDE_AXXEGRO_MATH_VEC4
 
 #include <cmath>
+#include <cstdint>
 #include <functional>
 
 namespace al {
@@ -74,6 +75,12 @@ namespace al {
 
 	template<typename T = float>
 	using Coord4 = Vec4<T>;
+
+	using Vec4d = Vec4<double>;
+	using Vec4f = Vec4<float>;
+	using Vec4i = Vec4<int>;
+	using Vec4u = Vec4<unsigned>;
+	using Vec4b = Vec4<uint8_t>;
 }
 
 #endif /* INCLUDE_AXXEGRO_MATH_VEC4 */

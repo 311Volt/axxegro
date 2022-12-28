@@ -29,7 +29,7 @@ namespace al {
 
 	/// @brief A compile-time representation of a custom vertex declaration.
 	template<typename CustomVertexT>
-	class CustomVertexDecl {
+	class BasicVertexDecl {
 	public:
 		using VertexT = CustomVertexT;
 		static_assert(
@@ -43,6 +43,14 @@ namespace al {
 		#define AXXEGRO_VERTEX_ATTR(m, attrid, storage) template<typename xd> struct Attr<attrid, xd> \
 			{using Type = ::al::VertexElementT<attrid, storage, offsetof(VertexT, m)>;};
 	};
+
+	///@brief Maps a vertex type to its BasicVertexDecl
+	template<typename T>
+	class VertexDeclFor {
+		static_assert(std::is_void_v<T>, "The type T does not have a vertex declaration associated with it. ");
+	};
+
+	#define AXXEGRO_VERTEX_DECL(vtype) template<> struct al::VertexDeclFor<vtype>: public ::al::BasicVertexDecl<vtype>
 
 	/**
 	 * @brief Create an array of vertex elements 
@@ -69,7 +77,8 @@ namespace al {
 		FINNA_KMS_XD(4); FINNA_KMS_XD(5); FINNA_KMS_XD(6); FINNA_KMS_XD(7);
 		FINNA_KMS_XD(8); FINNA_KMS_XD(9); FINNA_KMS_XD(10); FINNA_KMS_XD(11);
 		FINNA_KMS_XD(12); FINNA_KMS_XD(13); FINNA_KMS_XD(14); FINNA_KMS_XD(15);
-		
+		#undef FINNA_KMS_XD
+
 		return ret;
 	}
 

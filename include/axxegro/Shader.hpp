@@ -51,7 +51,7 @@ namespace al {
 
 		const char* getLog() const;
 		ALLEGRO_SHADER_PLATFORM getPlatform() const;
-		bool use();
+		void use();
 
 		static void Reset();
 

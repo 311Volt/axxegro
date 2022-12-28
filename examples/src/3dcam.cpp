@@ -1,11 +1,20 @@
 
 #include <axxegro/axxegro.hpp>
 
+#include <fmt/format.h>
+
 /**
  * @file
  * 
  * a simple 3d camera example
  */
+
+
+std::array<al::Vertex, 3> DemoTriangle = {
+	al::Vertex({0, 0, 0}, {0, 0}),
+	al::Vertex({0, 1.5, 0}, {0, 1000}),
+	al::Vertex({1.5, 0, 1.5}, {1000, 0})
+};
 
 int main()
 {
@@ -20,7 +29,7 @@ int main()
 
 	auto font = al::Font::BuiltinFont();
 
-	//player orientation in degrees
+	//player orientation (pitch) in degrees
 	float rx = 0.0;
 
 	al::Bitmap tex("data/bg.jpg");
@@ -47,12 +56,6 @@ int main()
 		//calculate forward direction based on orientation
 		fwd = {std::sin(rx * float(al::DEG2RAD)), 0.0f, std::cos(rx * float(al::DEG2RAD))};
 
-		static std::array<al::Vertex, 3> tri {
-			al::Vertex({0, 0, 0}, {0, 0}),
-			al::Vertex({0, 1, 0}, {0, 1000}),
-			al::Vertex({1, 0, 1}, {1000, 0})
-		};
-
 		//render HUD
 		al::TargetBitmap.resetTransform();
 		al::TargetBitmap.resetProjection();
@@ -67,7 +70,7 @@ int main()
 		//render 3D scene (in this case, one triangle)
 		al::Transform::Camera(pos, pos+fwd, {0,1,0}).use();
 		proj.useProjection();
-		al::DrawPrim(tri, tex);
+		al::DrawPrim(DemoTriangle, tex);
 		al::CurrentDisplay.flip();
 	};
 	

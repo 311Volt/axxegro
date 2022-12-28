@@ -1,6 +1,12 @@
 #include <allegro5/allegro_native_dialog.h>
 #include <axxegro/axxegro.hpp>
 
+/**
+ * @file
+ * 
+ * An example on how to use shaders in axxegro.
+ */
+
 int main()
 {
     std::set_terminate(al::Terminate); //for a nice error message if there's an exception

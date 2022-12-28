@@ -6,7 +6,7 @@ al::Shader::Shader(ALLEGRO_SHADER_PLATFORM platform)
 	: Resource(al_create_shader(platform))
 {
 	if(!ptr()) {
-		throw ShaderError("Cannot create shader. This error might have occured because an imcompatible shader platform was specified.");
+		throw ShaderError("Cannot create shader. This error might have occured because an incompatible shader platform was specified.");
 	}
 }
 
@@ -45,7 +45,9 @@ ALLEGRO_SHADER_PLATFORM al::Shader::getPlatform() const
 	return al_get_shader_platform(ptr());
 }
 
-bool al::Shader::use()
+void al::Shader::use()
 {
-	return al_use_shader(ptr());
+	if(!al_use_shader(ptr())) {
+		throw ShaderError("Cannot use shader: " + std::string(getLog()));
+	}
 }

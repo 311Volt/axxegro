@@ -12,9 +12,6 @@
  * An example on how to create and handle user events.
  */
 
-
-
-
 //How to create custom user events in axxegro:
 //First, we need an event type ID.
 constexpr ALLEGRO_EVENT_TYPE AXX_EXAMPLE_EVENT = 1437;

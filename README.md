@@ -1,16 +1,29 @@
+**warning: development is on hold until i have any free time to speak of**
+
 # axxegro
 
-A C++17 wrapper for [Allegro5](https://github.com/liballeg/allegro5) that aims to combine
-Allegro's straightforward and intuitive API with modern C++. It is not a complete wrapper and exposes the Allegro API to the user rather
-than redefining every constant; however, the goal for 1.0 is to completely 
-eliminate the need to call any Allegro functions directly.
+A C++17 wrapper for the game programming library [Allegro5](https://github.com/liballeg/allegro5) 
+that aims to combine Allegro's straightforward and intuitive API with modern C++. It is not a complete wrapper 
+and exposes the Allegro API to the user rather than redefining every constant; however, 
+the goal for 1.0 is to completely eliminate the need to call any Allegro functions directly.
+To use the library currently, the user is assumed to have good knowledge of Allegro's C API.
+A series of tutorials will be written in the future to make axxegro accessible.
 
 The library is work-in-progress and it is still missing some things, but it's
-already usable for some simple applications, getting the same job done with far less
+already usable for simple applications, getting the same job done with far less
 code and close to zero overhead.
 
 Work-in-progress also means that the API is completely unstable and might change
 on any scale at any time.
+
+# main features so far
+
+- RAII wrapper classes for ALLEGRO_* objects
+- Built-in homebrew `Vec*` and `Rect` classes for screen coordinate manipulation
+- An `EventLoop` class that handles boilerplate for basic programs
+- Template-powered user event support
+- `constexpr` colors and helper functions
+
 
 # examples
 
@@ -21,19 +34,27 @@ lena.draw({0, 0});
 
 ```c++
 al::EventLoop loop = al::EventLoop::Basic(); //with pre-registered event sources
+loop.enableEscToQuit();
 loop.loopBody = [](){
-    al::TargetBitmap.clearToColor(al::RGB(0,0,0));
-    // draw stuff
+    al::TargetBitmap.clearToColor(al::Black);
+    handleInput();
+    render();
     al::CurrentDisplay.flip();
 };
-loop.enableClock(60); //framerate limiter (60 fps)
+loop.enableFramerateLimit(60); //limit to 60 fps
 loop.run(); //will run until window is closed
 ```
 
 For more examples, see examples/src.
 
 # how to build with CMake
-Use:   
+
+I should begin by pointing out that integration with a working Allegro project
+without the help of a build system is trivial, as axxegro is plain ISO C++17 and
+does not depend on any other third-party libraries. This approach is recommended,
+as build system work is VERY work-in-progress.
+
+To build with CMake, use:   
 ```bash
 mkdir build
 cd build
@@ -55,11 +76,6 @@ Alternatively, you can supply your own build of Allegro. To do this, place as ne
 
 For Windows builds, the most recent MinGW-w64 based build of [TDM-GCC](https://jmeubank.github.io/tdm-gcc/download/) is recommended. (tip for VSCode users: make a copy of the toolset's `mingw32-make.exe` and call it `make.exe` so that `cmake.generator` can be set automatically)
 
-# using the library without CMake
-You can also ignore the CMake stuff and simply add axxegro's sources and `include`
-as an include directory to your Allegro project. axxegro is ISO C++ and does not,
-nor will it ever need any special build options or code generation scripts.
-
 
 # development progress
 
@@ -69,7 +85,7 @@ the following missing things:
 
 ### high priority
  - everything audio
- - a subset of gfx routines (pixel formats, blending modes)
+ - a subset of gfx routines (pixel formats, blending modes, render states)
  - vertex/index buffers
  - platform-specific and D3D/OpenGL specific functions
  - native dialog menus
@@ -85,7 +101,6 @@ the following missing things:
 
 ### low priority / won't be done
  - fixed point math (consider this instead: https://github.com/MikeLankamp/fpm)
- - memory (al_malloc et al.) - shouldn't be needed at all
  - threads (C++ has std::thread)
  - path structures (C++ has std::filesystem::path)
 

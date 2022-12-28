@@ -34,7 +34,7 @@ namespace al {
 	/**
 	 * @brief Displays a message box and terminates the program.
 	 * @details The message box contains the current exception message if found.
-	 * The function is suitable for passing to std::set_terminate.
+	 * This function is intended for use as a global terminate handler function.
 	 */
 	void Terminate();
 

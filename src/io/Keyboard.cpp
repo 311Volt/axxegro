@@ -9,8 +9,11 @@ ALLEGRO_KEYBOARD_STATE al::GetKeyboardState()
 }
 bool al::IsKeyDown(int keycode)
 {
-	ALLEGRO_KEYBOARD_STATE state = GetKeyboardState();
-	return al_key_down(&state, keycode);
+	return IsKeyDown(GetKeyboardState(), keycode);
+}
+bool al::IsKeyDown(const al::KeyboardState& kbState, int keycode)
+{
+	return al_key_down(&kbState, keycode);
 }
 bool al::SetKeyboardLEDs(int flags)
 {

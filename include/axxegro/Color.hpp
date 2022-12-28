@@ -138,6 +138,17 @@ namespace al {
 		constexpr float f_1_255 = 1.0f / 255.0f;
 		return PremulRGBA_f(r*f_1_255, g*f_1_255, b*f_1_255, a*f_1_255);
 	}
+
+	constexpr Color Gray(float lum)
+	{
+		lum = std::clamp(lum, 0.0f, 1.0f);
+		return RGB_f(lum, lum, lum);
+	}
+
+	constexpr Color Gray8(uint8_t lum)
+	{
+		return RGB(lum, lum, lum);
+	}
 	
 	
 	/** @brief Creates the nth color from the 16-color CGA palette.

@@ -13,7 +13,9 @@ struct MyVertex {
 	float u,v;
 };
 
-struct MyVertexDecl: public al::CustomVertexDecl<MyVertex> {
+//struct MyVertexDecl: public al::BasicVertexDecl<MyVertex> 
+
+AXXEGRO_VERTEX_DECL(MyVertex) {
 	AXXEGRO_VERTEX_ATTR_BEGIN()
 	AXXEGRO_VERTEX_ATTR(x, ALLEGRO_PRIM_POSITION, ALLEGRO_PRIM_FLOAT_2)
 	AXXEGRO_VERTEX_ATTR(u, ALLEGRO_PRIM_TEX_COORD_PIXEL, ALLEGRO_PRIM_FLOAT_2)
@@ -33,9 +35,8 @@ int main()
 	};
 	
 	al::Transform().scale({100, 100}).use();
-	al::DrawPrim<MyVertexDecl>(vtxs, bg);
+	al::DrawPrim<MyVertex>(vtxs, bg);
 	al::CurrentDisplay.flip();
 
 	al::Sleep(2.0);
-
 }

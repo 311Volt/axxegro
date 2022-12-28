@@ -40,9 +40,9 @@ namespace al {
 		* multiple keys, use GetState() in combination with this function
 		* for performance.
 		*/
-	bool IsKeyDown(KeyboardState& kbState, int keycode);
+	bool IsKeyDown(const KeyboardState& kbState, int keycode);
 
-	///@brief See: https://liballeg.org/a5docs/trunk/keyboard.html#al_set_keyboard_leds
+	///@brief See: https://liballeg.org/a5docs/trunk/keyboard.html#al_set_keyboard_leds (TODO constants)
 	bool SetKeyboardLEDs(int ledBitField);
 
 	///@brief See: https://liballeg.org/a5docs/trunk/keyboard.html#al_keycode_to_name

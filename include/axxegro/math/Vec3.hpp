@@ -2,6 +2,7 @@
 #define INCLUDE_AXXEGRO_MATH_VEC3
 
 #include <cmath>
+#include <cstdint>
 #include <functional>
 
 namespace al {
@@ -45,6 +46,10 @@ namespace al {
 		constexpr Vec3 operator/(T rhs) const 
 			{Vec3 ret=*this; ret/=rhs; return ret;}
 		
+		
+		constexpr T dot(const Vec3& rhs)
+			{return x*rhs.x + y*rhs.y + z*rhs.z;}
+
 		constexpr Vec3 cross(const Vec3& rhs) const
 		{
 			return {
@@ -87,6 +92,14 @@ namespace al {
 
 	template<typename T = float>
 	using Coord3 = Vec3<T>;
+
+	
+
+	using Vec3d = Vec3<double>;
+	using Vec3f = Vec3<float>;
+	using Vec3i = Vec3<int>;
+	using Vec3u = Vec3<unsigned>;
+	using Vec3b = Vec3<uint8_t>;
 }
 
 #endif /* INCLUDE_AXXEGRO_MATH_VEC3 */

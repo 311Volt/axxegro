@@ -36,7 +36,7 @@ namespace al {
 		 * @brief Pops the event. 
 		 * Use this instead of pop() if you want to be explicit about ignoring an event.
 		 * @return true on success
-		 * @return false on failure (queue was already emptys)
+		 * @return false on failure (queue was already empty)
 		 */
 		bool drop();
 

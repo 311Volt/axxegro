@@ -51,7 +51,7 @@ int main()
 			int x = loop.getTick() % (bg.width()-10);
 			al::Coord<int> p{x, y}, bb{2, 2};
 			al::BitmapLockedRegion lr(bg, {p, p+bb}, ALLEGRO_PIXEL_FORMAT_ABGR_8888, ALLEGRO_LOCK_READWRITE);
-			lr.rowData(1)[1] = 113;
+			lr.rowData<uint32_t>(1)[1] = 0xFF00FF;
 		}
 
 		bg.drawScaled(bg.rect(), al::CurrentDisplay.rect());

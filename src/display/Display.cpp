@@ -150,6 +150,16 @@ bool al::Display::setSystemCursor(ALLEGRO_SYSTEM_MOUSE_CURSOR id)
 	return al_set_system_mouse_cursor(ptr(), id);
 }
 
+void al::Display::grabMouse()
+{
+	al_grab_mouse(ptr());
+}
+
+void al::Display::ungrabMouse()
+{
+	al_ungrab_mouse();
+}
+
 const al::Bitmap& al::Display::backbuffer() const
 {
 	return *ptrBackbuffer;

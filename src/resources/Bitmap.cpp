@@ -194,6 +194,11 @@ void al::Bitmap::SetNewBitmapFlags(int flags)
 	al_set_new_bitmap_flags(flags);
 }
 
+void al::Bitmap::clear()
+{
+	clearToColor(al::Black);
+}
+
 al::BitmapLockedRegion::BitmapLockedRegion(Bitmap& bmp, int format, int flags)
 {
 	this->bmp = bmp.ptr();
@@ -220,13 +225,13 @@ al::BitmapLockedRegion::~BitmapLockedRegion()
 	al_unlock_bitmap(bmp);
 }
 
-uint8_t* al::BitmapLockedRegion::data()
+void* al::BitmapLockedRegion::data()
 {
-	return (uint8_t*)reg->data;
+	return reg->data;
 }
-uint8_t* al::BitmapLockedRegion::rowData(unsigned rowIndex)
+void* al::BitmapLockedRegion::rawRowData(unsigned rowIndex)
 {
-	return data() + ((int)rowIndex*reg->pitch);
+	return (uint8_t*)data() + ((int)rowIndex*reg->pitch);
 }
 int al::BitmapLockedRegion::getFormat()
 {

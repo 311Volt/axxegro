@@ -86,6 +86,9 @@ namespace al {
 		/// @brief Sets all pixels of the bitmap to the given color.
 		void clearToColor(Color color);
 
+		/// @brief Equivalent to clearToColor(al::Black).
+		void clear();
+
 		/// @brief al_save_bitmap()
 		void saveToFile(const std::string& filename) const;
 
@@ -155,11 +158,19 @@ namespace al {
 		BitmapLockedRegion& operator=(BitmapLockedRegion&) = delete;
 		BitmapLockedRegion& operator=(BitmapLockedRegion&&) = delete;
 
-		uint8_t* data();
-		uint8_t* rowData(unsigned rowIndex);
+		void* data();
+		void* rawRowData(unsigned rowIndex);
 		int getFormat();
 		int getPitch();
 		int getPixelSize();
+
+		template<typename T>
+		T* rowData(unsigned rowIndex)
+		{
+			//TODO assert correct format
+			return reinterpret_cast<T*>(rawRowData(rowIndex));
+		}
+
 	private:
 		ALLEGRO_LOCKED_REGION* reg;
 		ALLEGRO_BITMAP* bmp;

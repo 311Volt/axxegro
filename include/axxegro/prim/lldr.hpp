@@ -16,6 +16,8 @@
 
 
 namespace al {
+
+	//TODO consider replacing these with a plain old pointer
 	template<typename T>
 	using OptionalRef = std::optional<std::reference_wrapper<T>>;
 	
@@ -34,7 +36,7 @@ namespace al {
 
 	
 
-	inline void DrawPrim(
+	inline int DrawPrim(
 		const tcb::span<Vertex> vertices, 
 		const OptionalRef<Bitmap> texture = std::nullopt, 
 		ALLEGRO_PRIM_TYPE type = ALLEGRO_PRIM_TRIANGLE_LIST,
@@ -42,7 +44,7 @@ namespace al {
 		int end = -1
 	)
 	{
-		al_draw_prim(
+		return al_draw_prim(
 			vertices.data(), 
 			nullptr, 
 			texture ? texture->get().constPtr() : nullptr, 
@@ -52,33 +54,33 @@ namespace al {
 		);
 	}
 
-	inline void DrawIndexedPrim(
+	inline int DrawIndexedPrim(
 		const tcb::span<Vertex> vertices, 
 		const tcb::span<int> indices, 
 		const OptionalRef<Bitmap> texture = std::nullopt, 
 		ALLEGRO_PRIM_TYPE type = ALLEGRO_PRIM_TRIANGLE_LIST
 	)
 	{
-		al_draw_indexed_prim(
+		return al_draw_indexed_prim(
 			vertices.data(), 
 			nullptr, 
 			texture ? texture->get().constPtr() : nullptr, 
 			indices.data(), 
-			vertices.size(), 
+			indices.size(), 
 			type
 		);
 	}
 
-	template<typename VDecl>
+	template<typename VType>
 	void DrawPrim(
-		const tcb::span<typename VDecl::VertexT> vertices,
+		const tcb::span<VType> vertices,
 		const OptionalRef<Bitmap> texture = std::nullopt,
 		ALLEGRO_PRIM_TYPE type = ALLEGRO_PRIM_TRIANGLE_LIST,
 		int start = 0,
 		int end = -1
 	)
 	{
-		static VertexDecl vd = VertexDecl::Init<VDecl>();
+		static VertexDecl vd = VertexDecl::Init<VertexDeclFor<VType>>();
 		al_draw_prim(
 			vertices.data(), 
 			vd.ptr(), 
@@ -89,38 +91,26 @@ namespace al {
 		);
 	}
 
-	template<typename VDecl>
+	template<typename VType>
 	void DrawIndexedPrim(
-		const tcb::span<typename VDecl::VertexT> vertices,
+		const tcb::span<VType> vertices,
 		const tcb::span<int> indices,
 		const OptionalRef<Bitmap> texture = std::nullopt,
 		ALLEGRO_PRIM_TYPE type = ALLEGRO_PRIM_TRIANGLE_LIST
 	)
 	{
-		static VertexDecl vd = VertexDecl::Init<VDecl>();
+		static VertexDecl vd = VertexDecl::Init<VertexDeclFor<VType>>();
 		al_draw_indexed_prim(
 			vertices.data(), 
 			vd.ptr(), 
 			texture ? texture->get().constPtr() : nullptr, 
 			indices.data(), 
-			vertices.size(), 
+			indices.size(), 
 			type
 		);
 	}
 
-	AXXEGRO_DEFINE_DELETER(ALLEGRO_VERTEX_BUFFER, al_destroy_vertex_buffer);
-	AXXEGRO_DEFINE_DELETER(ALLEGRO_INDEX_BUFFER, al_destroy_index_buffer);
-
-	class IndexBuffer: Resource<ALLEGRO_INDEX_BUFFER> {
-	public:
-		IndexBuffer(const tcb::span<int> indices, int flags = ALLEGRO_PRIM_BUFFER_STATIC);
-	};
-
-	class VertexBuffer: Resource<ALLEGRO_VERTEX_BUFFER> {
-	public:
-		VertexBuffer(const tcb::span<Vertex> vertices, int flags = ALLEGRO_PRIM_BUFFER_STATIC);
-
-	};
+	
 
 }
 
