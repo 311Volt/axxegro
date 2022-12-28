@@ -23,6 +23,8 @@ namespace al {
 	class BitmapLockError: public std::runtime_error {using std::runtime_error::runtime_error;};
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_BITMAP, al_destroy_bitmap);
 
+	class BitmapLockedRegion;
+
 	/**
 	 * @brief Wraps around ALLEGRO_BITMAP.
 	 */
@@ -99,6 +101,8 @@ namespace al {
 		 * @return A second identical Bitmap.
 		 */
 		Bitmap clone() const;
+
+		BitmapLockedRegion lock(int format = ALLEGRO_PIXEL_FORMAT_ARGB_8888, int flags = ALLEGRO_LOCK_READWRITE);
 
 		static int GetNewBitmapFlags();
 		static void SetNewBitmapFlags(int flags);

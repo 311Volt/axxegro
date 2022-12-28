@@ -13,8 +13,10 @@ al::EventLoop::EventLoop()
 {
 	exitFlag = false;
 	tick = 0;
+	fps = 0;
 	loopBody = [](){};
 	lastTickTime = 0.01;
+	lastFpsUpdateTime = -1.0;
 }
 
 al::EventLoop::EventLoop(al::EventLoop::BasicInit)
@@ -79,6 +81,11 @@ int64_t al::EventLoop::getTick()
 	return tick;
 }
 
+int64_t al::EventLoop::getFPS()
+{
+	return fps;
+}
+
 double al::EventLoop::getLastTickTime()
 {
 	return lastTickTime;
@@ -97,7 +104,14 @@ void al::EventLoop::run()
 			clockEventQueue.flush();
 		}
 		loopBody();
-		lastTickTime = GetTime() - t0;
+		double endTickTime = GetTime();
+		lastTickTime = endTickTime - t0;
+		fpsCounter++;
+		if(endTickTime - lastFpsUpdateTime > 1.0) {
+			fps = fpsCounter;
+			fpsCounter = 0;
+			lastFpsUpdateTime = endTickTime;
+		}
 		tick++;
 	}
 	exitFlag = false;

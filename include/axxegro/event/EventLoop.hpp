@@ -40,11 +40,15 @@ namespace al {
 		static EventLoop Basic();
 
 		int64_t getTick();
+		int64_t getFPS();
 		double getLastTickTime();
 	private:
 		std::unique_ptr<Timer> clockTimer;
 		EventQueue clockEventQueue;
 		int64_t tick;
+		int64_t fps;
+		int64_t fpsCounter;
+		double lastFpsUpdateTime;
 		double lastTickTime;
 		bool exitFlag;
 	};

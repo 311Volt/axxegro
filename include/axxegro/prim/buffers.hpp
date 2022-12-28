@@ -15,11 +15,18 @@ namespace al {
 	class VertexBuffer: public Resource<ALLEGRO_VERTEX_BUFFER> {
 	public:
 		VertexBuffer(const tcb::span<Vertex> vertices, int flags = ALLEGRO_PRIM_BUFFER_STATIC);
+
+		int size() const;
+		//TODO template ctor for different vertex types
 	};
+	//TODO locking
 
 	class IndexBuffer: public Resource<ALLEGRO_INDEX_BUFFER> {
 	public:
 		IndexBuffer(const tcb::span<int> indices, int flags = ALLEGRO_PRIM_BUFFER_STATIC);
+
+		int size() const;
+		//TODO template ctor for different index sizes
 	};
 	
 	inline int DrawVertexBuffer(
@@ -29,6 +36,9 @@ namespace al {
 		int type=ALLEGRO_PRIM_TRIANGLE_LIST
 	)
 	{
+		if(end < 0) {
+			end = vBuf.size();
+		}
 		return al_draw_vertex_buffer(
 			vBuf.constPtr(), 
 			texture ? texture->get().constPtr() : nullptr, 
@@ -44,6 +54,9 @@ namespace al {
 		int type=ALLEGRO_PRIM_TRIANGLE_LIST
 	)
 	{
+		if(end < 0) {
+			end = iBuf.size();
+		}
 		return al_draw_indexed_buffer(
 			vBuf.constPtr(), 
 			texture ? texture->get().constPtr() : nullptr, 

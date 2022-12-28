@@ -3,5 +3,6 @@
 
 #include "hldr.hpp"
 #include "lldr.hpp"
+#include "buffers.hpp"
 
 #endif /* INCLUDE_AXXEGRO_PRIM_PRIM */

@@ -199,6 +199,11 @@ void al::Bitmap::clear()
 	clearToColor(al::Black);
 }
 
+al::BitmapLockedRegion al::Bitmap::lock(int format, int flags)
+{
+	return BitmapLockedRegion(*this, format, flags);
+}
+
 al::BitmapLockedRegion::BitmapLockedRegion(Bitmap& bmp, int format, int flags)
 {
 	this->bmp = bmp.ptr();
