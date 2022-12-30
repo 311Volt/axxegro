@@ -58,6 +58,9 @@ namespace al {
 				x*rhs.y - y*rhs.x,
 			};
 		}
+		
+		constexpr Vec3 hadamard(const Vec3& rhs)
+			{return Vec3(x*rhs.x, y*rhs.y, z*rhs.z);}
 
 		constexpr Vec3 normalized() const
 		{

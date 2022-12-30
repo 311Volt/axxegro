@@ -1,11 +1,10 @@
+#include "allegro5/mouse_cursor.h"
 #include "axxegro/display/DisplayModes.hpp"
+#include <string>
 #define AXXEGRO_TRUSTED
 
 #include <axxegro/display/Display.hpp>
 #include <stdexcept>
-
-#define FMT_HEADER_ONLY
-#include <fmt/format.h>
 
 al::TCurrentDisplay al::CurrentDisplay;
 
@@ -39,7 +38,7 @@ al::Display::Display(int w, int h, int flags, std::vector<Option> requiredOption
 
 	setPtr(al_create_display(w, h));
 	if(!ptr()) {
-		throw DisplayCreationError(fmt::format("Could not create a {}x{} Allegro display.", w, h));
+		throw DisplayCreationError("Could not create a " + std::to_string(w) + "x" + std::to_string(h) + " Allegro display.");
 	}
 	al_reset_new_display_options();
 	initPointers();
@@ -148,6 +147,16 @@ bool al::Display::setCursor(al::MouseCursor &cur)
 bool al::Display::setSystemCursor(ALLEGRO_SYSTEM_MOUSE_CURSOR id)
 {
 	return al_set_system_mouse_cursor(ptr(), id);
+}
+
+void al::Display::hideCursor()
+{
+	al_hide_mouse_cursor(ptr());
+}
+
+void al::Display::showCursor()
+{
+	al_show_mouse_cursor(ptr());
 }
 
 void al::Display::grabMouse()

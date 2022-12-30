@@ -6,14 +6,12 @@
 #include <axxegro/time/Time.hpp>
 #include <axxegro/display/Display.hpp>
 
-#define FMT_HEADER_ONLY
-#include <fmt/format.h>
-
 al::EventLoop::EventLoop()
 {
 	exitFlag = false;
 	tick = 0;
 	fps = 0;
+	fpsCounter = 0;
 	loopBody = [](){};
 	lastTickTime = 0.01;
 	lastFpsUpdateTime = -1.0;

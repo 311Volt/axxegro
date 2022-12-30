@@ -1,3 +1,4 @@
+#include <stdexcept>
 #define AXXEGRO_TRUSTED
 
 #include <axxegro/prim/buffers.hpp>
@@ -7,7 +8,9 @@ al::VertexBuffer::VertexBuffer(const tcb::span<Vertex> vertices, int flags)
 		al_create_vertex_buffer(nullptr, vertices.data(), vertices.size(), flags)
 	  )
 {
-
+	if(ptr() == nullptr) {
+		throw std::runtime_error("");
+	}
 }
 
 int al::VertexBuffer::size() const

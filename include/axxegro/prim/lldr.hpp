@@ -23,7 +23,7 @@ namespace al {
 	
 	class Vertex: public ALLEGRO_VERTEX {
 	public:
-		Vertex(const Vec3<> pos, const Vec2<> uv = {0,0}, Color color = al::White);
+		Vertex(const Vec3<> pos = {0,0,0}, const Vec2<> uv = {0,0}, Color color = al::White);
 
 		void setPos(const Vec3<> pos);
 		void setUV(const Vec2<> uv);

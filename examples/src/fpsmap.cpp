@@ -1,4 +1,7 @@
+#include "axxegro/math/Vec2.hpp"
+#include "axxegro/prim/lldr.hpp"
 #include <axxegro/axxegro.hpp>
+#include <iterator>
 
 #define FMT_HEADER_ONLY
 #include <fmt/format.h>
@@ -7,62 +10,69 @@
 
 using namespace al::ColorLiterals;
 
-float Interpolate(float a, float b, float weight) 
+
+/**
+ * @file fpsmap.cpp
+ * @brief 
+ * Sample terrain from a Perlin noise heightmap. 
+ * Demonstrates the basics of 3D programming in axxegro and how it
+ * could be used to create a game engine.
+ */
+
+
+class PerlinNoiseGenerator
 {
-	weight = std::clamp(weight, 0.0f, 1.0f);
-    return (b - a) * (3.0 - weight * 2.0) * weight * weight + a;
-}
+public:
+	PerlinNoiseGenerator(uint32_t seed = 0x12345678): seed(seed) {}
 
-al::Vec2f RandomGradient(al::Vec2<int> seed)
-{
-	uint32_t a = seed.x * 89733 + seed.y * 2879327 + 0xB16B00B5;
-	a = a<<13 | a>>19;
-	a *= 0xD398A93F;
-	return al::Vec2f(std::cos(a), std::sin(a));
-}
-
-float Perlin(al::Vec2f pos)
-{
-	al::Vec2f floorPos(std::floor(pos.x), std::floor(pos.y));
-	auto interp = pos - floorPos;
-
-	float n[4];
-	for(int i=0; i<4; i++) {
-		al::Vec2f ipos = floorPos + al::Vec2f(!!(i&1), !!(i&2));
-		n[i] = RandomGradient(ipos).dot(pos-ipos);
-	}
-
-	float ix0 = Interpolate(n[0], n[1], interp.x);
-	float ix1 = Interpolate(n[2], n[3], interp.x);
-	
-	return std::clamp(Interpolate(ix0, ix1, interp.y), -1.0f, 1.0f) * 0.5 + 0.5;
-}
-
-float PerlinFractal(al::Vec2f pos, int octaves)
-{
-	octaves = std::max(1, octaves);
-	float sum = 0;
-	for(int i=0; i<octaves; i++) {
-		int mul = 1 << i;
-		sum += Perlin(pos * mul) / mul;
-	}
-	return sum / 2;
-}
-
-al::Bitmap PerlinNoise(int width, int height)
-{
-	al::Bitmap result(width, height);
-	al::BitmapLockedRegion region = result.lock();
-
-	for(int y=0; y<height; y++) {
-		uint32_t* row = region.rowData<uint32_t>(y);
-		for(int x=0; x<width; x++) {
-			row[x] = al::Gray(PerlinFractal(al::Vec2f(x, y) * 0.01, 6)).rgba_u32();
+	float operator()(al::Vec2f pos, int octaves = 1)
+	{
+		octaves = std::max(1, octaves);
+		float sum = 0, max = 0;
+		for(int i=0; i<octaves; i++) {
+			double coeff = 1.0 / (1 << i);
+			max += coeff;
+			sum += baseOctave(pos * (1<<i)) * coeff;
 		}
+		return sum / max;
 	}
 
-	return result;
-}
+	float baseOctave(al::Vec2f pos)
+	{
+		// https://en.wikipedia.org/wiki/Perlin_noise
+		al::Vec2f floorPos(std::floor(pos.x), std::floor(pos.y));
+		auto interp = pos - floorPos;
+
+		float n[4];
+		for(int i=0; i<4; i++) {
+			al::Vec2f ipos = floorPos + al::Vec2f(!!(i&1), !!(i&2));
+			n[i] = randomGradient(ipos).dot(pos-ipos);
+		}
+
+		float ix0 = interpolate(n[0], n[1], interp.x);
+		float ix1 = interpolate(n[2], n[3], interp.x);
+		
+		return std::clamp(interpolate(ix0, ix1, interp.y), -1.0f, 1.0f) * 0.5 + 0.5;
+	}
+private:
+	uint32_t seed = 0x12345678;
+
+	static float interpolate(float a, float b, float weight) 
+	{
+		weight = std::clamp(weight, 0.0f, 1.0f);
+		return (b - a) * (3.0 - weight * 2.0) * weight * weight + a;
+	}
+
+	al::Vec2f randomGradient(al::Vec2<int> pos)
+	{
+		uint32_t a = pos.x * 89733 + pos.y * 2879327 + 0xB16B00B5;
+		a = a<<13 | a>>19;
+		a ^= seed;
+		a *= 0xD398A93F;
+		return al::Vec2f(std::cos(a), std::sin(a));
+	}
+};
+
 
 struct Mesh 
 {
@@ -70,14 +80,115 @@ struct Mesh
 	std::vector<int> indices;
 };
 
+
+struct Camera {
+	al::Vec3f pos;
+	al::Vec2d rot;
+	constexpr static al::Vec3f Up {0,0,-1};
+
+	al::Vec3f forward() 
+	{
+		return al::Vec3f(
+			std::cos(rot.x) * std::cos(rot.y),
+			std::cos(rot.x) * std::sin(rot.y),
+			std::sin(-rot.x)
+		).normalized();
+	}
+	
+	void rotate(al::Vec2f delta) 
+	{
+		rot += delta;
+		rot.x = std::clamp(rot.x, -1.5706, 1.5706);
+		rot.y = std::fmod(rot.y, ALLEGRO_PI * 2.0);
+	}
+
+	al::Vec3f right() 
+	{
+		return forward().cross(Up).normalized();
+	}
+
+	al::Transform transform() 
+	{
+		return al::Transform::Camera(pos, pos+forward(), Up);
+	}
+};
+
+struct Skybox {
+	al::Bitmap texture;
+	Mesh skyboxMesh;
+
+	Skybox(al::Bitmap&& texture)
+		: texture(std::move(texture))
+	{
+		skyboxMesh = createSkyboxMesh();
+		scaleUV();
+	}
+
+	static Mesh createSkyboxMesh()
+	{
+		static constexpr al::Vec3f positions[] = {
+			{-1, -1, -1}, {-1, 1, -1}, {1, 1, -1}, {1, -1, -1}, // low part, clockwise
+			{-1, -1, 1},  {-1, 1, 1},  {1, 1, 1},  {1, -1, 1}, // high part, clockwise
+		};
+		static constexpr al::Vec2f wallUV[] = {
+			{0, 2}, {1, 2}, {2, 2}, {3, 2}, {4, 2},
+			{0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1}
+		};
+		static constexpr al::Vec2f floorCeilingUV[] {
+			{1, 3}, {1, 2}, {2, 2}, {2, 3},
+			{1, 0}, {1, 1}, {2, 1}, {2, 0}
+		};
+		static constexpr int floorCeilingIndices[] = {
+			0, 1, 2, 0, 2, 3,
+			4, 5, 6, 4, 6, 7
+		};
+		static constexpr int wallIndices[] = {
+			0, 1, 5, 1, 5, 6,
+			1, 2, 6, 2, 6, 7,
+			2, 3, 7, 3, 7, 8,
+			3, 4, 8, 4, 8, 9
+		};
+		std::array<al::Vertex, std::size(wallUV)> wallVertices;
+		std::array<al::Vertex, std::size(floorCeilingUV)> floorCeilingVertices;
+
+		for(unsigned i=0; i<wallVertices.size(); i++)
+			wallVertices[i] = {positions[(i%5)%4 + 4*(i/5)], wallUV[i]};
+		for(unsigned i=0; i<floorCeilingVertices.size(); i++)
+			floorCeilingVertices[i] = {positions[i], floorCeilingUV[i]};
+		
+		Mesh result;
+		for(auto v: wallVertices) result.vertices.push_back(v);
+		for(auto v: floorCeilingVertices) result.vertices.push_back(v);
+		for(auto i: wallIndices) result.indices.push_back(i);
+		for(auto i: floorCeilingIndices) result.indices.push_back(i + wallVertices.size());
+
+		return result;
+	}
+
+	void scaleUV()
+	{
+		for(auto& vtx: skyboxMesh.vertices) {
+			vtx.setUV(vtx.getUV().hadamard({1.0/4.0,1.0/3.0}).hadamard(al::Vec2f(texture.size())));
+		}
+	}
+
+	void render() 
+	{
+		al::DrawIndexedPrim(skyboxMesh.vertices, skyboxMesh.indices, texture);
+	}
+};
+
+
+
 Mesh CreateTerrain(int sx, int sy, float height)
 {
 	Mesh result;
+	PerlinNoiseGenerator perlin;
 	for(int y=0; y<sy; y++) {
 		for(int x=0; x<sx; x++) {
 			al::Vec2f pos(x, y);
-			float vh = height*PerlinFractal(pos*0.01, 8);
-			al::Vertex vtx({pos.x, pos.y, vh}, pos, al::Gray(vh/height));
+			float vh = height*perlin(pos*0.01, 8);
+			al::Vertex vtx({pos.x, pos.y, vh}, pos*15.0, al::Gray(vh/height));
 			result.vertices.push_back(vtx);
 			if(x < sx-1 && y < sy-1) {
 				for(auto offset: {0, 1, sx, 1, sx+1, sx}) {
@@ -90,44 +201,19 @@ Mesh CreateTerrain(int sx, int sy, float height)
 	return result;
 }
 
-struct Camera {
-	al::Vec3f pos;
-	al::Vec2f rot;
-	constexpr static al::Vec3f Up {0,0,-1};
-
-	al::Vec3f forward() {
-		return al::Vec3f(
-			std::cos(rot.x) * std::cos(rot.y),
-			std::cos(rot.x) * std::sin(rot.y),
-			std::sin(-rot.x)
-		).normalized();
-	}
-	void rotate(al::Vec2f delta) {
-		rot += delta;
-		rot.x = std::clamp(rot.x, -1.5706f, 1.5706f);
-	}
-	al::Vec3f right() {
-		return forward().cross(Up).normalized();
-	}
-	al::Transform transform() {
-		return al::Transform::Camera(pos, pos+forward(), Up);
-	}
-};
-
 
 int main()
 {
-	//al_set_config_value(al_get_system_config(), "trace", "level", "debug");
 	std::set_terminate(al::Terminate);
 	al::FullInit();
 
 	al::Display display(1024, 768, 0, {}, {
 		{ALLEGRO_DEPTH_SIZE, 32}, 
 		{ALLEGRO_FLOAT_DEPTH, 1},
-		{ALLEGRO_VSYNC, 2}
+		{ALLEGRO_VSYNC, 1}
 	});
 
-	Mesh terrain = CreateTerrain(200, 200, 96);
+	Mesh terrain = CreateTerrain(128, 128, 96);
 	al::VertexBuffer terrainVB(terrain.vertices);
 	al::IndexBuffer terrainIB(terrain.indices);
 
@@ -136,44 +222,63 @@ int main()
 
 	al::Transform proj = al::Transform::PerspectiveFOV(78, 0.01, 10000);
 	al::EventLoop loop = al::EventLoop::Basic();
+	
+	auto builtinFont = al::Font::BuiltinFont();
 
+	al::Bitmap::SetNewBitmapFlags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
+	al::Bitmap rockTexture("data/rock.jpg");
 
+	Skybox skybox(al::Bitmap("data/nightsky.jpg"));
+
+	al::CurrentDisplay.hideCursor();
 	loop.enableEscToQuit();
 	loop.loopBody = [&](){
-		al::SetMousePos(display.size() / 2.0);
+		
+		//reset mouse to screen center
+		if((al::GetMousePos() - (display.size()/2.0)).length() > 15) {
+			al::SetMousePos(display.size()/2.0);
+		}
 
-		float movDelta = loop.getLastTickTime() * 70.0f;
+		//handle keyboard input
+		float movDelta = loop.getLastTickTime() * 30.0f;
 		auto keyb = al::GetKeyboardState();
 		if(al::IsKeyDown(keyb, ALLEGRO_KEY_W)) camera.pos += camera.forward() * movDelta;
 		if(al::IsKeyDown(keyb, ALLEGRO_KEY_S)) camera.pos -= camera.forward() * movDelta;
 		if(al::IsKeyDown(keyb, ALLEGRO_KEY_A)) camera.pos -= camera.right() * movDelta;
 		if(al::IsKeyDown(keyb, ALLEGRO_KEY_D)) camera.pos += camera.right() * movDelta;
 
-		al::TargetBitmap.clearToColor(al::Blue);
+		//clear the framebuffer (technically unnecessary since we have a skybox)
+		al::TargetBitmap.clearToColor(al::Black);
+		proj.useProjection();
 
+		//render the skybox
+		al_set_render_state(ALLEGRO_DEPTH_TEST, 0);
+		al::Transform::Camera({0,0,0}, camera.forward(), {0,0,-1}).use();
+		skybox.render();
+
+		//render the terrain
 		al_set_render_state(ALLEGRO_DEPTH_TEST, 1);
 		al_clear_depth_buffer(1.0);
 		camera.transform().use();
-		proj.useProjection();
 
 		//al::DrawIndexedPrim(terrain.vertices, terrain.indices);
-		al::DrawIndexedBuffer(terrainVB, terrainIB);
-
-
-
+		al::DrawIndexedBuffer(terrainVB, terrainIB, rockTexture);
+		
+		//render the HUD
 		al_set_render_state(ALLEGRO_DEPTH_TEST, 0);
 		al::TargetBitmap.resetTransform();
 		al::TargetBitmap.resetProjection();
-		al::Font::BuiltinFont().draw(fmt::format("{} fps", loop.getFPS()), al::White, {15, 15});
-
+		builtinFont.draw(fmt::format("{} fps", loop.getFPS()), al::White, {15, 15});
 
 		al::CurrentDisplay.flip();
 	};
 
+	//rotate the camera when we move the mouse
 	loop.eventDispatcher.setEventTypeHandler(ALLEGRO_EVENT_MOUSE_AXES, [&](const ALLEGRO_EVENT& ev){
 		al::Vec2f delta(ev.mouse.dx, ev.mouse.dy);
 		camera.rotate((delta * 0.002).transposed());
 	});
+
 	//loop.enableFramerateLimit(60.0);
 	loop.run();
 }

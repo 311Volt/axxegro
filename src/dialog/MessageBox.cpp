@@ -2,9 +2,6 @@
 #include <iostream>
 #include <typeinfo>
 
-#define FMT_HEADER_ONLY
-#include <fmt/format.h>
-
 #if __has_include(<cxxabi.h>)
 #include <cxxabi.h>
 

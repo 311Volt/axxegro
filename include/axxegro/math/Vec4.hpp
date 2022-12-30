@@ -51,6 +51,10 @@ namespace al {
 		constexpr bool operator!=(const Vec4& rhs) const 
 			{return !(*this==rhs);}
 		
+
+		constexpr Vec4 hadamard(const Vec4& rhs)
+			{return Vec4(x*rhs.x, y*rhs.y, z*rhs.z, w*rhs.w);}
+
 		constexpr T length() const
 			{return std::sqrt(x*x + y*y + z*z + w*w);}
 		constexpr T dist(const Vec4& rhs) const

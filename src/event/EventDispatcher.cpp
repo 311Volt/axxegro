@@ -3,9 +3,7 @@
 #include <random>
 #include <stdexcept>
 #include <limits>
-
-#define FMT_HEADER_ONLY
-#include <fmt/format.h>
+#include <string>
 
 al::EventDispatcher::EventDispatcher()
 {
@@ -27,7 +25,7 @@ void al::EventDispatcher::setEventTypeHandler(ALLEGRO_EVENT_TYPE evType, al::Eve
 void al::EventDispatcher::setEventValueHandler(al::EventDispatcher::EventDiscretizerId discrId, int64_t value, al::EventHandler handler)
 {
 	if(!discretizers.count(discrId)) {
-		throw std::runtime_error(fmt::format("al::EventDispatcher: cannot set value handler: discretizer with id={} does not exist", discrId));
+		throw std::runtime_error("al::EventDispatcher: cannot set value handler: discretizer with id="+std::to_string(discrId)+" does not exist");
 	}
 	eventValueHandler[discrId][value] = handler;
 }

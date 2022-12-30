@@ -1,6 +1,5 @@
 #include <axxegro/io/Keyboard.hpp>
 
-
 ALLEGRO_KEYBOARD_STATE al::GetKeyboardState()
 {
 	ALLEGRO_KEYBOARD_STATE ret;

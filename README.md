@@ -51,8 +51,11 @@ For more examples, see examples/src.
 
 I should begin by pointing out that integration with a working Allegro project
 without the help of a build system is trivial, as axxegro is plain ISO C++17 and
-does not depend on any other third-party libraries. This approach is recommended,
-as build system work is VERY work-in-progress.
+does not depend on any other third-party libraries 
+(except for the header-only tcb::span, which is included and will be removed
+once axxegro moves to C++20). 
+
+This approach is recommended, as build system work is VERY work-in-progress.
 
 To build with CMake, use:   
 ```bash

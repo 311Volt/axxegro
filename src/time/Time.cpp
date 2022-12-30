@@ -7,8 +7,6 @@
 #if ALLEGRO_VERSION_INT < AL_ID(5,2,8,1) && _POSIX_C_SOURCE >= 199309L
 #define AXX_OVERRIDE_GET_TIME
 
-#include <fmt/format.h>
-
 #include <time.h>
 struct AXXPOSIXTimer {
 	struct timespec init;

@@ -61,6 +61,9 @@ namespace al {
 			return (*this) / this->length();
 		}
 
+		constexpr Vec2 hadamard(const Vec2& rhs)
+			{return Vec2(x*rhs.x, y*rhs.y);}
+
 		constexpr T dot(const Vec2& rhs)
 			{return x*rhs.x + y*rhs.y;}
 		

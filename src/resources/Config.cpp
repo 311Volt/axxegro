@@ -4,8 +4,6 @@
 #include <stdexcept>
 #include <unordered_set>
 
-#define FMT_HEADER_ONLY
-#include <fmt/format.h>
 
 al::Config::Config()
 	: Resource(al_create_config())
@@ -17,10 +15,7 @@ al::Config::Config(const std::string& filename)
 	: Resource(al_load_config_file(filename.c_str()))
 {
 	if(!ptr()) {
-		throw ResourceLoadError(fmt::format(
-			"Cannot load config from \"{}\" - file missing, corrupted or invalid",
-			filename
-		));
+		throw ResourceLoadError("Cannot load config from \""+filename+"\" - file missing, corrupted or invalid");
 	}
 	currentSection = "";
 }

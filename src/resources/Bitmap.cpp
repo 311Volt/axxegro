@@ -1,3 +1,4 @@
+#include <string>
 #define AXXEGRO_TRUSTED
 
 #include <axxegro/resources/Bitmap.hpp>
@@ -5,19 +6,14 @@
 
 #include <stdexcept>
 
-#define FMT_HEADER_ONLY
-#include <fmt/format.h>
-
 al::CTargetBitmap al::TargetBitmap;
 
 al::Bitmap::Bitmap(int w, int h)
 	: Resource(al_create_bitmap(w,h))
 {
 	if(!ptr()) {
-		throw ResourceLoadError(fmt::format(
-			"Error while creating a {}x{} bitmap", 
-			w, h
-		));
+		throw ResourceLoadError(
+			"Error while creating a " + std::to_string(w) + "x" + std::to_string(h) + " bitmap");
 	}
 }
 al::Bitmap::Bitmap(int w, int h, al::Color color)
@@ -29,10 +25,9 @@ al::Bitmap::Bitmap(const std::string& filename)
 	: Resource(al_load_bitmap(filename.c_str()))
 {	
 	if(!ptr()) {
-		throw ResourceLoadError(fmt::format(
-			"Cannot load bitmap from \"{}\" - file missing, corrupted or invalid",
-			filename
-		));
+		throw ResourceLoadError(
+			"Cannot load bitmap from \"" + filename + "\" - file missing, corrupted or invalid"
+		);
 	}
 }
 

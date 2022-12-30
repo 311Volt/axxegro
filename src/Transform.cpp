@@ -1,4 +1,5 @@
 
+#include <string>
 #define AXXEGRO_TRUSTED
 
 #include <axxegro/Transform.hpp>
@@ -8,9 +9,6 @@
 
 #include <cmath>
 #include <stdexcept>
-
-#define FMT_HEADER_ONLY
-#include <fmt/format.h>
 
 al::Transform::Transform()
 {
@@ -85,7 +83,7 @@ al::Transform al::Transform::PerspectiveFOV(float vFOV, float near, float far, f
 		aspect = al::CurrentDisplay.aspectRatio();
 	}
 	if(vFOV <= 0.0f || vFOV >= 180.0f) {
-		throw std::invalid_argument(fmt::format("Invalid vertical FOV value: {:.2f} degrees", vFOV));
+		throw std::invalid_argument("Invalid vertical FOV value: " + std::to_string(vFOV) + " degrees");
 	}
 	float h = near * std::tan(vFOV*0.5 * DEG2RAD);
 	float w = h*aspect;
@@ -103,7 +101,7 @@ al::Transform al::Transform::PerspectiveHFOV(float hFOV, float near, float far, 
 		aspect = al::CurrentDisplay.aspectRatio();
 	}
 	if(hFOV <= 0.0f || hFOV >= 180.0f) {
-		throw std::invalid_argument(fmt::format("Invalid horizontal FOV value: {:.2f} degrees", hFOV));
+		throw std::invalid_argument("Invalid horizontal FOV value: " + std::to_string(hFOV) + " degrees");
 	}
 	
 	float vFOV = 2.0f * std::atan(std::tan(hFOV*0.5 * DEG2RAD) / aspect) * RAD2DEG;

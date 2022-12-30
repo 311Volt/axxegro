@@ -1,5 +1,7 @@
 #include <axxegro/display/Monitor.hpp>
 
+#include <string>
+
 al::CAdapters al::Adapters;
 
 al::Rect<int> al::AdapterInfo::rect() const
