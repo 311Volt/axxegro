@@ -9,7 +9,7 @@
 #include <cstddef>
 #include <memory>
 #include <optional>
-#include <tcb/span.hpp>
+#include <span>
 #include <allegro5/allegro_primitives.h>
 
 #include "CustomVertex.hpp"
@@ -37,7 +37,7 @@ namespace al {
 	
 
 	inline int DrawPrim(
-		const tcb::span<Vertex> vertices, 
+		const std::span<Vertex> vertices, 
 		const OptionalRef<Bitmap> texture = std::nullopt, 
 		ALLEGRO_PRIM_TYPE type = ALLEGRO_PRIM_TRIANGLE_LIST,
 		int start = 0,
@@ -55,8 +55,8 @@ namespace al {
 	}
 
 	inline int DrawIndexedPrim(
-		const tcb::span<Vertex> vertices, 
-		const tcb::span<int> indices, 
+		const std::span<Vertex> vertices, 
+		const std::span<int> indices, 
 		const OptionalRef<Bitmap> texture = std::nullopt, 
 		ALLEGRO_PRIM_TYPE type = ALLEGRO_PRIM_TRIANGLE_LIST
 	)
@@ -73,7 +73,7 @@ namespace al {
 
 	template<typename VType>
 	void DrawPrim(
-		const tcb::span<VType> vertices,
+		const std::span<VType> vertices,
 		const OptionalRef<Bitmap> texture = std::nullopt,
 		ALLEGRO_PRIM_TYPE type = ALLEGRO_PRIM_TRIANGLE_LIST,
 		int start = 0,
@@ -93,8 +93,8 @@ namespace al {
 
 	template<typename VType>
 	void DrawIndexedPrim(
-		const tcb::span<VType> vertices,
-		const tcb::span<int> indices,
+		const std::span<VType> vertices,
+		const std::span<int> indices,
 		const OptionalRef<Bitmap> texture = std::nullopt,
 		ALLEGRO_PRIM_TYPE type = ALLEGRO_PRIM_TRIANGLE_LIST
 	)

@@ -1,9 +1,12 @@
+
 #include <string>
 #define AXXEGRO_TRUSTED
 
 #include <axxegro/resources/Font.hpp>
 #include <axxegro/UStr.hpp>
 #include <allegro5/allegro_ttf.h>
+
+#include <format>
 
 al::Font::Font()
 	: Resource(al_create_builtin_font())
@@ -22,7 +25,7 @@ al::Font::Font(Bitmap& bmp, std::vector<CharRange> ranges)
 
 	setPtr(al_grab_font_from_bitmap(bmp.ptr(), ranges.size(), rangesFlat.data()));
 	if(!ptr()) {
-		throw ResourceLoadError("Error while grabbing font from a " + std::to_string(bmp.width()) + "x" + std::to_string(bmp.height()) + " bitmap");
+		throw ResourceLoadError(std::format("Error while grabbing font from a {}x{} bitmap", bmp.width(), bmp.height()));
 	}
 }
 al::Font::Font(const std::string& filename, int size)
@@ -34,7 +37,7 @@ al::Font::Font(const std::string& filename, int size, int flags)
 	: Resource(al_load_font(filename.c_str(), size, flags))
 {
 	if(!ptr()) {
-		throw ResourceLoadError("Cannot load font from \"" + filename + "\" - file missing, corrupted or invalid");
+		throw ResourceLoadError(std::format("Cannot load font from {} - file missing, corrupted or invalid", filename));
 	}
 }
 

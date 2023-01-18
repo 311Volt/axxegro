@@ -1,9 +1,8 @@
 #include <axxegro/axxegro.hpp>
 
-#define FMT_HEADER_ONLY
-#include <fmt/format.h>
-#include <tcb/span.hpp>
 #include <cmath>
+#include <format>
+#include <iostream>
 
 
 /**
@@ -26,24 +25,24 @@ int main()
 	al::Config cfg("data/samplecfg.ini");
 
 	for(auto& section: cfg.sections()) {
-		fmt::print("{}: \n", section);
+		std::cout << std::format("{}: \n", section);
 		for(auto& key: cfg.keys(section)) {
 			al::Config::SectionSelector ss(cfg, section);
-			fmt::print("\t{} -> {}\n", key, cfg.getValue(key));
+			std::cout << std::format("\t{} -> {}\n", key, cfg.getValue(key));
 		}
-		fmt::print("\n\n");
+		std::cout << std::format("\n\n");
 	}
 
 	al::EventLoop loop = al::EventLoop::Basic();
 	loop.enableEscToQuit();
 
 	al::Coord<float> txtPos {320, 240};
-	std::string txtTest = fmt::format("kb {}B, m {}B", sizeof(ALLEGRO_KEYBOARD_STATE), sizeof(ALLEGRO_MOUSE_STATE));
+	std::string txtTest = std::format("kb {}B, m {}B", sizeof(ALLEGRO_KEYBOARD_STATE), sizeof(ALLEGRO_MOUSE_STATE));
 	loop.loopBody = [&](){
 		al::TargetBitmap.clearToColor(al::RGB(0,0,0));
 
 		float txtMaxWidth = 10.0 + (0.5+0.5*std::sin(al::GetTime())) * 300.0;
-		std::string txtTest1 = fmt::format("{}. tick={}", txtTest, loop.getTick());
+		std::string txtTest1 = std::format("{}. tick={}", txtTest, loop.getTick());
 		std::string txtTestCut = txtTest1.substr(0, font.calcCutoffPoint(txtTest1, txtMaxWidth));
 
 		{

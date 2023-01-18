@@ -3,14 +3,13 @@
 
 #include <string>
 #include <stdexcept>
+#include <span>
 
 #include <allegro5/allegro.h>
 
 #include <axxegro/resources/Resource.hpp>
 #include <axxegro/resources/Bitmap.hpp>
 #include <axxegro/Transform.hpp>
-
-#include <tcb/span.hpp>
 
 namespace al {
 
@@ -92,7 +91,7 @@ namespace al {
 		}
 
 		template<typename Vec>
-		static bool SetVector(const std::string& name, const tcb::span<Vec> vec)
+		static bool SetVector(const std::string& name, const std::span<Vec> vec)
 		{
 			if constexpr(std::is_same_v<typename Vec::ValueType, int>) {
 				return al_set_shader_int_vector(name.c_str(), Vec::NumElements, (int*)vec.data(), vec.size());

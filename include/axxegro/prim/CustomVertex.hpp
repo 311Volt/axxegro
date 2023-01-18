@@ -2,10 +2,10 @@
 #define INCLUDE_AXXEGRO_PRIM_CUSTOMVERTEX
 
 #include "axxegro/resources/Resource.hpp"
-#include "tcb/span.hpp"
 #include <allegro5/allegro_primitives.h>
 #include <type_traits>
 #include <utility>
+#include <array>
 
 namespace al {
 

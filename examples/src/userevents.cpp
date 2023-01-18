@@ -3,8 +3,7 @@
 #include <algorithm>
 #include <string>
 #include <queue>
-#define FMT_HEADER_ONLY
-#include <fmt/format.h>
+#include <format>
 
 /**
  * @file
@@ -35,7 +34,7 @@ public:
 	void fire()
 	{
 		ExampleEventData dat {state, 3.1, "this is some text"};
-		emitEvent<ExampleEventType>(dat);
+		this->emitEvent<ExampleEventType>(dat);
 		state += 0.5;
 	}
 };
@@ -63,14 +62,14 @@ int main()
 		const auto& dat = al::GetUserEventData<ExampleEventType>(ev);
 
 		//reading the data we put in
-		messages.push_back(fmt::format(
+		messages.push_back(std::format(
 			"[{:.02f}] Received example event: {:.1f} {:.1f} \"{}\"", 
 			ev.any.timestamp, 
 			dat.a, dat.b, dat.msg
 		));
 
 		//accessing the event source itself
-		messages.push_back(fmt::format(
+		messages.push_back(std::format(
 			"Custom event source state: {}",
 			static_cast<MyEventSource&>(al::GetUserEventSource(ev)).state
 		));

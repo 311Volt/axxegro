@@ -5,6 +5,8 @@
 #include <axxegro/Color.hpp>
 
 #include <stdexcept>
+#include <format>
+#include <iostream>
 
 al::CTargetBitmap al::TargetBitmap;
 
@@ -12,8 +14,9 @@ al::Bitmap::Bitmap(int w, int h)
 	: Resource(al_create_bitmap(w,h))
 {
 	if(!ptr()) {
-		throw ResourceLoadError(
-			"Error while creating a " + std::to_string(w) + "x" + std::to_string(h) + " bitmap");
+		throw ResourceLoadError(std::format(
+			"Error while creating a {}x{} bitmap", w, h
+		));
 	}
 }
 al::Bitmap::Bitmap(int w, int h, al::Color color)
@@ -26,7 +29,7 @@ al::Bitmap::Bitmap(const std::string& filename)
 {	
 	if(!ptr()) {
 		throw ResourceLoadError(
-			"Cannot load bitmap from \"" + filename + "\" - file missing, corrupted or invalid"
+			"Cannot load bitmap from \"" + filename + "\" - file missing, corrupted or in an unsupported format"
 		);
 	}
 }

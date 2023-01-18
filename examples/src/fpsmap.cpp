@@ -1,12 +1,13 @@
 #include "axxegro/math/Vec2.hpp"
 #include "axxegro/prim/lldr.hpp"
+#include "axxegro/resources/Resource.hpp"
 #include <axxegro/axxegro.hpp>
 #include <iterator>
-
-#define FMT_HEADER_ONLY
-#include <fmt/format.h>
+#include <format>
 
 #include <cmath>
+
+#include <iostream>
 
 using namespace al::ColorLiterals;
 
@@ -207,7 +208,7 @@ int main()
 	std::set_terminate(al::Terminate);
 	al::FullInit();
 
-	al::Display display(1024, 768, 0, {}, {
+	al::Display display(1920, 1080, 0, {}, {
 		{ALLEGRO_DEPTH_SIZE, 32}, 
 		{ALLEGRO_FLOAT_DEPTH, 1},
 		{ALLEGRO_VSYNC, 1}
@@ -268,7 +269,7 @@ int main()
 		al_set_render_state(ALLEGRO_DEPTH_TEST, 0);
 		al::TargetBitmap.resetTransform();
 		al::TargetBitmap.resetProjection();
-		builtinFont.draw(fmt::format("{} fps", loop.getFPS()), al::White, {15, 15});
+		builtinFont.draw(std::format("{} fps", loop.getFPS()), al::White, {15, 15});
 
 		al::CurrentDisplay.flip();
 	};
@@ -279,6 +280,5 @@ int main()
 		camera.rotate((delta * 0.002).transposed());
 	});
 
-	//loop.enableFramerateLimit(60.0);
 	loop.run();
 }

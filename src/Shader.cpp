@@ -1,6 +1,8 @@
+#include <string>
 #define AXXEGRO_TRUSTED
 
 #include <axxegro/Shader.hpp>
+#include <format>
 
 al::Shader::Shader(ALLEGRO_SHADER_PLATFORM platform)
 	: Resource(al_create_shader(platform))
@@ -19,7 +21,7 @@ void al::Shader::attachSourceCode(const std::string& src, ALLEGRO_SHADER_TYPE ty
 void al::Shader::attachSourceFile(const std::string& filename, ALLEGRO_SHADER_TYPE type)
 {
 	if(!al_attach_shader_source_file(ptr(), type, filename.c_str())) {
-		throw ShaderSourceError("Cannot attach shader source file "+filename+": \n" + std::string(getLog()));
+		throw ShaderSourceError(std::format("Cannot attach shader source file {}: \n{}", filename, std::string(getLog())));
 	}
 }
 

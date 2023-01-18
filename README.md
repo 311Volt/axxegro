@@ -1,8 +1,6 @@
-**warning: development is on hold until i have any free time to speak of**
-
 # axxegro
 
-A C++17 wrapper for the game programming library [Allegro5](https://github.com/liballeg/allegro5) 
+A C++20 wrapper for the game programming library [Allegro5](https://github.com/liballeg/allegro5) 
 that aims to combine Allegro's straightforward and intuitive API with modern C++. It is not a complete wrapper 
 and exposes the Allegro API to the user rather than redefining every constant; however, 
 the goal for 1.0 is to completely eliminate the need to call any Allegro functions directly.
@@ -27,7 +25,11 @@ on any scale at any time.
 
 # examples
 
+For complete example programs, see [examples/src](examples/src).
+
 ```c++
+al::Display display(800, 600);
+
 al::Bitmap lena("lena.jpg");
 lena.draw({0, 0});
 ```
@@ -45,39 +47,33 @@ loop.enableFramerateLimit(60); //limit to 60 fps
 loop.run(); //will run until window is closed
 ```
 
-For more examples, see examples/src.
+# Building
 
-# how to build with CMake
+This project, including examples and documentation, can be built with CMake:
 
-I should begin by pointing out that integration with a working Allegro project
-without the help of a build system is trivial, as axxegro is plain ISO C++17 and
-does not depend on any other third-party libraries 
-(except for the header-only tcb::span, which is included and will be removed
-once axxegro moves to C++20). 
-
-This approach is recommended, as build system work is VERY work-in-progress.
-
-To build with CMake, use:   
 ```bash
 mkdir build
 cd build
 cmake ..
-make # -jXX
+make #-jX
 ```
 
-By default, example programs will be built. Disable `AXXEGRO_BUILD_EXAMPLES`
-or build just the `axxegro` target if you don't want that.
+If Allegro can be found by CMake, no further configuration is required.
+If you prefer to not install Allegro to your toolchain/system path, you may
+specify a custom `CMAKE_PREFIX_PATH`.
 
-Any programs that use axxegro will also need Allegro linked separately, including
-the examples. 
-If you're using Linux, you can likely install Allegro5 with your distribution's package manager.
-Alternatively, you can supply your own build of Allegro. To do this, place as necessary:
-- library files in `deps/lib`
-- headers in `deps/include`
-- DLLs in `examples/dll` (for Windows)
+# Integration
 
+Since axxegro is plain C++20, it is enough to copy the sources and headers to a working C++20 Allegro5 project.
 
-For Windows builds, the most recent MinGW-w64 based build of [TDM-GCC](https://jmeubank.github.io/tdm-gcc/download/) is recommended. (tip for VSCode users: make a copy of the toolset's `mingw32-make.exe` and call it `make.exe` so that `cmake.generator` can be set automatically)
+It is also supported to use axxegro as a subdirectory in a CMake project:
+```cmake
+set(AXXEGRO_MASTER_PROJECT OFF)
+add_subdirectory(axxegro)
+
+target_link_libraries(my_game axxegro)
+```
+Installation and package config files are still TODO.
 
 
 # development progress
@@ -101,6 +97,7 @@ the following missing things:
  - state
  - system routines
  - touch input
+ - make addons optional, as in plain allegro
 
 ### low priority / won't be done
  - fixed point math (consider this instead: https://github.com/MikeLankamp/fpm)
@@ -114,8 +111,4 @@ and `AXXEGRO_BUILD_DOCS` is set to ON (which is the default)
 
 # credits
 
-axxegro builds on the excellent work of the creators of:
-
- - Allegro 5: https://github.com/liballeg/allegro5
- - libfmt: https://github.com/fmtlib/fmt
- - tcbrindle/span: https://github.com/tcbrindle/span
+axxegro builds on the excellent work of the creators of Allegro 5: https://github.com/liballeg/allegro5

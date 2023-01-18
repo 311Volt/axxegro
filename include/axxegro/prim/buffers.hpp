@@ -1,7 +1,7 @@
 #ifndef INCLUDE_AXXEGRO_PRIM_BUFFERS
 #define INCLUDE_AXXEGRO_PRIM_BUFFERS
 
-#include <tcb/span.hpp>
+#include <span>
 #include "lldr.hpp"
 #include <allegro5/allegro_primitives.h>
 #include "axxegro/resources/Resource.hpp"
@@ -14,7 +14,7 @@ namespace al {
 
 	class VertexBuffer: public Resource<ALLEGRO_VERTEX_BUFFER> {
 	public:
-		VertexBuffer(const tcb::span<Vertex> vertices, int flags = ALLEGRO_PRIM_BUFFER_STATIC);
+		VertexBuffer(const std::span<Vertex> vertices, int flags = ALLEGRO_PRIM_BUFFER_STATIC);
 
 		int size() const;
 		//TODO template ctor for different vertex types
@@ -23,7 +23,7 @@ namespace al {
 
 	class IndexBuffer: public Resource<ALLEGRO_INDEX_BUFFER> {
 	public:
-		IndexBuffer(const tcb::span<int> indices, int flags = ALLEGRO_PRIM_BUFFER_STATIC);
+		IndexBuffer(const std::span<int> indices, int flags = ALLEGRO_PRIM_BUFFER_STATIC);
 
 		int size() const;
 		//TODO template ctor for different index sizes

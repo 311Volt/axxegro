@@ -6,6 +6,7 @@
  a color class
 */
 
+#include <ratio>
 #include <stdint.h>
 
 #include <tuple>
@@ -165,30 +166,35 @@ namespace al {
 		return U32_RGB((r&0xAA0000) | (g&0x00AA00) | (b&0x0000AA) | (i&0x555555));
 	}
 
-	constexpr Color Black = CGA(0);
-	constexpr Color Blue = CGA(1);
-	constexpr Color Green = CGA(2);
-	constexpr Color Cyan = CGA(3);
-	constexpr Color Red = CGA(4);
-	constexpr Color Magenta = CGA(5);
-	constexpr Color Brown = CGA(6);
-	constexpr Color LightGray = CGA(7);
-	
-	constexpr Color DarkGray = CGA(8);
-	constexpr Color LightBlue = CGA(9);
-	constexpr Color LightGreen = CGA(10);
-	constexpr Color LightCyan = CGA(11);
-	constexpr Color LightRed = CGA(12);
-	constexpr Color LightMagenta = CGA(13);
-	constexpr Color Yellow = CGA(14);
-	constexpr Color White = CGA(15);
-	
-	constexpr Color PureBlue =    U32_RGB(0x0000FF);
-	constexpr Color PureGreen =   U32_RGB(0x00FF00);
-	constexpr Color PureCyan =    U32_RGB(0x00FFFF);
-	constexpr Color PureRed =     U32_RGB(0xFF0000);
-	constexpr Color PureMagenta = U32_RGB(0xFF00FF);
-	constexpr Color PureYellow =  U32_RGB(0xFFFF00);
+	namespace Colors
+	{
+		constexpr Color Black = CGA(0);
+		constexpr Color Blue = CGA(1);
+		constexpr Color Green = CGA(2);
+		constexpr Color Cyan = CGA(3);
+		constexpr Color Red = CGA(4);
+		constexpr Color Magenta = CGA(5);
+		constexpr Color Brown = CGA(6);
+		constexpr Color LightGray = CGA(7);
+		
+		constexpr Color DarkGray = CGA(8);
+		constexpr Color LightBlue = CGA(9);
+		constexpr Color LightGreen = CGA(10);
+		constexpr Color LightCyan = CGA(11);
+		constexpr Color LightRed = CGA(12);
+		constexpr Color LightMagenta = CGA(13);
+		constexpr Color Yellow = CGA(14);
+		constexpr Color White = CGA(15);
+		
+		constexpr Color PureBlue =    U32_RGB(0x0000FF);
+		constexpr Color PureGreen =   U32_RGB(0x00FF00);
+		constexpr Color PureCyan =    U32_RGB(0x00FFFF);
+		constexpr Color PureRed =     U32_RGB(0xFF0000);
+		constexpr Color PureMagenta = U32_RGB(0xFF00FF);
+		constexpr Color PureYellow =  U32_RGB(0xFFFF00);
+	}
+	using namespace Colors;
+
 
 	namespace ColorCoord {
 		

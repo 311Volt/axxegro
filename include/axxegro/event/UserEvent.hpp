@@ -28,6 +28,7 @@ namespace al {
 
 		static ALLEGRO_EVENT Create(std::unique_ptr<T> dat)
 		{
+			//TODO wtf is this static_assert
 			static_assert(std::is_same_v<typename decltype(dat)::deleter_type, std::default_delete<T>>, "custom deleters are not supported");
 			ALLEGRO_EVENT ret = Init();
 			
@@ -42,6 +43,7 @@ namespace al {
 
 		static ALLEGRO_EVENT Create(const T& dat)
 		{
+			//TODO wtf is this static_assert
 			static_assert(std::is_copy_constructible_v<T>, "cannot create an event by const-reference from a non-copy constructible type, try the unique_ptr overload");
 			ALLEGRO_EVENT ret = Init();
 			if constexpr(HasOptimization) {
