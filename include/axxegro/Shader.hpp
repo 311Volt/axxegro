@@ -15,10 +15,6 @@ namespace al {
 
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_SHADER, al_destroy_shader);
 
-	class ShaderError: public std::runtime_error{using std::runtime_error::runtime_error;};
-	class ShaderSourceError: public ShaderError{using ShaderError::ShaderError;};
-	class ShaderBuildError: public ShaderError{using ShaderError::ShaderError;};
-
 	class Shader: public Resource<ALLEGRO_SHADER> {
 	public:
 		Shader(ALLEGRO_SHADER_PLATFORM platform = ALLEGRO_SHADER_AUTO);
@@ -54,14 +50,7 @@ namespace al {
 
 		static void Reset();
 
-		static inline std::string GetDefaultSource(ALLEGRO_SHADER_PLATFORM platform, ALLEGRO_SHADER_TYPE type)
-		{
-			const char* src = al_get_default_shader_source(platform, type);
-			if(!src) {
-				throw std::runtime_error("Cannot get default shader source. Allegro might have been built without support for shaders for the specified platform.");
-			}
-			return src;
-		}
+		static inline std::string GetDefaultSource(ALLEGRO_SHADER_PLATFORM platform, ALLEGRO_SHADER_TYPE type);
 
 		static inline bool SetBool(const std::string &name, bool value)
 		{

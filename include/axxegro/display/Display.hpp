@@ -16,7 +16,6 @@
 #include <allegro5/allegro.h>
 
 namespace al {
-	class DisplayCreationError: public std::runtime_error {using std::runtime_error::runtime_error;};
 
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_DISPLAY, al_destroy_display);
 

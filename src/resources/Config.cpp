@@ -1,3 +1,4 @@
+#include "axxegro/Exception.hpp"
 #define AXXEGRO_TRUSTED
 
 #include <axxegro/resources/Config.hpp>
@@ -144,7 +145,7 @@ std::vector<std::string> al::Config::sections() const
 void al::Config::saveToDisk() const
 {
 	if(filename == "") {
-		throw std::runtime_error("cannot save config to file: no filename given");
+		throw ConfigError("cannot save config to file: no filename given");
 	}
 	saveToDisk(filename);
 }
@@ -152,7 +153,7 @@ void al::Config::saveToDisk() const
 void al::Config::saveToDisk(const std::string& filename) const
 {
 	if(!al_save_config_file(filename.c_str(), ptr())) {
-		throw std::runtime_error("cannot save config file to "+filename);
+		throw ConfigError("cannot save config file to {}", filename);
 	}
 }
 

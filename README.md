@@ -46,6 +46,11 @@ loop.loopBody = [](){
 loop.enableFramerateLimit(60); //limit to 60 fps
 loop.run(); //will run until window is closed
 ```
+# Compiler support
+
+ - GCC: >= 13
+ - Clang: >= 14 (`-fexperimental-library` required)
+ - MSVC: >= 19.29 (VS 2019 16.10)
 
 # Building
 

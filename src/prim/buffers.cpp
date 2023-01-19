@@ -1,3 +1,4 @@
+#include "axxegro/Exception.hpp"
 #include <stdexcept>
 #define AXXEGRO_TRUSTED
 
@@ -9,7 +10,7 @@ al::VertexBuffer::VertexBuffer(const std::span<Vertex> vertices, int flags)
 	  )
 {
 	if(ptr() == nullptr) {
-		throw std::runtime_error("");
+		throw VertexBufferError("Cannot create vertex buffer");
 	}
 }
 

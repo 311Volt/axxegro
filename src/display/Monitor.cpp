@@ -1,4 +1,5 @@
 #include <axxegro/display/Monitor.hpp>
+#include <axxegro/Exception.hpp>
 
 #include <string>
 
@@ -14,7 +15,7 @@ al::Rect<int> al::AdapterInfo::rect() const
 al::AdapterInfo al::CAdapters::operator[](int idx) const
 {
 	if(idx < 0 || idx > size()) {
-		throw std::out_of_range("Invalid video adapter index: " + std::to_string(idx));
+		throw OutOfRangeError("Invalid video adapter index: " + std::to_string(idx));
 	}
 	return AdapterInfo(idx);
 }

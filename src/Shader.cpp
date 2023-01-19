@@ -2,6 +2,7 @@
 #define AXXEGRO_TRUSTED
 
 #include <axxegro/Shader.hpp>
+#include <axxegro/Exception.hpp>
 #include <format>
 
 al::Shader::Shader(ALLEGRO_SHADER_PLATFORM platform)
@@ -52,4 +53,14 @@ void al::Shader::use()
 	if(!al_use_shader(ptr())) {
 		throw ShaderError("Cannot use shader: " + std::string(getLog()));
 	}
+}
+
+std::string al::Shader::GetDefaultSource(ALLEGRO_SHADER_PLATFORM platform, ALLEGRO_SHADER_TYPE type)
+{
+	
+	const char* src = al_get_default_shader_source(platform, type);
+	if(!src) {
+		throw ShaderError("Cannot get default shader source. Allegro might have been built without support for shaders for the specified platform.");
+	}
+	return src;
 }

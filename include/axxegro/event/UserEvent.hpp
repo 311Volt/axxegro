@@ -1,6 +1,7 @@
 #ifndef INCLUDE_AXXEGRO_EVENT_USEREVENT
 #define INCLUDE_AXXEGRO_EVENT_USEREVENT
 
+#include "axxegro/Exception.hpp"
 #include <allegro5/allegro.h>
 #include <memory>
 #include <stdexcept>
@@ -77,7 +78,7 @@ namespace al {
 	{
 #ifndef NDEBUG
 		if(ev.type != UEvT::ID) {
-			throw std::runtime_error("User event ID mismatch");
+			throw EventQueueError("User event ID mismatch");
 		}
 #endif
 		using DT = typename UEvT::DataType;

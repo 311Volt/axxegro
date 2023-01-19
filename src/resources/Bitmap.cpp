@@ -1,9 +1,9 @@
-#include "allegro5/render_state.h"
-#include <string>
 #define AXXEGRO_TRUSTED
 
 #include <axxegro/resources/Bitmap.hpp>
 #include <axxegro/Color.hpp>
+
+#include <axxegro/Exception.hpp>
 
 #include <stdexcept>
 #include <format>
@@ -15,9 +15,7 @@ al::Bitmap::Bitmap(int w, int h)
 	: Resource(al_create_bitmap(w,h))
 {
 	if(!ptr()) {
-		throw ResourceLoadError(std::format(
-			"Error while creating a {}x{} bitmap", w, h
-		));
+		throw ResourceLoadError("Error while creating a {}x{} bitmap", w, h);
 	}
 }
 al::Bitmap::Bitmap(int w, int h, al::Color color)
@@ -29,9 +27,7 @@ al::Bitmap::Bitmap(const std::string& filename)
 	: Resource(al_load_bitmap(filename.c_str()))
 {	
 	if(!ptr()) {
-		throw ResourceLoadError(
-			"Cannot load bitmap from \"" + filename + "\" - file missing, corrupted or in an unsupported format"
-		);
+		throw ResourceLoadError("Cannot load bitmap from {} - file missing, corrupted or in an unsupported format", filename);
 	}
 }
 

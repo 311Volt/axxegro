@@ -1,5 +1,7 @@
 #include "axxegro/Init.hpp"
 
+#include <axxegro/Exception.hpp>
+
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_image.h>

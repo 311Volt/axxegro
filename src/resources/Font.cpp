@@ -4,6 +4,7 @@
 
 #include <axxegro/resources/Font.hpp>
 #include <axxegro/UStr.hpp>
+#include <axxegro/Exception.hpp>
 #include <allegro5/allegro_ttf.h>
 
 #include <format>

@@ -1,3 +1,4 @@
+#include "axxegro/Exception.hpp"
 #define AXXEGRO_TRUSTED
 
 #include <axxegro/event/EventQueue.hpp>
@@ -9,7 +10,7 @@ al::EventQueue::EventQueue()
 	: Resource(al_create_event_queue())
 {
 	if(!ptr()) {
-		throw std::runtime_error("Failed to create Allegro event queue");
+		throw EventQueueError("Failed to create Allegro event queue");
 	}
 }
 
@@ -31,7 +32,7 @@ bool al::EventQueue::empty()
 ALLEGRO_EVENT al::EventQueue::pop()
 {
 	if(empty()) {
-		throw std::runtime_error("pop() called on an empty event queue. always check the queue with empty()");
+		throw EventQueueError("pop() called on an empty event queue. always check the queue with empty()");
 	}
 	ALLEGRO_EVENT ret;
 	al_get_next_event(ptr(), &ret);
@@ -41,7 +42,7 @@ ALLEGRO_EVENT al::EventQueue::pop()
 ALLEGRO_EVENT al::EventQueue::peek()
 {
 	if(empty()) {
-		throw std::runtime_error("peek() called on an empty event queue. always check the queue with empty()");
+		throw EventQueueError("peek() called on an empty event queue. always check the queue with empty()");
 	}
 	ALLEGRO_EVENT ret;
 	al_peek_next_event(ptr(), &ret);

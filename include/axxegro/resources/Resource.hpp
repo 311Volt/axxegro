@@ -35,11 +35,7 @@
 #include <memory>
 
 namespace al {
-
-	class ResourceLoadError: public std::runtime_error {
-		using std::runtime_error::runtime_error;
-	};
-
+	
 	template<typename T>
 	struct Deleter {
 		static_assert(std::is_same_v<void, void>, "Deleter for T not defined. Use AXXEGRO_DEFINE_DELETER");

@@ -4,6 +4,7 @@
 
 #include <axxegro/Transform.hpp>
 #include <axxegro/display/Display.hpp>
+#include <axxegro/Exception.hpp>
 
 #include <allegro5/allegro.h>
 
@@ -84,7 +85,7 @@ al::Transform al::Transform::PerspectiveFOV(float vFOV, float near, float far, f
 		aspect = al::CurrentDisplay.aspectRatio();
 	}
 	if(vFOV <= 0.0f || vFOV >= 180.0f) {
-		throw std::invalid_argument(std::format("Invalid vertical FOV value: {:.2f} degrees", vFOV));
+		throw InvalidTransformError("Invalid vertical FOV value: {:.2f} degrees", vFOV);
 	}
 	float h = near * std::tan(vFOV*0.5 * DEG2RAD);
 	float w = h*aspect;
@@ -102,7 +103,7 @@ al::Transform al::Transform::PerspectiveHFOV(float hFOV, float near, float far, 
 		aspect = al::CurrentDisplay.aspectRatio();
 	}
 	if(hFOV <= 0.0f || hFOV >= 180.0f) {
-		throw std::invalid_argument(std::format("Invalid horizontal FOV value: {:.2f} degrees", hFOV));
+		throw InvalidTransformError("Invalid horizontal FOV value: {:.2f} degrees", hFOV);
 	}
 	
 	float vFOV = 2.0f * std::atan(std::tan(hFOV*0.5 * DEG2RAD) / aspect) * RAD2DEG;

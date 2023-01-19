@@ -1,9 +1,10 @@
-#include "allegro5/mouse_cursor.h"
-#include "axxegro/display/DisplayModes.hpp"
-#include <string>
+
 #define AXXEGRO_TRUSTED
 
 #include <axxegro/display/Display.hpp>
+#include "axxegro/display/DisplayModes.hpp"
+#include <axxegro/Exception.hpp>
+#include <format>
 #include <stdexcept>
 
 al::TCurrentDisplay al::CurrentDisplay;
@@ -38,7 +39,7 @@ al::Display::Display(int w, int h, int flags, std::vector<Option> requiredOption
 
 	setPtr(al_create_display(w, h));
 	if(!ptr()) {
-		throw DisplayCreationError("Could not create a " + std::to_string(w) + "x" + std::to_string(h) + " Allegro display.");
+		throw DisplayCreationError("Could not create a {}x{} Allegro display.", w, h);
 	}
 	al_reset_new_display_options();
 	initPointers();

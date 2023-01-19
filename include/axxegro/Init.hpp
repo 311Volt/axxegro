@@ -23,8 +23,6 @@ namespace al {
 		void execute();
 	};
 
-	class InitJobFailed: public std::runtime_error {using std::runtime_error::runtime_error;};
-
 	using InitJobList = std::vector<InitJob>;
 
 	void Initialize(InitJobList list);

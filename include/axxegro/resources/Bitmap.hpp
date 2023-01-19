@@ -20,8 +20,6 @@
  */
 
 namespace al {
-
-	class BitmapLockError: public std::runtime_error {using std::runtime_error::runtime_error;};
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_BITMAP, al_destroy_bitmap);
 
 	class BitmapLockedRegion;
