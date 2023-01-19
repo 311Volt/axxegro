@@ -68,7 +68,7 @@ Since axxegro is plain C++20, it is enough to copy the sources and headers to a 
 
 It is also supported to use axxegro as a subdirectory in a CMake project:
 ```cmake
-set(AXXEGRO_MASTER_PROJECT OFF)
+option(AXXEGRO_MASTER_PROJECT OFF)
 add_subdirectory(axxegro)
 
 target_link_libraries(my_game axxegro)
@@ -84,7 +84,7 @@ the following missing things:
 
 ### high priority
  - everything audio
- - a subset of gfx routines (pixel formats, blending modes, render states)
+ - a subset of gfx routines (pixel formats, blending modes)
  - vertex/index buffers
  - platform-specific and D3D/OpenGL specific functions
  - native dialog menus

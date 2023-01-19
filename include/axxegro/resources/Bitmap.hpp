@@ -12,6 +12,7 @@
 #include "../math/math.hpp"
 #include "../Transform.hpp"
 #include "../Color.hpp"
+#include "allegro5/render_state.h"
 
 /**
  * @file
@@ -204,6 +205,14 @@ namespace al {
 		Transform currentTransform();
 		Transform currentInverseTransform();
 		Transform currentProjectionTransform();
+
+		void setRenderState(ALLEGRO_RENDER_STATE state, int value);
+		void setAlphaTest(bool value);
+		void setAlphaFunction(ALLEGRO_RENDER_FUNCTION value);
+		void setAlphaTestValue(uint8_t value);
+		void setWriteMaskFlags(ALLEGRO_WRITE_MASK_FLAGS value);
+		void setDepthTest(bool value);
+		void setDepthFunction(ALLEGRO_RENDER_FUNCTION value);
 
 		void clearToColor(Color color);
 		void clearDepthBuffer(float x);

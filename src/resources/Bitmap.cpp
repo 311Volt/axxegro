@@ -1,3 +1,4 @@
+#include "allegro5/render_state.h"
 #include <string>
 #define AXXEGRO_TRUSTED
 
@@ -271,6 +272,35 @@ void al::CTargetBitmap::setClippingRectangle(al::Rect<int> r)
 void al::CTargetBitmap::resetClippingRectangle()
 {
 	al_reset_clipping_rectangle();
+}
+
+void al::CTargetBitmap::setRenderState(ALLEGRO_RENDER_STATE state, int value)
+{
+	al_set_render_state(state, value);
+}
+void al::CTargetBitmap::setAlphaTest(bool value)
+{
+	setRenderState(ALLEGRO_ALPHA_TEST, value);
+}
+void al::CTargetBitmap::setAlphaFunction(ALLEGRO_RENDER_FUNCTION value)
+{
+	setRenderState(ALLEGRO_ALPHA_FUNCTION, value);
+}
+void al::CTargetBitmap::setAlphaTestValue(uint8_t value)
+{
+	setRenderState(ALLEGRO_ALPHA_TEST_VALUE, value);
+}
+void al::CTargetBitmap::setWriteMaskFlags(ALLEGRO_WRITE_MASK_FLAGS value)
+{
+	setRenderState(ALLEGRO_WRITE_MASK, value);
+}
+void al::CTargetBitmap::setDepthTest(bool value)
+{
+	setRenderState(ALLEGRO_DEPTH_TEST, value);
+}
+void al::CTargetBitmap::setDepthFunction(ALLEGRO_RENDER_FUNCTION value)
+{
+	setRenderState(ALLEGRO_DEPTH_FUNCTION, value);
 }
 
 

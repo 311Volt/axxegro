@@ -1,5 +1,6 @@
 #include "axxegro/math/Vec2.hpp"
 #include "axxegro/prim/lldr.hpp"
+#include "axxegro/resources/Bitmap.hpp"
 #include "axxegro/resources/Resource.hpp"
 #include <axxegro/axxegro.hpp>
 #include <iterator>
@@ -208,7 +209,7 @@ int main()
 	std::set_terminate(al::Terminate);
 	al::FullInit();
 
-	al::Display display(1920, 1080, 0, {}, {
+	al::Display display(1024, 768, 0, {}, {
 		{ALLEGRO_DEPTH_SIZE, 32}, 
 		{ALLEGRO_FLOAT_DEPTH, 1},
 		{ALLEGRO_VSYNC, 1}
@@ -253,20 +254,20 @@ int main()
 		proj.useProjection();
 
 		//render the skybox
-		al_set_render_state(ALLEGRO_DEPTH_TEST, 0);
+		al::TargetBitmap.setDepthTest(false);
 		al::Transform::Camera({0,0,0}, camera.forward(), {0,0,-1}).use();
 		skybox.render();
 
 		//render the terrain
-		al_set_render_state(ALLEGRO_DEPTH_TEST, 1);
-		al_clear_depth_buffer(1.0);
+		al::TargetBitmap.setDepthTest(true);
+		al::TargetBitmap.clearDepthBuffer(1.0f);
 		camera.transform().use();
 
 		//al::DrawIndexedPrim(terrain.vertices, terrain.indices);
 		al::DrawIndexedBuffer(terrainVB, terrainIB, rockTexture);
 		
 		//render the HUD
-		al_set_render_state(ALLEGRO_DEPTH_TEST, 0);
+		al::TargetBitmap.setDepthTest(false);
 		al::TargetBitmap.resetTransform();
 		al::TargetBitmap.resetProjection();
 		builtinFont.draw(std::format("{} fps", loop.getFPS()), al::White, {15, 15});
