@@ -1,6 +1,7 @@
 #ifndef INCLUDE_AXXEGRO_SHADER
 #define INCLUDE_AXXEGRO_SHADER
 
+#include "allegro5/shader.h"
 #include <string>
 #include <stdexcept>
 #include <span>
@@ -22,25 +23,11 @@ namespace al {
 		void attachSourceCode(const std::string& src, ALLEGRO_SHADER_TYPE type);
 		void attachSourceFile(const std::string& filename, ALLEGRO_SHADER_TYPE type);
 
-		inline void attachPixelShader(const std::string& src)
-		{
-			attachSourceCode(src, ALLEGRO_PIXEL_SHADER);
-		}
+		inline void attachPixelShader(const std::string& src) {attachSourceCode(src, ALLEGRO_PIXEL_SHADER);}
+		inline void attachVertexShader(const std::string& src) {attachSourceCode(src, ALLEGRO_VERTEX_SHADER);}
 
-		inline void attachVertexShader(const std::string& src)
-		{
-			attachSourceCode(src, ALLEGRO_VERTEX_SHADER);
-		}
-
-		inline void attachPixelShaderFile(const std::string& filename)
-		{
-			attachSourceFile(filename, ALLEGRO_PIXEL_SHADER);
-		}
-
-		inline void attachVertexShaderFile(const std::string& filename)
-		{
-			attachSourceFile(filename, ALLEGRO_VERTEX_SHADER);
-		}
+		inline void attachPixelShaderFile(const std::string& filename) {attachSourceFile(filename, ALLEGRO_PIXEL_SHADER);}
+		inline void attachVertexShaderFile(const std::string& filename) {attachSourceFile(filename, ALLEGRO_VERTEX_SHADER);}
 
 		void build();
 
@@ -50,9 +37,19 @@ namespace al {
 
 		static void Reset();
 
-		static inline std::string GetDefaultSource(ALLEGRO_SHADER_PLATFORM platform, ALLEGRO_SHADER_TYPE type);
+		static std::string GetDefaultSource(ALLEGRO_SHADER_PLATFORM platform, ALLEGRO_SHADER_TYPE type);
 
-		static inline bool SetBool(const std::string &name, bool value)
+		inline void attachDefaultVertexShader()
+		{
+			attachVertexShader(GetDefaultSource(getPlatform(), ALLEGRO_VERTEX_SHADER));
+		}
+
+		inline void attachDefaultPixelShader()
+		{
+			attachVertexShader(GetDefaultSource(getPlatform(), ALLEGRO_PIXEL_SHADER));
+		}
+
+		static inline bool SetBool(const std::string &name, bool value) 
 		{
 			return al_set_shader_bool(name.c_str(), value);
 		}
@@ -65,6 +62,11 @@ namespace al {
 		static inline bool SetFloat(const std::string &name, float value)
 		{
 			return al_set_shader_float(name.c_str(), value);
+		}
+
+		static inline bool SetSampler(const std::string& name, al::Bitmap& bitmap, int unit)
+		{
+			return al_set_shader_sampler(name.c_str(), bitmap.ptr(), unit);
 		}
 
 		template<typename Vec>

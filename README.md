@@ -16,11 +16,13 @@ on any scale at any time.
 
 # main features so far
 
-- RAII wrapper classes for ALLEGRO_* objects
+- Wrappers for most of Allegro's API
 - Built-in homebrew `Vec*` and `Rect` classes for screen coordinate manipulation
 - An `EventLoop` class that handles boilerplate for basic programs
 - Template-powered user event support
 - `constexpr` colors and helper functions
+- exceptions for common failure points (no more mysterious segfaults 
+    when you forget to `al_init()` or misspell a filename)
 
 
 # examples
@@ -49,8 +51,9 @@ loop.run(); //will run until window is closed
 # Compiler support
 
  - GCC: >= 13
- - Clang: >= 14 (`-fexperimental-library` required)
+ - Clang: >= 15 (`-fexperimental-library` required)
  - MSVC: >= 19.29 (VS 2019 16.10)
+
 
 # Building
 
@@ -89,7 +92,7 @@ the following missing things:
 
 ### high priority
  - everything audio
- - a subset of gfx routines (pixel formats, blending modes)
+ - a subset of gfx routines (blending modes, sub-bitmaps)
  - vertex/index buffers
  - platform-specific and D3D/OpenGL specific functions
  - native dialog menus

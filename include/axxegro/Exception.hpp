@@ -19,7 +19,7 @@ namespace al
 
 		template<typename... Args>
 		Exception(const std::format_string<Args...> msg, Args&&... args)
-			: std::runtime_error(std::format(msg, args...))
+			: std::runtime_error(std::format(msg, std::forward<Args>(args)...))
 		{}
 	};
 
@@ -37,7 +37,9 @@ namespace al
 	AXXEGRO_DEF_EXCEPTION(Exception, EventDispatcherError);
 	AXXEGRO_DEF_EXCEPTION(Exception, EventQueueError);
 	AXXEGRO_DEF_EXCEPTION(Exception, EventSourceError);
-	AXXEGRO_DEF_EXCEPTION(Exception, VertexBufferError);
+	AXXEGRO_DEF_EXCEPTION(Exception, HardwareBufferError);
+		AXXEGRO_DEF_EXCEPTION(HardwareBufferError, VertexBufferError);
+		AXXEGRO_DEF_EXCEPTION(HardwareBufferError, IndexBufferError);
 	AXXEGRO_DEF_EXCEPTION(Exception, ConfigError);
 	
 

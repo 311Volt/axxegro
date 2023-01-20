@@ -1,5 +1,4 @@
 #include "axxegro/Exception.hpp"
-#include <stdexcept>
 #define AXXEGRO_TRUSTED
 
 #include <axxegro/prim/buffers.hpp>
@@ -10,7 +9,7 @@ al::VertexBuffer::VertexBuffer(const std::span<Vertex> vertices, int flags)
 	  )
 {
 	if(ptr() == nullptr) {
-		throw VertexBufferError("Cannot create vertex buffer");
+		throw VertexBufferError("Cannot create vertex buffer of size {}. ", vertices.size());
 	}
 }
 
@@ -24,7 +23,9 @@ al::IndexBuffer::IndexBuffer(const std::span<int> indices, int flags)
 		al_create_index_buffer(sizeof(int), indices.data(), indices.size(), flags)
 	)
 {
-
+	if(ptr() == nullptr) {
+		throw IndexBufferError("Cannot create index buffer of size {}. ", indices.size());
+	}
 }
 
 int al::IndexBuffer::size() const

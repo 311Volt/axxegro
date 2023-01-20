@@ -23,18 +23,18 @@ namespace al {
 		UserEventSource(const UserEventSource&) = delete;
 		UserEventSource& operator=(const UserEventSource&) = delete;
 
-		UserEventSource()
+		inline UserEventSource()
 		{
 			al_init_user_event_source(&evs);
 			al_set_event_source_data(&evs, (intptr_t)this);
 		}
 
-		~UserEventSource()
+		inline ~UserEventSource()
 		{
 			al_destroy_user_event_source(&evs);
 		}
 
-		ALLEGRO_EVENT_SOURCE* ptr() const override
+		inline ALLEGRO_EVENT_SOURCE* ptr() const override
 		{
 			return (ALLEGRO_EVENT_SOURCE*)(&evs);
 		}
