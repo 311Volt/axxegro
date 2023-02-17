@@ -90,7 +90,6 @@ Everything in Allegro has an axxegro equivalent, except
 the following missing things:
 
 ### high priority
- - advanced audio
  - a subset of gfx routines (blending modes, sub-bitmaps)
  - vertex/index buffers
  - platform-specific and D3D/OpenGL specific functions
@@ -99,6 +98,7 @@ the following missing things:
 
 ### medium priority
  - virtual filesystem, PhysicsFS and memfile
+ - some audio features (devices etc)
  - haptic
  - joystick
  - state
