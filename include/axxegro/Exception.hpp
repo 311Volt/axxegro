@@ -19,7 +19,7 @@ namespace al
 
 		template<typename... Args>
 		Exception(const std::format_string<Args...> msg, Args&&... args)
-			: std::runtime_error(std::format(msg, std::forward<Args>(args)...))
+			: std::runtime_error(std::vformat(msg.get(), std::make_format_args(args...)))
 		{}
 	};
 
@@ -29,6 +29,7 @@ namespace al
 	AXXEGRO_DEF_EXCEPTION(Exception, ShaderError);
 		AXXEGRO_DEF_EXCEPTION(ShaderError, ShaderSourceError);
 		AXXEGRO_DEF_EXCEPTION(ShaderError, ShaderBuildError);
+    AXXEGRO_DEF_EXCEPTION(Exception, AudioError);
 	AXXEGRO_DEF_EXCEPTION(Exception, DisplayCreationError);
 	AXXEGRO_DEF_EXCEPTION(Exception, BitmapLockError);
 	AXXEGRO_DEF_EXCEPTION(Exception, ResourceLoadError);

@@ -6,6 +6,7 @@
 #include "UStr.hpp"
 #include "Transform.hpp"
 #include "Shader.hpp"
+#include "audio/Sample.hpp"
 #include "dialog/dialog.hpp"
 #include "display/Display.hpp"
 #include "resources/Bitmap.hpp"

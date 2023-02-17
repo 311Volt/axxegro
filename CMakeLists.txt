@@ -9,7 +9,12 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 file(GLOB_RECURSE AXXEGRO_SOURCES "src/*.cpp")
 
-option(AXXEGRO_MASTER_PROJECT ON)
+if (NOT DEFINED AXXEGRO_MASTER_PROJECT)
+	set(AXXEGRO_MASTER_PROJECT OFF)
+	if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+		set(AXXEGRO_MASTER_PROJECT ON)
+	endif ()
+endif ()
 
 if(NOT MSVC)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -pedantic")
@@ -22,7 +27,6 @@ add_library(${PROJECT_NAME} ${AXXEGRO_SOURCES})
 find_package(Allegro REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC ${Allegro_LIBRARIES})
 target_include_directories(${PROJECT_NAME} PUBLIC ${Allegro_INCLUDE_DIRS})
-
 target_include_directories(${PROJECT_NAME} PUBLIC "include")
 
 option(AXXEGRO_BUILD_EXAMPLES "Build example programs" ${AXXEGRO_MASTER_PROJECT})

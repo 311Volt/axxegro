@@ -52,7 +52,8 @@ loop.run(); //will run until window is closed
 
  - GCC: >= 13
  - Clang: >= 15 (`-fexperimental-library` required)
- - MSVC: >= 19.29 (VS 2019 16.10)
+ - MSVC: >= 19.29 (VS 2019 16.10) (**not tested**)
+
 
 
 # Building
@@ -72,13 +73,11 @@ specify a custom `CMAKE_PREFIX_PATH`.
 
 # Integration
 
-Since axxegro is plain C++20, it is enough to copy the sources and headers to a working C++20 Allegro5 project.
+Since axxegro is plain C++20, it is enough to copy the sources and headers to a working Allegro5 project.
 
 It is also supported to use axxegro as a subdirectory in a CMake project:
 ```cmake
-option(AXXEGRO_MASTER_PROJECT OFF)
 add_subdirectory(axxegro)
-
 target_link_libraries(my_game axxegro)
 ```
 Installation and package config files are still TODO.
@@ -91,7 +90,7 @@ Everything in Allegro has an axxegro equivalent, except
 the following missing things:
 
 ### high priority
- - everything audio
+ - advanced audio
  - a subset of gfx routines (blending modes, sub-bitmaps)
  - vertex/index buffers
  - platform-specific and D3D/OpenGL specific functions
@@ -114,8 +113,11 @@ the following missing things:
 
 
 # docs
+
+(WARNING docs are very incomplete at the moment)
+
 Documentation will be generated and placed in `build/docs` if Doxygen is found
-and `AXXEGRO_BUILD_DOCS` is set to ON (which is the default)
+and `AXXEGRO_BUILD_DOCS` is set to ON (which is the default for `AXXEGRO_MASTER_PROJECT`)
 
 # credits
 

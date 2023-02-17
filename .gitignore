@@ -1,4 +1,6 @@
-build
-deps
-.cache
-.vscode
+/build
+/deps
+/.cache
+/.vscode
+/cmake-build-*
+/.idea

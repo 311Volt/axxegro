@@ -93,6 +93,10 @@ namespace al {
 	template<typename T = float>
 	using Coord2 = Vec2<T>;
 
+	using CoordF = Coord<float>;
+	using CoordD = Coord<double>;
+	using CoordI = Coord<int32_t>;
+
 	using Vec2d = Vec2<double>;
 	using Vec2f = Vec2<float>;
 	using Vec2i = Vec2<int>;

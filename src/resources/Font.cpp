@@ -14,6 +14,7 @@ al::Font::Font()
 {
 
 }
+
 al::Font::Font(Bitmap& bmp, std::vector<CharRange> ranges)
 	: Resource(nullptr)
 {
@@ -26,19 +27,21 @@ al::Font::Font(Bitmap& bmp, std::vector<CharRange> ranges)
 
 	setPtr(al_grab_font_from_bitmap(bmp.ptr(), ranges.size(), rangesFlat.data()));
 	if(!ptr()) {
-		throw ResourceLoadError(std::format("Error while grabbing font from a {}x{} bitmap", bmp.width(), bmp.height()));
+		throw ResourceLoadError("Error while grabbing font from a {}x{} bitmap", bmp.width(), bmp.height());
 	}
 }
+
 al::Font::Font(const std::string& filename, int size)
 	: Font(filename, size, 0)
 {
 
 }
+
 al::Font::Font(const std::string& filename, int size, int flags)
 	: Resource(al_load_font(filename.c_str(), size, flags))
 {
 	if(!ptr()) {
-		throw ResourceLoadError(std::format("Cannot load font from {} - file missing, corrupted or invalid", filename));
+		throw ResourceLoadError("Cannot load font from {} - file missing, corrupted or invalid", filename);
 	}
 }
 
@@ -51,10 +54,12 @@ int al::Font::getLineHeight() const
 {
 	return al_get_font_line_height(ptr());
 }
+
 int al::Font::getAscent() const
 {
 	return al_get_font_ascent(ptr());
 }
+
 int al::Font::getDescent() const
 {
 	return al_get_font_descent(ptr());
@@ -65,6 +70,7 @@ int al::Font::getTextWidth(const std::string& text) const
 	UStr ustr(text);
 	return al_get_ustr_width(ptr(), ustr.ptr());
 }
+
 al::Rect<int> al::Font::getTextDimensions(const std::string& text) const
 {
 	UStr ustr(text);
