@@ -42,6 +42,11 @@ namespace al {
 		static_assert(std::is_same_v<T, void>, "Deleter for T not defined. Use AXXEGRO_DEFINE_DELETER");
 	};
 
+	enum class ResourceModel: char {
+		Owning,
+		NonOwning
+	};
+
 	#define AXXEGRO_DEFINE_DELETER(type, delfn) \
 		template<> struct Deleter<type>{ \
 			inline void operator()(type* p){delfn(p);} \
@@ -50,10 +55,22 @@ namespace al {
 	template<typename T, typename Deleter = ::al::Deleter<T>>
 	class Resource {
 		std::unique_ptr<T, Deleter> alPtr;
+		ResourceModel model;
 	public:
-		Resource(T* p)
+		explicit Resource(T* p, ResourceModel model = ResourceModel::Owning)
+			: model(model)
 		{
 			setPtr(p);
+		}
+
+		Resource(Resource&&) = default;
+		Resource& operator=(Resource&&) = default;
+
+		~Resource()
+		{
+			if(model == ResourceModel::NonOwning) {
+				alPtr.reset();
+			}
 		}
 
 		T* ptr()

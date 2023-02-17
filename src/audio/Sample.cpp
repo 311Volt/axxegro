@@ -1,7 +1,7 @@
 #define AXXEGRO_TRUSTED
 
-#include "axxegro/audio/Sample.hpp"
-#include "axxegro/Exception.hpp"
+#include <axxegro/audio/Sample.hpp>
+#include <axxegro/Exception.hpp>
 
 al::Sample::Sample(const std::string &filename)
     : Resource<ALLEGRO_SAMPLE>(al_load_sample(filename.c_str()))
@@ -11,7 +11,7 @@ al::Sample::Sample(const std::string &filename)
     }
 }
 
-std::optional<al::SampleID> al::Sample::play(al::SamplePlayParams options)
+std::optional<al::SampleID> al::Sample::play(al::PlaybackParams options)
 {
     ALLEGRO_SAMPLE_ID smpId;
     bool status = al_play_sample(ptr(), options.gain, options.pan, options.speed, options.loop, &smpId);
@@ -26,11 +26,19 @@ bool al::Sample::save(const std::string &filename)
     return al_save_sample(filename.c_str(), ptr());
 }
 
-void al::Sample::ReserveSamples(int numSamples)
+ALLEGRO_CHANNEL_CONF al::Sample::getChannelConf() const
 {
-    if(!al_reserve_samples(numSamples)) {
-        throw AudioError("Cannot reserve {} samples", numSamples);
-    }
+	return al_get_sample_channels(ptr());
+}
+
+ALLEGRO_AUDIO_DEPTH al::Sample::getDepth() const
+{
+	return al_get_sample_depth(ptr());
+}
+
+unsigned al::Sample::getFrequency() const
+{
+	return al_get_sample_frequency(ptr());
 }
 
 void al::SampleID::stop()

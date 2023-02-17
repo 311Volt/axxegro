@@ -13,7 +13,7 @@ int main()
 
 	al::Font font("data/roboto.ttf", 36);
 
-	al::Sample::ReserveSamples(16);
+	al::SampleInstance::ReserveSamples(16);
 	al::Sample uuhhh("data/audio/uuhhh.ogg"); //sue me bitches
 
 	evLoop.loopBody = [&](){
