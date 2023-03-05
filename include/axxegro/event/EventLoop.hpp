@@ -4,7 +4,6 @@
 #include "EventQueue.hpp"
 #include "EventDispatcher.hpp"
 #include "../time/Timer.hpp"
-#include <axxegro/event/EventLoop.hpp>
 
 #include <axxegro/io/Keyboard.hpp>
 #include <axxegro/io/Mouse.hpp>

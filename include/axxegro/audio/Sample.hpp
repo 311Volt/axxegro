@@ -3,7 +3,6 @@
 
 #include <axxegro/resources/Resource.hpp>
 #include <axxegro/audio/AudioCommon.hpp>
-#include <axxegro/audio/Sample.hpp>
 #include <axxegro/Exception.hpp>
 
 #include <allegro5/allegro5.h>

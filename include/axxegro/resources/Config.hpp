@@ -7,6 +7,7 @@
 #include <memory>
 
 #include <axxegro/resources/Resource.hpp>
+#include <axxegro/Exception.hpp>
 
 #include <unordered_map>
 #include <unordered_set>

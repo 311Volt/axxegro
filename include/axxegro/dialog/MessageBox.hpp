@@ -22,7 +22,7 @@ namespace al {
 	 * ## ALLEGRO_MESSAGEBOX_YES_NO
 	 * Display Yes/No buttons instead of the “OK” button. Ignored if `buttons` is not empty.
 	 */
-	int MessageBox(
+	inline int MessageBox(
 		const std::string& title,
 		const std::string& heading,
 		const std::string& text = "",
