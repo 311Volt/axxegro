@@ -222,7 +222,7 @@ int main()
 	Camera camera;
 	camera.pos = {30, 30, 100};
 
-	al::Transform proj = al::Transform::PerspectiveFOV(78, 0.01, 10000);
+	al::Transform proj = al::Transform::PerspectiveFOV(78, 0.01, 10000, al::CurrentDisplay.aspectRatio());
 	al::EventLoop loop = al::EventLoop::Basic();
 	
 	const auto& builtinFont = al::Font::BuiltinFont();

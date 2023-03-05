@@ -23,7 +23,7 @@ int main()
 	auto skyColor = al::RGB(100, 190, 240);
 
 	// 78 FOV, view range 0.01 - 100
-	auto proj = al::Transform::PerspectiveFOV(78, 0.01, 100.0);
+	auto proj = al::Transform::PerspectiveFOV(78, 0.01, 100.0, al::CurrentDisplay.aspectRatio());
 	proj.useProjection();
 
 	const auto& font = al::Font::BuiltinFont();

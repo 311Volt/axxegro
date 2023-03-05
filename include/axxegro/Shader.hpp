@@ -5,10 +5,12 @@
 #include <string>
 #include <stdexcept>
 #include <span>
+#include <format>
 
 #include <allegro5/allegro.h>
 
 #include <axxegro/resources/Resource.hpp>
+#include <axxegro/Exception.hpp>
 #include <axxegro/resources/Bitmap.hpp>
 #include <axxegro/Transform.hpp>
 
@@ -18,54 +20,91 @@ namespace al {
 
 	class Shader: public Resource<ALLEGRO_SHADER> {
 	public:
-		Shader(ALLEGRO_SHADER_PLATFORM platform = ALLEGRO_SHADER_AUTO);
-
-		void attachSourceCode(const std::string& src, ALLEGRO_SHADER_TYPE type);
-		void attachSourceFile(const std::string& filename, ALLEGRO_SHADER_TYPE type);
-
-		inline void attachPixelShader(const std::string& src) {attachSourceCode(src, ALLEGRO_PIXEL_SHADER);}
-		inline void attachVertexShader(const std::string& src) {attachSourceCode(src, ALLEGRO_VERTEX_SHADER);}
-
-		inline void attachPixelShaderFile(const std::string& filename) {attachSourceFile(filename, ALLEGRO_PIXEL_SHADER);}
-		inline void attachVertexShaderFile(const std::string& filename) {attachSourceFile(filename, ALLEGRO_VERTEX_SHADER);}
-
-		void build();
-
-		const char* getLog() const;
-		ALLEGRO_SHADER_PLATFORM getPlatform() const;
-		void use();
-
-		static void Reset();
-
-		static std::string GetDefaultSource(ALLEGRO_SHADER_PLATFORM platform, ALLEGRO_SHADER_TYPE type);
-
-		inline void attachDefaultVertexShader()
+		explicit Shader(ALLEGRO_SHADER_PLATFORM platform = ALLEGRO_SHADER_AUTO)
+				: Resource(al_create_shader(platform))
 		{
+			if(!ptr()) {
+				throw ShaderError("Cannot create shader. This error might have occured because an incompatible shader platform was specified.");
+			}
+		}
+
+
+		void attachSourceCode(const std::string& src, ALLEGRO_SHADER_TYPE type) {
+			if(!al_attach_shader_source(ptr(), type, src.c_str())) {
+				throw ShaderSourceError("Cannot attach shader source: {}\n", std::string(getLog()));
+			}
+		}
+		void attachSourceFile(const std::string& filename, ALLEGRO_SHADER_TYPE type) {
+			if(!al_attach_shader_source_file(ptr(), type, filename.c_str())) {
+				throw ShaderSourceError("Cannot attach shader source file {}: \n{}", filename, std::string(getLog()));
+			}
+		}
+
+		void attachPixelShader(const std::string& src) {
+			attachSourceCode(src, ALLEGRO_PIXEL_SHADER);
+		}
+		void attachVertexShader(const std::string& src) {
+			attachSourceCode(src, ALLEGRO_VERTEX_SHADER);
+		}
+
+		void attachPixelShaderFile(const std::string& filename) {
+			attachSourceFile(filename, ALLEGRO_PIXEL_SHADER);
+		}
+		void attachVertexShaderFile(const std::string& filename) {
+			attachSourceFile(filename, ALLEGRO_VERTEX_SHADER);
+		}
+
+		void build() {
+			if(!al_build_shader(ptr())) {
+				throw ShaderBuildError("Cannot build shader: \n" + std::string(getLog()));
+			}
+		}
+
+		[[nodiscard]] const char* getLog() const {
+			return al_get_shader_log(ptr());
+		}
+		[[nodiscard]] ALLEGRO_SHADER_PLATFORM getPlatform() const {
+			return al_get_shader_platform(ptr());
+		}
+		void use() {
+			if(!al_use_shader(ptr())) {
+				throw ShaderError("Cannot use shader: " + std::string(getLog()));
+			}
+		}
+
+		static void Reset() {
+			al_use_shader(nullptr);
+		}
+
+		static std::string GetDefaultSource(ALLEGRO_SHADER_PLATFORM platform, ALLEGRO_SHADER_TYPE type) {
+			const char* src = al_get_default_shader_source(platform, type);
+			if(!src) {
+				throw ShaderError("Cannot get default shader source. Allegro might have been built without support for shaders for the specified platform.");
+			}
+			return src;
+		}
+
+		void attachDefaultVertexShader() {
 			attachVertexShader(GetDefaultSource(getPlatform(), ALLEGRO_VERTEX_SHADER));
 		}
 
-		inline void attachDefaultPixelShader()
-		{
+		void attachDefaultPixelShader() {
 			attachVertexShader(GetDefaultSource(getPlatform(), ALLEGRO_PIXEL_SHADER));
 		}
 
-		static inline bool SetBool(const std::string &name, bool value) 
-		{
+		static bool SetBool(const std::string &name, bool value) {
 			return al_set_shader_bool(name.c_str(), value);
 		}
 		
-		static inline bool SetInt(const std::string &name, int value)
-		{
+		static bool SetInt(const std::string &name, int value) {
 			return al_set_shader_int(name.c_str(), value);
 		}
 
-		static inline bool SetFloat(const std::string &name, float value)
-		{
+		static bool SetFloat(const std::string &name, float value) {
 			return al_set_shader_float(name.c_str(), value);
 		}
 
-		static inline bool SetSampler(const std::string& name, al::Bitmap& bitmap, int unit)
-		{
+		static bool SetSampler(const std::string& name, al::Bitmap& bitmap, int unit) {
 			return al_set_shader_sampler(name.c_str(), bitmap.ptr(), unit);
 		}
 
