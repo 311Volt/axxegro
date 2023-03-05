@@ -3,6 +3,7 @@
 
 #include <axxegro/resources/Resource.hpp>
 #include <axxegro/event/EventSource.hpp>
+#include <axxegro/Exception.hpp>
 
 #include <allegro5/allegro_native_dialog.h>
 
@@ -14,11 +15,11 @@ namespace al {
 	class TextLog;
 	class TextLogEventSource: public EventSource {
 	public:
-		TextLogEventSource(TextLog& tl)
+		explicit TextLogEventSource(TextLog& tl)
 			: tl(tl)
 		{}
 
-		virtual ALLEGRO_EVENT_SOURCE* ptr() const override;
+		[[nodiscard]] ALLEGRO_EVENT_SOURCE* ptr() const override;
 	private:
 		const TextLog& tl;
 	};
@@ -26,7 +27,13 @@ namespace al {
 
 	class TextLog: public Resource<ALLEGRO_TEXTLOG> {
 	public:
-		TextLog(const std::string& title = "Log", int flags = 0);
+		explicit TextLog(const std::string& title = "Log", int flags = 0)
+			: Resource<ALLEGRO_TEXTLOG>(al_open_native_text_log(title.c_str(), flags))
+		{
+			if(!ptr()) {
+				throw al::ResourceLoadError("Cannot open native textlog (title={})", title);
+			}
+		}
 
 		template<typename... Args>
 		void writef(const char* fmt, Args... args)
@@ -34,9 +41,19 @@ namespace al {
 			al_append_native_text_log(ptr(), fmt, args...);
 		}
 		
-		void write(const std::string& text);
-		void writeln(const std::string& text);
+		void write(const std::string& text) {
+			writef("%s", text.c_str());
+		}
+		void writeln(const std::string& text) {
+			writef("%s\n", text.c_str());
+		}
 	};
+
+	inline ALLEGRO_EVENT_SOURCE* al::TextLogEventSource::ptr() const
+	{
+		return al_get_native_text_log_event_source(tl.ptr());
+	}
+
 }
 
 #endif /* INCLUDE_AXXEGRO_DIALOG_TEXTLOG */

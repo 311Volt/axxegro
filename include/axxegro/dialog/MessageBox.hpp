@@ -29,14 +29,17 @@ namespace al {
 		const std::string& buttons = "",
 		int flags = 0,
 		std::optional<std::reference_wrapper<Display>> parentDisplay = std::nullopt
-	);
-
-	/**
-	 * @brief Displays a message box and terminates the program.
-	 * @details The message box contains the current exception message if found.
-	 * This function is intended for use as a global terminate handler function.
-	 */
-	void Terminate();
+	)
+	{
+		return al_show_native_message_box(
+				parentDisplay ? parentDisplay->get().ptr() : nullptr,
+				title.c_str(),
+				heading.c_str(),
+				text.c_str(),
+				buttons.size() ? buttons.c_str() : nullptr,
+				flags
+		);
+	}
 
 }
 
