@@ -11,24 +11,62 @@ namespace al {
 
 	class Voice: public Resource<ALLEGRO_VOICE> {
 	public:
-		explicit Voice(AudioFormat audioFormat = {});
-		~Voice();
+		explicit Voice(AudioFormat audioFormat = {})
+				: Resource<ALLEGRO_VOICE>(al_create_voice(audioFormat.frequency, audioFormat.depth, audioFormat.chanConf))
+		{
+			if(!ptr()) {
+				throw AudioError("Could not create voice with format: {}", audioFormat.str());
+			}
+		}
 
-		bool attachMixer(Mixer& mixer);
-		bool attachAudioStream(AudioStream& audio);
-		bool attachSampleInstance(SampleInstance& sampleInstance);
+		~Voice()
+		{
+			if(lastDefaultVoice) {
+				al_set_default_voice(lastDefaultVoice);
+			}
+		}
 
-		bool setAsDefault();
+		bool attachMixer(Mixer& mixer) {
+			return al_attach_mixer_to_voice(mixer.ptr(), ptr());
+		}
+		bool attachAudioStream(AudioStream& audio) {
+			return al_attach_audio_stream_to_voice(audio.ptr(), ptr());
+		}
+		bool attachSampleInstance(SampleInstance& sampleInstance) {
+			return al_attach_sample_instance_to_voice(sampleInstance.ptr(), ptr());
+		}
 
-		[[nodiscard]] unsigned getFrequency() const;
-		[[nodiscard]] ALLEGRO_CHANNEL_CONF getChannelConf() const;
-		[[nodiscard]] ALLEGRO_AUDIO_DEPTH getDepth() const;
+		bool setAsDefault() {
+			if(lastDefaultVoice != ptr()) {
+				lastDefaultVoice = ptr();
+			}
+			al_set_default_voice(ptr());
+			return false;
+		}
 
-		[[nodiscard]] bool getPlaying() const;
-		bool setPlaying(bool val);
+		[[nodiscard]] unsigned getFrequency() const {
+			return al_get_voice_frequency(ptr());
+		}
+		[[nodiscard]] ALLEGRO_CHANNEL_CONF getChannelConf() const {
+			return al_get_voice_channels(ptr());
+		}
+		[[nodiscard]] ALLEGRO_AUDIO_DEPTH getDepth() const {
+			return al_get_voice_depth(ptr());
+		}
 
-		[[nodiscard]] unsigned getPosition() const;
-		bool setPosition(unsigned val);
+		[[nodiscard]] bool getPlaying() const {
+			return al_get_voice_playing(ptr());
+		}
+		bool setPlaying(bool val) {
+			return al_set_voice_playing(ptr(), val);
+		}
+
+		[[nodiscard]] unsigned getPosition() const {
+			return al_get_voice_position(ptr());
+		}
+		bool setPosition(unsigned val) {
+			return al_set_voice_position(ptr(), val);
+		}
 
 //		[[nodiscard]] bool hasAttachments() const;
 	private:
@@ -40,10 +78,12 @@ namespace al {
 	class CDefaultVoice: public Voice {
 	public:
 		using Voice::Voice;
-		ALLEGRO_VOICE* getPointer() const override;
+		ALLEGRO_VOICE* getPointer() const override {
+			return al_get_default_voice();
+		}
 	};
 
-	extern CDefaultVoice DefaultVoice;
+	inline CDefaultVoice DefaultVoice {nullptr, al::ResourceModel::NonOwning};
 
 }
 

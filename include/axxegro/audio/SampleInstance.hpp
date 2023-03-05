@@ -6,6 +6,7 @@
 #include <axxegro/resources/Resource.hpp>
 #include <axxegro/audio/AudioCommon.hpp>
 #include <axxegro/audio/Sample.hpp>
+#include <axxegro/Exception.hpp>
 
 #include <allegro5/allegro_audio.h>
 
@@ -15,47 +16,104 @@ namespace al
 
     class SampleInstance: public Resource<ALLEGRO_SAMPLE_INSTANCE>, public AddPlaybackParams<SampleInstance> {
     public:
-        explicit SampleInstance(const Sample& sample);
+        explicit SampleInstance(const Sample& sample)
+				: Resource<ALLEGRO_SAMPLE_INSTANCE>(al_create_sample_instance(sample.constPtr())) {
+			if(!ptr()) {
+				throw ResourceLoadError("Cannot create sample instance");
+			}
+		}
 
-        bool play();
-        bool stop();
+        bool play() {
+			return al_play_sample_instance(ptr());
+		}
+        bool stop() {
+			return al_stop_sample_instance(ptr());
+		}
 
-		[[nodiscard]] ALLEGRO_CHANNEL_CONF getChannelConf() const;
-		[[nodiscard]] ALLEGRO_AUDIO_DEPTH getDepth() const;
-		[[nodiscard]] unsigned getFrequency() const;
+		[[nodiscard]] ALLEGRO_CHANNEL_CONF getChannelConf() const {
+			return al_get_sample_instance_channels(ptr());
+		}
 
-		[[nodiscard]] float getLengthSecs() const;
+		[[nodiscard]] ALLEGRO_AUDIO_DEPTH getDepth() const {
+			return al_get_sample_instance_depth(ptr());
+		}
 
-		[[nodiscard]] unsigned int getLength() const;
-        bool setLength(unsigned numSamples);
+		[[nodiscard]] unsigned getFrequency() const {
+			return al_get_sample_instance_frequency(ptr());
+		}
 
-		[[nodiscard]] unsigned getPosition() const;
-        bool setPosition(unsigned val);
+		[[nodiscard]] float getLengthSecs() const {
+			return al_get_sample_instance_time(ptr());
+		}
 
-		[[nodiscard]] float getSpeed() const;
-        bool setSpeed(float val);
+		[[nodiscard]] unsigned int getLength() const {
+			return al_get_sample_instance_length(ptr());
+		}
+        bool setLength(unsigned numSamples) {
+			return al_set_sample_instance_length(ptr(), numSamples);
+		}
 
-		[[nodiscard]] float getGain() const;
-        bool setGain(float val);
+		[[nodiscard]] unsigned getPosition() const {
+			return al_get_sample_instance_position(ptr());
+		}
+        bool setPosition(unsigned val) {
+			return al_set_sample_instance_position(ptr(), val);
+		}
 
-		[[nodiscard]] float getPan() const;
-        bool setPan(float val);
+		[[nodiscard]] float getSpeed() const {
+			return al_get_sample_instance_speed(ptr());
+		}
+        bool setSpeed(float val) {
+			return al_set_sample_instance_speed(ptr(), val);
+		}
 
-		[[nodiscard]] ALLEGRO_PLAYMODE getPlayMode() const;
-        bool setPlayMode(ALLEGRO_PLAYMODE val);
+		[[nodiscard]] float getGain() const {
+			return al_get_sample_instance_gain(ptr());
+		}
+        bool setGain(float val) {
+			return al_set_sample_instance_gain(ptr(), val);
+		}
 
-		[[nodiscard]] bool getPlaying() const;
-        bool setPlaying(bool val);
+		[[nodiscard]] float getPan() const {
+			return al_get_sample_instance_pan(ptr());
+		}
+        bool setPan(float val) {
+			return al_set_sample_instance_pan(ptr(), val);
+		}
 
-		[[nodiscard]] bool isAttached() const;
-        bool detach();
+		[[nodiscard]] ALLEGRO_PLAYMODE getPlayMode() const {
+			return al_get_sample_instance_playmode(ptr());
+		}
+        bool setPlayMode(ALLEGRO_PLAYMODE val) {
+			return al_set_sample_instance_playmode(ptr(), val);
+		}
+
+		[[nodiscard]] bool getPlaying() const {
+			return al_get_sample_instance_playing(ptr());
+		}
+        bool setPlaying(bool val) {
+			return al_set_sample_instance_playing(ptr(), val);
+		}
+
+		[[nodiscard]] bool isAttached() const {
+			return al_get_sample_instance_attached(ptr());
+		}
+        bool detach() {
+			return al_detach_sample_instance(ptr());
+		}
 
         //Sample& getSample(); //TODO implement
-        bool setSample(Sample& sample);
+        bool setSample(Sample& sample) {
+			return al_set_sample(ptr(), sample.ptr());
+		}
 
         //setChannelMatrix() //TODO
 
-		static void ReserveSamples(int numSamples);
+		static inline void ReserveSamples(int numSamples) {
+			if(!al_reserve_samples(numSamples)) {
+				throw AudioError("Cannot reserve {} samples", numSamples);
+			}
+		}
 	};
 }
 

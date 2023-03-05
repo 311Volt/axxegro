@@ -31,7 +31,6 @@
  * See CCurrentDisplay or CDisplayBackbuffer in Display.cpp for examples.
  **/
 
-#include <stdexcept>
 #include <type_traits>
 #include <memory>
 
@@ -78,14 +77,11 @@ namespace al {
 			return getPointer();
 		}
 
-		T* constPtr() const
+		T* constPtr() const //TODO remove this
 		{
 			return getPointer();
 		}
 
-#ifndef AXXEGRO_TRUSTED
-	private:
-#endif
 		T* ptr() const
 		{
 			return getPointer();

@@ -13,37 +13,83 @@ namespace al {
 			public Resource<ALLEGRO_MIXER>,
 			public AddAudioFormatQuery<Mixer> {
 	public:
-		explicit Mixer(AudioFormat audioFormat = {});
-		~Mixer();
+		explicit Mixer(AudioFormat audioFormat = {})
+		    : Resource<ALLEGRO_MIXER>(al_create_mixer(audioFormat.frequency, audioFormat.depth, audioFormat.chanConf))
+		{
 
-		bool attachMixer(Mixer& mixer);
-		bool attachAudioStream(AudioStream& audio);
-		bool attachSampleInstance(SampleInstance& sampleInstance);
+		}
+		~Mixer()
+		{
+			if(prevDefaultMixer) {
+				al_set_default_mixer(prevDefaultMixer);
+			}
+		}
 
-		bool setAsDefault();
+		bool attachMixer(Mixer& mixer) {
+			return al_attach_mixer_to_mixer(mixer.ptr(), ptr());
+		}
+		bool attachAudioStream(AudioStream& audio) {
+			return al_attach_audio_stream_to_mixer(audio.ptr(), ptr());
+		}
+		bool attachSampleInstance(SampleInstance& sampleInstance) {
+			return al_attach_sample_instance_to_mixer(sampleInstance.ptr(), ptr());
+		}
 
-		[[nodiscard]] unsigned getFrequency() const;
-		bool setFrequency(unsigned val);
+		bool setAsDefault() {
+			if(prevDefaultMixer != ptr()) {
+				prevDefaultMixer = al_get_default_mixer();
+			}
+			return al_set_default_mixer(ptr());
+		}
 
-		[[nodiscard]] ALLEGRO_CHANNEL_CONF getChannelConf() const;
+		[[nodiscard]] unsigned getFrequency() const {
+			return al_get_mixer_frequency(ptr());
+		}
+		bool setFrequency(unsigned val) {
+			return al_set_mixer_frequency(ptr(), val);
+		}
 
-		[[nodiscard]] ALLEGRO_AUDIO_DEPTH getDepth() const;
+		[[nodiscard]] ALLEGRO_CHANNEL_CONF getChannelConf() const {
+			return al_get_mixer_channels(ptr());
+		}
 
-		[[nodiscard]] float getGain() const;
-		bool setGain(float val);
+		[[nodiscard]] ALLEGRO_AUDIO_DEPTH getDepth() const {
+			return al_get_mixer_depth(ptr());
+		}
 
-		[[nodiscard]] ALLEGRO_MIXER_QUALITY getQuality() const;
-		bool setQuality(ALLEGRO_MIXER_QUALITY val);
+		[[nodiscard]] float getGain() const {
+			return al_get_mixer_gain(ptr());
+		}
+		bool setGain(float val) {
+			return al_set_mixer_gain(ptr(), val);
+		}
 
-		[[nodiscard]] bool getPlaying() const;
-		bool setPlaying(bool val);
+		[[nodiscard]] ALLEGRO_MIXER_QUALITY getQuality() const {
+			return al_get_mixer_quality(ptr());
+		}
+		bool setQuality(ALLEGRO_MIXER_QUALITY val) {
+			return al_set_mixer_quality(ptr(), val);
+		}
 
-		[[nodiscard]] bool isAttached() const;
+		[[nodiscard]] bool getPlaying() const {
+			return al_get_mixer_playing(ptr());
+		}
+		bool setPlaying(bool val) {
+			return al_set_mixer_playing(ptr(), val);
+		}
+
+		[[nodiscard]] bool isAttached() const {
+			return al_get_mixer_attached(ptr());
+		}
 //		[[nodiscard]] bool hasAttachments() const; //5.2.9
 
-		bool detach();
+		bool detach() {
+			return al_detach_mixer(ptr());
+		}
 
-		bool setCStylePostprocessCallback(void (*cb)(void* buf, unsigned samples, void* userdata), void* userdata);
+		bool setCStylePostprocessCallback(void (*cb)(void* buf, unsigned samples, void* userdata), void* userdata) {
+			return al_set_mixer_postprocess_callback(ptr(), cb, userdata);
+		}
 
 		template<ALLEGRO_CHANNEL_CONF ChanConf, ALLEGRO_AUDIO_DEPTH AudioDepth>
 		bool setPostprocessCallback(void (*callback)(std::span<typename SampleType<ChanConf, AudioDepth>::Type>))
@@ -64,10 +110,12 @@ namespace al {
 	public:
 		using Mixer::Mixer;
 	private:
-		[[nodiscard]] ALLEGRO_MIXER* getPointer() const override;
+		[[nodiscard]] ALLEGRO_MIXER* getPointer() const override {
+			return al_get_default_mixer();
+		}
 	};
 
-	extern CDefaultMixer DefaultMixer;
+	inline CDefaultMixer DefaultMixer {nullptr, al::ResourceModel::NonOwning};
 
 }
 

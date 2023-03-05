@@ -212,7 +212,7 @@ int main()
 	al::Display display(1024, 768, 0, {}, {
 		{ALLEGRO_DEPTH_SIZE, 32}, 
 		{ALLEGRO_FLOAT_DEPTH, 1},
-		{ALLEGRO_VSYNC, 1}
+		{ALLEGRO_VSYNC, 2}
 	});
 
 	Mesh terrain = CreateTerrain(128, 128, 96);

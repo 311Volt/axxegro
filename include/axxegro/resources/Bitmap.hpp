@@ -157,7 +157,7 @@ namespace al {
 		~BitmapLockedRegion();
 		
 		BitmapLockedRegion(BitmapLockedRegion&) = delete;
-		BitmapLockedRegion(BitmapLockedRegion&&) = delete;
+		BitmapLockedRegion(BitmapLockedRegion&&) = delete; //TODO maybe moving should be allowed?
 		BitmapLockedRegion& operator=(BitmapLockedRegion&) = delete;
 		BitmapLockedRegion& operator=(BitmapLockedRegion&&) = delete;
 
@@ -173,7 +173,7 @@ namespace al {
 			//TODO assert correct format
 			return reinterpret_cast<T*>(rawRowData(rowIndex));
 		}
-
+		
 	private:
 		ALLEGRO_LOCKED_REGION* reg;
 		ALLEGRO_BITMAP* bmp;

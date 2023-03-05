@@ -10,67 +10,140 @@
 
 namespace al {
 
-    AXXEGRO_DEFINE_DELETER(ALLEGRO_AUDIO_STREAM, al_destroy_audio_stream);
-
-
 	class AudioStream;
-
 	struct AudioStreamEventSource: public EventSource {
 	public:
-		explicit AudioStreamEventSource(AudioStream& stream);
+		explicit AudioStreamEventSource(AudioStream& stream) : stream(stream) {}
 		[[nodiscard]] ALLEGRO_EVENT_SOURCE* ptr() const override;
 	private:
 		AudioStream& stream;
 	};
+
+    AXXEGRO_DEFINE_DELETER(ALLEGRO_AUDIO_STREAM, al_destroy_audio_stream);
 
 	class AudioStream:
 			public Resource<ALLEGRO_AUDIO_STREAM>,
 			public AddPlaybackParams<AudioStream>,
 			public AddAudioFormatQuery<AudioStream> {
     public:
-		explicit AudioStream(size_t bufferCount = 4, unsigned samples = 2048, AudioFormat format = {});
-		explicit AudioStream(const std::string& filename, size_t bufferCount = 4, unsigned samples = 4096);
+
+		explicit AudioStream(size_t bufferCount = 4, unsigned samples = 2048, AudioFormat format = {})
+				: Resource<ALLEGRO_AUDIO_STREAM>(al_create_audio_stream(bufferCount, samples, format.frequency, format.depth, format.chanConf)),
+				  evSource(new AudioStreamEventSource(*this))
+		{
+
+		}
+
+		explicit AudioStream(const std::string& filename, size_t bufferCount = 4, unsigned samples = 4096)
+				: Resource<ALLEGRO_AUDIO_STREAM>(al_load_audio_stream(filename.c_str(), bufferCount, samples)),
+				  evSource(new AudioStreamEventSource(*this))
+		{
+
+		}
 
 //		static AudioStream& Play(const std::string& filename); //5.2.8 unstable
 
-        void drain();
-        bool rewind();
-        [[nodiscard]] unsigned getFrequency() const;
-        [[nodiscard]] ALLEGRO_AUDIO_DEPTH getDepth() const;
-        [[nodiscard]] ALLEGRO_CHANNEL_CONF getChannelConf() const;
-        [[nodiscard]] unsigned getLength() const;
+        void drain() {
+			al_drain_audio_stream(ptr());
+		}
 
-		[[nodiscard]] float getSpeed() const;
-        bool setSpeed(float val);
+        bool rewind() {
+			return al_rewind_audio_stream(ptr());
+		}
 
-		[[nodiscard]] float getGain() const;
-        bool setGain(float val);
+        [[nodiscard]] unsigned getFrequency() const {
+			return al_get_audio_stream_frequency(ptr());
+		}
+        [[nodiscard]] ALLEGRO_AUDIO_DEPTH getDepth() const {
+			return al_get_audio_stream_depth(ptr());
+		}
+        [[nodiscard]] ALLEGRO_CHANNEL_CONF getChannelConf() const {
+			return al_get_audio_stream_channels(ptr());
+		}
+        [[nodiscard]] unsigned getLength() const {
+			return al_get_audio_stream_length(ptr());
+		}
 
-		[[nodiscard]] float getPan() const;
-        bool setPan(float val);
+		[[nodiscard]] float getSpeed() const {
+			return al_get_audio_stream_speed(ptr());
+		}
+        bool setSpeed(float val) {
+			return al_set_audio_stream_speed(ptr(), val);
+		}
 
-		[[nodiscard]] bool getPlaying() const;
-        bool setPlaying(bool val);
+		[[nodiscard]] float getGain() const {
+			return al_get_audio_stream_gain(ptr());
+		}
 
-		[[nodiscard]] ALLEGRO_PLAYMODE getPlayMode() const;
-        bool setPlayMode(ALLEGRO_PLAYMODE val);
+        bool setGain(float val) {
+			return al_set_audio_stream_gain(ptr(), val);
+		}
 
-		[[nodiscard]] bool isAttached() const;
-        bool detach();
+		[[nodiscard]] float getPan() const {
+			return al_get_audio_stream_pan(ptr());
+		}
+        bool setPan(float val) {
+			return al_set_audio_stream_pan(ptr(), val);
+		}
 
-		[[nodiscard]] uint64_t getNumPlayedSamples() const;
+		[[nodiscard]] bool getPlaying() const {
+			return al_get_audio_stream_playing(ptr());
+		}
+        bool setPlaying(bool val) {
+			return al_set_audio_stream_playing(ptr(), val);
+		}
+		bool play() {
+			return setPlaying(true);
+		}
+		bool stop() {
+			return setPlaying(false);
+		}
 
-		EventSource& getEventSource();
+		[[nodiscard]] ALLEGRO_PLAYMODE getPlayMode() const {
+			return al_get_audio_stream_playmode(ptr());
+		}
+        bool setPlayMode(ALLEGRO_PLAYMODE val) {
+			return al_set_audio_stream_playmode(ptr(), val);
+		}
 
-		bool seekSecs(double time);
-		[[nodiscard]] double getPositionSecs() const;
-		[[nodiscard]] double getLengthSecs() const;
+		[[nodiscard]] bool isAttached() const {
+			return al_get_audio_stream_attached(ptr());
+		}
+        bool detach() {
+			return al_detach_audio_stream(ptr());
+		}
 
-		[[nodiscard]] unsigned getNumFragments() const;
-		[[nodiscard]] unsigned getNumAvailableFragments() const;
+		[[nodiscard]] uint64_t getNumPlayedSamples() const {
+			return al_get_audio_stream_played_samples(ptr());
+		}
 
-		void* getFragmentData();
-		bool setFragmentData(void* data);
+		EventSource& getEventSource() {
+			return *evSource;
+		}
+
+		bool seekSecs(double time) {
+			return al_seek_audio_stream_secs(ptr(), time);
+		}
+		[[nodiscard]] double getPositionSecs() const {
+			return al_get_audio_stream_position_secs(ptr());
+		}
+		[[nodiscard]] double getLengthSecs() const {
+			return (double)getLength() / getFrequency();
+		}
+
+		[[nodiscard]] unsigned getNumFragments() const {
+			return al_get_audio_stream_fragments(ptr());
+		}
+		[[nodiscard]] unsigned getNumAvailableFragments() const {
+			return al_get_available_audio_stream_fragments(ptr());
+		}
+
+		void* getFragmentData() {
+			return al_get_audio_stream_fragment(ptr());
+		}
+		bool setFragmentData(void* data) {
+			return al_set_audio_stream_fragment(ptr(), data);
+		}
 
 		template<ALLEGRO_CHANNEL_CONF ChanConf, ALLEGRO_AUDIO_DEPTH AudioDepth>
 		bool setFragment(void (*filler)(std::span<typename SampleType<ChanConf, AudioDepth>::Type>))
@@ -93,9 +166,13 @@ namespace al {
 		using Resource::Resource;
 
 //		static std::unique_ptr<AudioStream> defaultAudioStream;
-		std::unique_ptr<AudioStreamEventSource> evSource;
+		std::unique_ptr<EventSource> evSource;
     };
 
+	inline ALLEGRO_EVENT_SOURCE *al::AudioStreamEventSource::ptr() const
+	{
+		return al_get_audio_stream_event_source(stream.ptr());
+	}
 }
 
 #endif /* INCLUDE_AXXEGRO_AUDIO_AUDIOSTREAM */
