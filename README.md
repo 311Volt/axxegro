@@ -1,6 +1,6 @@
 # axxegro
 
-A C++20 wrapper for the game programming library [Allegro5](https://github.com/liballeg/allegro5) 
+A C++20 header-only wrapper for the game programming library [Allegro5](https://github.com/liballeg/allegro5) 
 that aims to combine Allegro's straightforward and intuitive API with modern C++. It is not a complete wrapper 
 and exposes the Allegro API to the user rather than redefining every constant; however, 
 the goal for 1.0 is to completely eliminate the need to call any Allegro functions directly.
@@ -54,11 +54,11 @@ loop.run(); //will run until window is closed
  - Clang: >= 15 (`-fexperimental-library` required)
  - MSVC: >= 19.29 (VS 2019 16.10) (**not tested**)
 
-
+Support for GCC 10 will be brought back soon.
 
 # Building
 
-This project, including examples and documentation, can be built with CMake:
+Examples and documentation can be built with CMake:
 
 ```bash
 mkdir build
@@ -71,9 +71,13 @@ If Allegro can be found by CMake, no further configuration is required.
 If you prefer to not install Allegro to your toolchain/system path, you may
 specify a custom `CMAKE_PREFIX_PATH`.
 
+Note that only linkage to `allegro_monolith` is supported as of now.
+This will be fixed soon™.
+
 # Integration
 
-Since axxegro is plain C++20, it is enough to copy the sources and headers to a working Allegro5 project.
+Since axxegro is plain C++20, it is enough to copy the headers to a working Allegro5 project
+and compile with `-I<path_to_axxegro>`.
 
 It is also supported to use axxegro as a subdirectory in a CMake project:
 ```cmake
@@ -85,13 +89,12 @@ Installation and package config files are still TODO.
 
 # development progress
 
-As I'm writing this, the library is about 60% done.
+As I'm writing this, the library is about 80% done.
 Everything in Allegro has an axxegro equivalent, except
 the following missing things:
 
 ### high priority
  - a subset of gfx routines (blending modes, sub-bitmaps)
- - vertex/index buffers
  - platform-specific and D3D/OpenGL specific functions
  - native dialog menus
  - video streaming
@@ -104,7 +107,7 @@ the following missing things:
  - state
  - system routines
  - touch input
- - make addons optional, as in plain allegro
+ - make addons optional like in plain allegro
 
 ### low priority / won't be done
  - fixed point math (consider this instead: https://github.com/MikeLankamp/fpm)
@@ -114,7 +117,8 @@ the following missing things:
 
 # docs
 
-(WARNING docs are very incomplete at the moment)
+(WARNING docs are very incomplete at the moment and will probably move to
+something other than doxygen)
 
 Documentation will be generated and placed in `build/docs` if Doxygen is found
 and `AXXEGRO_BUILD_DOCS` is set to ON (which is the default for `AXXEGRO_MASTER_PROJECT`)
