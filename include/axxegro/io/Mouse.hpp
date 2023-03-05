@@ -15,13 +15,19 @@ namespace al {
 
 	class MouseCursor: public Resource<ALLEGRO_MOUSE_CURSOR> {
 	public:
-		MouseCursor(const Bitmap& bmp, Coord<int> focus);
+		MouseCursor(const Bitmap& bmp, Coord<int> focus)
+				: Resource(al_create_mouse_cursor(bmp.ptr(), focus.x, focus.y))
+		{
+
+		}
+
 	};
 
 	class MouseEventSource: public EventSource {
 	public:
-		ALLEGRO_EVENT_SOURCE* ptr() const override
-			{return al_get_mouse_event_source();}
+		[[nodiscard]] ALLEGRO_EVENT_SOURCE* ptr() const override {
+			return al_get_mouse_event_source();
+		}
 	};
 
 	/// @brief Mouse button numbers used by Allegro
@@ -33,30 +39,52 @@ namespace al {
 	};
 
 	struct MouseState: public ALLEGRO_MOUSE_STATE {
-		inline bool isButtonDown(MouseButton btn)
-		{
+		bool isButtonDown(MouseButton btn) {
 			return al_mouse_button_down(this, btn);
 		}
 	};
 
 
 	/// @returns The bit corresponding to a button in the MouseState::buttons bitfield
-	constexpr int MouseBtnBit(int btn)
-	{
+	constexpr int MouseBtnBit(int btn) {
 		return 1 << (int(btn)-1);
 	}
 	
-	unsigned GetNumAxes();
-	unsigned GetNumButtons();
+	inline unsigned GetNumAxes() {
+		return al_get_mouse_num_axes();
+	}
 
-	MouseState GetMouseState();
-	bool IsButtonDown(MouseButton btn);
+	inline unsigned GetNumButtons() {
+		return al_get_mouse_num_buttons();
+	}
 
-	bool SetMousePos(Coord<int> p);
-	Coord<int> GetMousePos();
-	Coord<int> GetMouseDesktopPos();
+	inline MouseState GetMouseState() {
+		MouseState ret;
+		al_get_mouse_state(&ret);
+		return ret;
+	}
 
-	const EventSource& GetMouseEventSource();
+	inline bool IsButtonDown(MouseButton btn) {
+		return GetMouseState().isButtonDown(btn);
+	}
+
+	inline bool SetMousePos(Coord<int> p) {
+		return al_set_mouse_xy(al_get_current_display(), int(p.x), int(p.y));
+	}
+	inline Coord<int> GetMousePos() {
+		MouseState st = GetMouseState();
+		return {st.x, st.y};
+	}
+	inline Coord<int> GetMouseDesktopPos() {
+		int x,y;
+		al_get_mouse_cursor_position(&x, &y);
+		return {x, y};
+	}
+
+	inline const EventSource& GetMouseEventSource() {
+		static MouseEventSource mouseEventSource;
+		return mouseEventSource;
+	}
 }
 
 #endif /* INCLUDE_AXXEGRO_IO_MOUSE */
