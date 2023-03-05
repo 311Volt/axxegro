@@ -6,6 +6,9 @@
 
 #include <vector>
 #include <array>
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_primitives.h>
+
 
 /**
  * @file
@@ -16,127 +19,223 @@ namespace al {
 	constexpr al::Color PRIM_DEFAULT_COLOR = al::RGB(255,255,255);
 	constexpr float PRIM_DEFAULT_THICKNESS = 1.0f;
 
-	void DrawLine(
+	inline void DrawLine(
 		const Coord<>& a, 
 		const Coord<>& b, 
 		const Color& color = PRIM_DEFAULT_COLOR,
 		float thickness = PRIM_DEFAULT_THICKNESS
-	);
+	) {
+		al_draw_line(a.x, a.y, b.x, b.y, color, thickness);
+	}
 
-	void DrawTriangle(
+	inline void DrawTriangle(
 		const Coord<>& a, 
 		const Coord<>& b, 
 		const Coord<>& c, 
 		const Color& color = PRIM_DEFAULT_COLOR, 
 		float thickness = PRIM_DEFAULT_THICKNESS
-	);
+	) {
+		al_draw_triangle(a.x, a.y, b.x, b.y, c.x, c.y, color, thickness);
+	}
 
-	void DrawFilledTriangle(
+	inline void DrawFilledTriangle(
 		const Coord<>& a, 
 		const Coord<>& b, 
 		const Coord<>& c, 
 		const Color& color = PRIM_DEFAULT_COLOR
-	);
+	) {
+		al_draw_filled_triangle(a.x, a.y, b.x, b.y, c.x, c.y, color);
+	}
 
-	void DrawRectangle(
+	inline void DrawRectangle(
 		const Rect<>& r,
 		const Color& color = PRIM_DEFAULT_COLOR,
 		float thickness = PRIM_DEFAULT_THICKNESS
-	);
+	) {
+		al_draw_rectangle(r.a.x, r.a.y, r.b.x, r.b.y, color, thickness);
+	}
 
-	void DrawFilledRectangle(
+	inline void DrawFilledRectangle(
 		const Rect<>& rect,
 		const Color& color = PRIM_DEFAULT_COLOR
-	);
+	) {
+		al_draw_filled_rectangle(rect.a.x, rect.a.y, rect.b.x, rect.b.y, color);
+	}
 
-	void DrawRoundRect(
-		const Rect<>& rect,
-		const Vec2<>& radius = {0, 0},
-		const Color& color = PRIM_DEFAULT_COLOR,
-		float thickness = PRIM_DEFAULT_THICKNESS
-	);
-
-	void DrawFilledRoundRect(
+	inline void DrawRoundRect(
 		const Rect<>& rect,
 		const Vec2<>& radius = {0, 0},
-		const Color& color = PRIM_DEFAULT_COLOR
-	);
+		const Color& color = PRIM_DEFAULT_COLOR,
+		float thickness = PRIM_DEFAULT_THICKNESS
+	) {
+		al_draw_rounded_rectangle(
+				rect.a.x, rect.a.y, rect.b.x, rect.b.y,
+				radius.x, radius.y,
+				color, thickness
+		);
+	}
 
-	void DrawPieslice(
+	inline void DrawFilledRoundRect(
+		const Rect<>& rect,
+		const Vec2<>& radius = {0, 0},
+		const Color& color = PRIM_DEFAULT_COLOR
+	) {
+		al_draw_filled_rounded_rectangle(
+				rect.a.x, rect.a.y, rect.b.x, rect.b.y,
+				radius.x, radius.y,
+				color
+		);
+	}
+
+	inline void DrawPieslice(
 		const Coord<>& center,
 		float radius,
 		float startTheta,
 		float deltaTheta,
 		const Color& color = PRIM_DEFAULT_COLOR,
 		float thickness = PRIM_DEFAULT_THICKNESS
-	);
+	) {
+		al_draw_pieslice(
+				center.x, center.y,
+				radius,
+				startTheta, deltaTheta,
+				color, thickness
+		);
+	}
 
-	void DrawFilledPieslice(
+	inline void DrawFilledPieslice(
 		const Coord<>& center,
 		float radius,
 		float startTheta,
 		float deltaTheta,
 		const Color& color = PRIM_DEFAULT_COLOR
-	);
+	) {
+		al_draw_filled_pieslice(
+				center.x, center.y,
+				radius,
+				startTheta, deltaTheta,
+				color
+		);
+	}
 
-	void DrawEllipse(
+	inline void DrawEllipse(
 		const Coord<>& center,
 		const Vec2<>& radius,
 		const Color& color = PRIM_DEFAULT_COLOR,
 		float thickness = PRIM_DEFAULT_THICKNESS
-	);
+	) {
+		al_draw_ellipse(
+				center.x, center.y,
+				radius.x, radius.y,
+				color, thickness
+		);
+	}
 
-	void DrawFilledEllipse(
+	inline void DrawFilledEllipse(
 		const Coord<>& center,
 		const Vec2<>& radius,
 		const Color& color = PRIM_DEFAULT_COLOR
-	);
+	) {
+		al_draw_filled_ellipse(
+				center.x, center.y,
+				radius.x, radius.y,
+				color
+		);
+	}
 
-	void DrawCircle(
+	inline void DrawCircle(
 		const Coord<>& center,
 		float radius,
 		const Color& color = PRIM_DEFAULT_COLOR,
 		float thickness = PRIM_DEFAULT_THICKNESS
-	);
+	) {
+		al_draw_circle(
+				center.x, center.y,
+				radius,
+				color, thickness
+		);
+	}
 
-	void DrawFilledCircle(
+	inline void DrawFilledCircle(
 		const Coord<>& center,
 		float radius,
 		const Color& color = PRIM_DEFAULT_COLOR
-	);
-	
-	void DrawArc(
+	) {
+		al_draw_filled_circle(
+				center.x, center.y,
+				radius,
+				color
+		);
+	}
+
+	inline void DrawArc(
 		const Coord<>& center,
 		float radius,
 		float startTheta,
 		float deltaTheta,
 		const Color& color = PRIM_DEFAULT_COLOR,
 		float thickness = PRIM_DEFAULT_THICKNESS
-	);
+	) {
+		al_draw_arc(
+				center.x, center.y,
+				radius,
+				startTheta, deltaTheta,
+				color, thickness
+		);
+	}
 
-	void DrawEllipticalArc(
+	inline void DrawEllipticalArc(
 		const Coord<>& center,
 		const Vec2<>& radius,
 		float startTheta,
 		float deltaTheta,
 		const Color& color = PRIM_DEFAULT_COLOR,
 		float thickness = PRIM_DEFAULT_THICKNESS
-	);
-	
-	void DrawSpline(
+	) {
+		al_draw_elliptical_arc(
+				center.x, center.y,
+				radius.x, radius.y,
+				startTheta, deltaTheta,
+				color, thickness
+		);
+	}
+
+	inline void DrawSpline(
 		const std::array<Coord<>, 4>& points,
 		const Color& color = PRIM_DEFAULT_COLOR,
 		float thickness = PRIM_DEFAULT_THICKNESS
-	);
-	
-	std::vector<Coord<>> CalculateArc(
+	) {
+		std::vector<float> pts(8);
+		for(unsigned i=0; i<points.size(); i++) {
+			pts[i*2 + 0] = points[i].x;
+			pts[i*2 + 1] = points[i].y;
+		}
+		al_draw_spline(pts.data(), color, thickness);
+	}
+
+	inline std::vector<Coord<>> CalculateArc(
 		const Coord<>& center,
 		const Coord<>& radius,
 		float startTheta,
 		float deltaTheta,
 		float thickness,
-		unsigned numPoints
-	);
+		int numPoints
+	) {
+		std::vector<float> outData(2*numPoints*(1 + (thickness > 0)));
+		al_calculate_arc(
+				outData.data(), 2*sizeof(outData[0]),
+				center.x, center.y,
+				radius.x, radius.y,
+				startTheta, deltaTheta,
+				thickness,
+				numPoints
+		);
+		std::vector<Coord<>> ret(outData.size() / 2);
+		for(unsigned i=0; i<ret.size(); i++) {
+			ret[i] = {outData[i*2 + 0], outData[i*2 + 1]};
+		}
+		return ret;
+	}
 
 	//TODO ribbons
 }

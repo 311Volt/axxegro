@@ -14,18 +14,38 @@ namespace al {
 
 	class VertexBuffer: public Resource<ALLEGRO_VERTEX_BUFFER> {
 	public:
-		VertexBuffer(const std::span<Vertex> vertices, int flags = ALLEGRO_PRIM_BUFFER_STATIC);
+		explicit VertexBuffer(const std::span<Vertex> vertices, int flags = ALLEGRO_PRIM_BUFFER_STATIC)
+				: Resource<ALLEGRO_VERTEX_BUFFER>(
+				al_create_vertex_buffer(nullptr, vertices.data(), (int)vertices.size(), flags)
+		)
+		{
+			if(ptr() == nullptr) {
+				throw VertexBufferError("Cannot create vertex buffer of size {}. ", vertices.size());
+			}
+		}
 
-		int size() const;
+		[[nodiscard]] int size() const {
+			return al_get_vertex_buffer_size(ptr());
+		}
 		//TODO template ctor for different vertex types
 	};
 	//TODO locking
 
 	class IndexBuffer: public Resource<ALLEGRO_INDEX_BUFFER> {
 	public:
-		IndexBuffer(const std::span<int> indices, int flags = ALLEGRO_PRIM_BUFFER_STATIC);
+		explicit IndexBuffer(const std::span<int> indices, int flags = ALLEGRO_PRIM_BUFFER_STATIC)
+				: Resource<ALLEGRO_INDEX_BUFFER>(
+				al_create_index_buffer(sizeof(int), indices.data(), (int)indices.size(), flags)
+		)
+		{
+			if(ptr() == nullptr) {
+				throw IndexBufferError("Cannot create index buffer of size {}. ", indices.size());
+			}
+		}
 
-		int size() const;
+		[[nodiscard]] int size() const {
+			return al_get_index_buffer_size(ptr());
+		}
 		//TODO template ctor for different index sizes
 	};
 	

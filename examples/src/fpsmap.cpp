@@ -225,7 +225,7 @@ int main()
 	al::Transform proj = al::Transform::PerspectiveFOV(78, 0.01, 10000);
 	al::EventLoop loop = al::EventLoop::Basic();
 	
-	auto builtinFont = al::Font::BuiltinFont();
+	const auto& builtinFont = al::Font::BuiltinFont();
 
 	al::Bitmap::SetNewBitmapFlags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
 	al::Bitmap rockTexture("data/rock.jpg");

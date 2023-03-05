@@ -26,7 +26,7 @@ int main()
 	auto proj = al::Transform::PerspectiveFOV(78, 0.01, 100.0);
 	proj.useProjection();
 
-	auto font = al::Font::BuiltinFont();
+	const auto& font = al::Font::BuiltinFont();
 
 	//player orientation (pitch) in degrees
 	float rx = 0.0;

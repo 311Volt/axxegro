@@ -13,12 +13,13 @@ namespace al {
 
 	class TimerEventSource: public EventSource {
 	public:
-		TimerEventSource(ALLEGRO_TIMER* t)
+		explicit TimerEventSource(ALLEGRO_TIMER* t)
 			: t(t)
 		{}
 
-		virtual ALLEGRO_EVENT_SOURCE* ptr() const override
-			{return al_get_timer_event_source(t);}
+		[[nodiscard]] ALLEGRO_EVENT_SOURCE* ptr() const override {
+			return al_get_timer_event_source(t);
+		}
 	private:
 		ALLEGRO_TIMER* t;
 	};
@@ -27,27 +28,58 @@ namespace al {
 
 	class Timer: public Resource<ALLEGRO_TIMER> {
 	public:
-		Timer(double period);
+		explicit Timer(double period)
+				: Resource(al_create_timer(period))
+		{
+			evSrc = std::make_unique<TimerEventSource>(ptr());
+		}
 
-		static Timer Freq(double freq);
-		static Timer Period(double period);
+		static Timer Freq(double freq) {
+			return Timer(FreqToPeriod(freq));
+		}
 
-		void start();
-		void resume();
-		void stop();
+		static Timer Period(double period) {
+			return Timer(period);
+		};
 
-		bool isStarted();
+		void start() {
+			al_start_timer(ptr());
+		}
+		void resume() {
+			al_resume_timer(ptr());
+		}
+		void stop() {
+			al_stop_timer(ptr());
+		}
 
-		const EventSource& getEventSource() const;
+		[[nodiscard]] bool isStarted() const {
+			return al_get_timer_started(ptr());
+		}
 
-		int64_t getCount() const;
-		void setCount(int64_t value);
+		[[nodiscard]] const EventSource& getEventSource() const {
+			return *evSrc;
+		}
 
-		double getPeriod() const;
-		void setPeriod(double value);
+		[[nodiscard]] int64_t getCount() const {
+			return al_get_timer_count(ptr());
+		}
+		void setCount(int64_t value) {
+			al_set_timer_count(ptr(), value);
+		}
 
-		double getFreq() const;
-		void setFreq(double value);
+		[[nodiscard]] double getPeriod() const {
+			return al_get_timer_speed(ptr());
+		}
+		void setPeriod(double value) {
+			al_set_timer_speed(ptr(), value);
+		}
+
+		[[nodiscard]] double getFreq() const {
+			return PeriodToFreq(getPeriod());
+		}
+		void setFreq(double value) {
+			setPeriod(FreqToPeriod(value));
+		}
 	private:
 		std::unique_ptr<TimerEventSource> evSrc;
 	};

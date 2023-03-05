@@ -44,7 +44,7 @@ int main()
 {
 	al::FullInit();
 	al::Display disp(640, 480);
-	auto font = al::Font::BuiltinFont();
+	const auto& font = al::Font::BuiltinFont();
 
 	//for displaying messages about events on screen
 	std::deque<std::string> messages;
