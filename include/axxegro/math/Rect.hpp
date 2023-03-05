@@ -15,7 +15,7 @@ namespace al {
 		Rect(){} // = {Vec2<T>(),Vec2<T>()} = {{0,0},{0,0}}
 		constexpr Rect(const Vec2<T>& a, const Vec2<T>& b)
 			:a(a),b(b){}
-		constexpr Rect(float x1, float y1, float x2, float y2)
+		constexpr Rect(T x1, T y1, T x2, T y2)
 			:Rect(Vec2<T>(x1,y1), Vec2<T>(x2,y2))
 		{}
 
@@ -34,9 +34,9 @@ namespace al {
 			: Rect(r.a, r.b)
 		{}
 
-		constexpr float width() const 
+		constexpr T width() const
 			{return b.x-a.x;}
-		constexpr float height() const 
+		constexpr T height() const
 			{return b.y-a.y;}
 
 		constexpr Vec2<T> topLeft() const 
@@ -76,7 +76,7 @@ namespace al {
 		constexpr bool operator==(const Rect& rhs) const 
 			{return a==rhs.a && b==rhs.b;}
 		constexpr bool operator!=(const Rect& rhs) const 
-			{return !(*this==rhs);}
+			{return *this != rhs;}
 		
 		constexpr T area()
 		{

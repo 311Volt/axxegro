@@ -3,6 +3,7 @@
 
 #include <allegro5/allegro.h>
 #include <axxegro/math/math.hpp>
+#include <axxegro/Exception.hpp>
 
 #include <stdexcept>
 
@@ -10,44 +11,48 @@ namespace al {
 	
 	class AdapterInfo {
 		int idx;
-		AdapterInfo(int idx)
+		explicit AdapterInfo(int idx)
 			: idx(idx) {}
 		friend class CAdapters;
 	public:
 
-		Rect<int> rect() const;
-		inline int dpi() const
-		{
+		[[nodiscard]] Rect<int> rect() const {
+			ALLEGRO_MONITOR_INFO m;
+			al_get_monitor_info(idx, &m);
+			return {m.x1, m.y1, m.x2, m.y2};
+		}
+		[[nodiscard]] int dpi() const {
 			return al_get_monitor_dpi(idx);
 		}
 	};
 
 	class CAdapters {
 	public:
-		inline int size() const
-		{
+		[[nodiscard]] int size() const {
 			return al_get_num_video_adapters();
 		}
 
-		inline int getDefaultIndex() const
-		{
+		[[nodiscard]] int getDefaultIndex() const {
 			return al_get_new_display_adapter();
 		}
 
-		inline void setDefault(int adapter)
-		{
+		void setDefault(int adapter) {
 			return al_set_new_display_adapter(adapter);
 		}
 
-		AdapterInfo operator[](int idx) const;
+		AdapterInfo operator[](int idx) const {
+			if(idx < 0 || idx > size()) {
+				throw OutOfRangeError("Invalid video adapter index: " + std::to_string(idx));
+			}
+			return AdapterInfo(idx);
+		}
 
-		inline AdapterInfo getDefault()
-		{
+		[[nodiscard]] AdapterInfo getDefault() const {
 			return operator[](getDefaultIndex());
 		}
 	};
 
-	extern CAdapters Adapters;
+	inline CAdapters Adapters;
 }
 
 #endif /* INCLUDE_AXXEGRO_DISPLAY_MONITOR */

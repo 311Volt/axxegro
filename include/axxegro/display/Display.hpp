@@ -7,6 +7,7 @@
 
 #include "../resources/Resource.hpp"
 #include "../resources/Bitmap.hpp"
+#include "DisplayModes.hpp"
 
 #include <allegro5/display.h>
 #include <string>
@@ -14,6 +15,8 @@
 #include <optional>
 
 #include <allegro5/allegro.h>
+
+#define AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC [[maybe_unused]] auto* unused_____ = ptr();
 
 namespace al {
 
@@ -23,22 +26,22 @@ namespace al {
 
 	class DisplayBackbuffer: public Bitmap {
 	public:
-		DisplayBackbuffer(Display& disp)
+		explicit DisplayBackbuffer(Display& disp)
 			: Bitmap(nullptr), disp(disp)
 		{}
 	private:
-		virtual ALLEGRO_BITMAP* getPointer() const override;
+		[[nodiscard]] ALLEGRO_BITMAP* getPointer() const override;
 
 		Display& disp;
 	};
 
 	class DisplayEventSource: public EventSource {
 	public:
-		DisplayEventSource(Display& disp)
+		explicit DisplayEventSource(Display& disp)
 			: disp(disp)
 		{}
 
-		virtual ALLEGRO_EVENT_SOURCE* ptr() const override;
+		[[nodiscard]] ALLEGRO_EVENT_SOURCE* ptr() const override;
 	private:
 		Display& disp;
 	};
@@ -46,7 +49,9 @@ namespace al {
 	class Display: public Resource<ALLEGRO_DISPLAY> {
 	public:
 		using Resource::Resource;
-		using Option = struct{int option, value;};
+		struct Option {
+			int option, value;
+		};
 
 		/**
 		 * @brief Construct a new Display object with custom flags and options.
@@ -63,35 +68,76 @@ namespace al {
 			int w, 
 			int h, 
 			int flags = 0, 
-			std::vector<Option> requiredOptions = {}, 
-			std::vector<Option> suggestedOptions = {}, 
-			std::vector<Option> dontCareOptions = {}
-		);
-		
+			const std::vector<Option>& requiredOptions = {},
+			const std::vector<Option>& suggestedOptions = {},
+			const std::vector<Option>& dontCareOptions = {}
+		)
+				: Resource(nullptr)
+		{
+			if(!al_is_system_installed()) {
+				throw DisplayCreationError("cannot create display (did you forget to initialize allegro?)");
+			}
+			al_reset_new_display_options();
+			for(const auto& [opt, val]: requiredOptions) {
+				al_set_new_display_option(opt, val, ALLEGRO_REQUIRE);
+			}
+			for(const auto& [opt, val]: suggestedOptions) {
+				al_set_new_display_option(opt, val, ALLEGRO_SUGGEST);
+			}
+			for(const auto& [opt, val]: dontCareOptions) {
+				al_set_new_display_option(opt, val, ALLEGRO_DONTCARE);
+			}
+			al_set_new_display_flags(flags);
+
+			setPtr(al_create_display(w, h));
+			if(!ptr()) {
+				throw DisplayCreationError("Could not create a {}x{} Allegro display.", w, h);
+			}
+			al_reset_new_display_options();
+			initPointers();
+		}
+
+
 
 		///@return Width of the display in pixels.
-		int width() const;
+		[[nodiscard]] int width() const {
+			return al_get_display_width(ptr());
+		}
 
 		///@return Height of the display in pixels;
-		int height() const;
+		[[nodiscard]] int height() const {
+			return al_get_display_height(ptr());
+		}
 
 		///@return Refresh rate of the display in Hz. Keep in mind that THIS RETURNS 0 FOR WINDOWED DISPLAYS
-		int getRefreshRate() const;
+		[[nodiscard]] int getRefreshRate() const {
+			return al_get_display_refresh_rate(ptr());
+		}
 
 		///@return Dimensions of the display in pixels.
-		Vec2<int> size() const;
+		[[nodiscard]] Vec2<int> size() const {
+			return {width(), height()};
+		}
 
 		///@return Aspect ratio of the display (e.g. ~1.33 for 640x480)
-		double aspectRatio() const;
+		[[nodiscard]] double aspectRatio() const {
+			return double(width()) / double(height());
+		}
 
 		///@return A rectangle starting at (0,0) and ending at (width,height).
-		Rect<int> rect() const;
+		[[nodiscard]] Rect<int> rect() const {
+			return {{0,0}, size()};
+		}
 
 		///@brief See: https://liballeg.org/a5docs/trunk/display.html#al_get_display_option
-		int getOptionValue(int option) const;
+		[[nodiscard]] int getOptionValue(int option) const {
+			return al_get_display_option(ptr(), option);
+		}
 
 		///@brief See: https://liballeg.org/a5docs/trunk/display.html#al_set_display_flag
-		bool setFlag(int flag, bool onoff);
+		bool setFlag(int flag, bool onoff) {
+			return al_set_display_flag(ptr(), flag, onoff);
+		}
 
 		/**
 		 * @brief Resizes the display.
@@ -101,7 +147,9 @@ namespace al {
 		 * @return true on success
 		 * @return false on failure
 		 */
-		bool resize(int w, int h);
+		bool resize(int w, int h) {
+			return al_resize_display(ptr(), w, h);
+		}
 
 		/**
 		 * @brief Should be called in response to ALLEGRO_EVENT_DISPLAY_RESIZE.
@@ -110,22 +158,32 @@ namespace al {
 		 * @return true on success
 		 * @return false on failure
 		 */
-		bool acknowledgeResize();
+		bool acknowledgeResize() {
+			return al_acknowledge_resize(ptr());
+		}
 
 		/**
 		 * @return The position of the display relative to the desktop. 
 		 */
-		Coord<int> getPosition() const;
+		[[nodiscard]] Coord<int> getPosition() const {
+			int x, y;
+			al_get_window_position(ptr(), &x, &y);
+			return {x, y};
+		}
 
 		/**
 		 * @brief Changes the position of the display (window)
 		 * 
 		 * @param pos Position in pixels, relative to the desktop
 		 */
-		void setPosition(Coord<int> pos);
+		void setPosition(Coord<int> pos) {
+			al_set_window_position(ptr(), pos.x, pos.y);
+		}
 
 		///@brief See: https://liballeg.org/a5docs/trunk/display.html#al_get_display_flags
-		int getFlags() const;
+		[[nodiscard]] int getFlags() const {
+			return al_get_display_flags(ptr());
+		}
 
 		/**
 		 * @brief Gets the text in the system clipboard, converted to an STL string.
@@ -133,7 +191,17 @@ namespace al {
 		 * 
 		 * @return Clipboard text, in the context of this display.
 		 */
-		std::optional<std::string> getClipboardText() const;
+		[[nodiscard]] std::optional<std::string> getClipboardText() const {
+			std::string ret;
+			char* buf = al_get_clipboard_text(ptr());
+			if(buf) {
+				ret = buf;
+				al_free(buf);
+			} else {
+				return std::nullopt;
+			}
+			return ret;
+		}
 
 		/**
 		 * @brief Sets the system clipboard context.
@@ -142,14 +210,18 @@ namespace al {
 		 * @return true on success
 		 * @return false on failure
 		 */
-		bool setClipboardText(const std::string& text);
+		bool setClipboardText(const std::string& text) {
+			return al_set_clipboard_text(ptr(), text.c_str());
+		}
 
 		/**
 		 * @brief Sets the display's window's title.
 		 * 
 		 * @param title New title.
 		 */
-		void setTitle(const std::string& title);
+		void setTitle(const std::string& title) {
+			al_set_window_title(ptr(), title.c_str());
+		}
 
 		/**
 		 * @brief Sets the mouse cursor to be shown on the display.
@@ -158,7 +230,9 @@ namespace al {
 		 * @return true on success 
 		 * @return false on failure
 		 */
-		bool setCursor(MouseCursor& cur);
+		bool setCursor(MouseCursor& cur) {
+			return al_set_mouse_cursor(ptr(), cur.ptr());
+		}
 
 		/**
 		 * @brief Sets the mouse cursor to one of the OS's predefined cursors.
@@ -168,25 +242,39 @@ namespace al {
 		 * @return true 
 		 * @return false 
 		 */
-		bool setSystemCursor(ALLEGRO_SYSTEM_MOUSE_CURSOR id);
+		bool setSystemCursor(ALLEGRO_SYSTEM_MOUSE_CURSOR id) {
+			return al_set_system_mouse_cursor(ptr(), id);
+		}
 
 		///@brief Hides the mouse cursor.
-		void hideCursor();
+		void hideCursor() {
+			al_hide_mouse_cursor(ptr());
+		}
 
 		///@brief Shows the mouse cursor.
-		void showCursor();
+		void showCursor() {
+			al_show_mouse_cursor(ptr());
+		}
 
 		///@brief Constrains the mouse to the display.
-		void grabMouse();
+		void grabMouse() {
+			al_grab_mouse(ptr());
+		}
 
 		///@brief Reverses the effect of a grabMouse() call.
-		void ungrabMouse();
+		void ungrabMouse() { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
+			al_ungrab_mouse();
+		}
 
 		///@returns A reference to the display's backbuffer bitmap.
-		const Bitmap& backbuffer() const;
+		[[nodiscard]] const Bitmap& backbuffer() const {
+			return *ptrBackbuffer;
+		}
 
 		///@brief Returns the display's event source.
-		const EventSource& eventSource();
+		const EventSource& eventSource() {
+			return *ptrEventSource;
+		}
 
 		/**
 		 * @brief Tries to find a reasonable default for a framerate limiter.
@@ -196,15 +284,43 @@ namespace al {
 		 * If that fails, it returns 300.
 		 * The return value is clamped between 60 and 300.
 		 */
-		int findFramerateCap();
+		[[nodiscard]] int findFramerateCap() const {
+			int ret = getRefreshRate();
+			if(ret == 0) {
+				auto modes = GetDisplayModes();
+				ret = 0;
+				for(auto& mode: modes) {
+					ret = std::max(ret, mode.refresh_rate);
+				}
+			}
+			if(ret == 0) {
+				return 300;
+			}
+			return std::clamp(ret, 60, 300);
+		}
 
 	protected:
-		void initPointers();
+		void initPointers() {
+			ptrBackbuffer = std::make_unique<DisplayBackbuffer>(*this);
+			ptrEventSource = std::make_unique<DisplayEventSource>(*this);
+		}
 	private:
 		std::unique_ptr<DisplayEventSource> ptrEventSource;
 		std::unique_ptr<DisplayBackbuffer> ptrBackbuffer;
 	};
-	
+
+
+	inline ALLEGRO_BITMAP *al::DisplayBackbuffer::getPointer() const
+	{
+		return al_get_backbuffer(disp.ptr());
+	}
+
+	inline ALLEGRO_EVENT_SOURCE *al::DisplayEventSource::ptr() const
+	{
+		return al_get_display_event_source(disp.ptr());
+	}
+
+
 	class TCurrentDisplay: public Display {
 	public:
 		TCurrentDisplay() : Display(nullptr) 
@@ -212,22 +328,31 @@ namespace al {
 			initPointers();
 		}
 		
-		void flip();
-		void flip(Rect<int> rect);
-		bool waitForVsync();
-		void convertMemoryBitmaps();
+		void flip() { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
+			al_flip_display();
+		}
+		void flip(Rect<int> rect) { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
+			al_update_display_region(rect.a.x, rect.a.y, rect.width(), rect.height());
+		}
+		bool waitForVsync() { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
+			return al_wait_for_vsync();
+		}
+		void convertMemoryBitmaps() { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
+			al_convert_memory_bitmaps();
+		}
 
-		void setTargetBitmap(Bitmap& bmp);
+		void setTargetBitmap(Bitmap& bmp) { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
+			al_set_target_bitmap(bmp.ptr());
+		}
 	private:
-		virtual ALLEGRO_DISPLAY* getPointer() const override
-		{
+		[[nodiscard]] ALLEGRO_DISPLAY* getPointer() const override {
 			return al_get_current_display();
 		}
 	};
 
+#undef AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
 
-
-	extern TCurrentDisplay CurrentDisplay;
+	inline TCurrentDisplay CurrentDisplay;
 }
 
 #endif /* INCLUDE_AXXEGRO_DISPLAY_DISPLAY */
