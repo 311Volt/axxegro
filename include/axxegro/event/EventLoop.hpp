@@ -4,6 +4,13 @@
 #include "EventQueue.hpp"
 #include "EventDispatcher.hpp"
 #include "../time/Timer.hpp"
+#include <axxegro/event/EventLoop.hpp>
+
+#include <axxegro/io/Keyboard.hpp>
+#include <axxegro/io/Mouse.hpp>
+
+#include <axxegro/time/Time.hpp>
+#include <axxegro/display/Display.hpp>
 
 #include <unordered_map>
 #include <optional>
@@ -17,40 +24,107 @@ namespace al {
 		
 		//copy elision for Basic()
 		class BasicInit{};
-		EventLoop(BasicInit);
+
+		explicit EventLoop(BasicInit)
+				: EventLoop()
+		{
+			initDefaultEventQueue();
+			initDefaultDispatcher();
+		}
+
 	public:
 
-		EventLoop();
-		~EventLoop();
-		
+		EventLoop() = default;
+		~EventLoop() = default;
+
+		void enableFramerateLimit(double freq) {
+			clockTimer = std::make_unique<Timer>(FreqToPeriod(freq));
+			clockEventQueue.registerSource(clockTimer->getEventSource());
+			clockTimer->start();
+		}
+		void disableClock() {
+			clockTimer.reset();
+		}
+
+		void initDefaultEventQueue() {
+			eventQueue.registerSource(GetMouseEventSource());
+			eventQueue.registerSource(GetKeyboardEventSource());
+			eventQueue.registerSource(al::CurrentDisplay.eventSource());
+		}
+
+		void initDefaultDispatcher() {
+			eventDispatcher.setEventTypeHandler(ALLEGRO_EVENT_DISPLAY_CLOSE, [this](const ALLEGRO_EVENT&){
+				exitFlag = true;
+			});
+
+			eventDispatcher.setEventTypeHandler(ALLEGRO_EVENT_DISPLAY_RESIZE, [](const ALLEGRO_EVENT&){
+				CurrentDisplay.acknowledgeResize();
+			});
+		}
+		void enableEscToQuit() {
+			auto keycodeDiscretizer = eventDispatcher.addDiscretizer({ALLEGRO_EVENT_KEY_DOWN, [](const ALLEGRO_EVENT& ev){
+				return ev.keyboard.keycode;
+			}});
+
+			eventDispatcher.setEventValueHandler(keycodeDiscretizer, ALLEGRO_KEY_ESCAPE, [this](const ALLEGRO_EVENT&){
+				exitFlag = true;
+			});
+		}
+		void run() {
+			while(!exitFlag) {
+				double t0 = GetTime();
+				while(!eventQueue.empty()) {
+					ALLEGRO_EVENT ev = eventQueue.pop();
+					eventDispatcher.dispatch(ev);
+				}
+				if(clockTimer) {
+					clockEventQueue.wait();
+					clockEventQueue.flush();
+				}
+				loopBody();
+				double endTickTime = GetTime();
+				lastTickTime = endTickTime - t0;
+				fpsCounter++;
+				if(endTickTime - lastFpsUpdateTime > 1.0) {
+					fps = fpsCounter;
+					fpsCounter = 0;
+					lastFpsUpdateTime = endTickTime;
+				}
+				tick++;
+			}
+			exitFlag = false;
+		}
+
+		void setExitFlag() {
+			exitFlag = true;
+		}
+
+		static EventLoop Basic() {
+			return EventLoop(BasicInit());
+		}
+
+		int64_t getTick() const {
+			return tick;
+		}
+		int64_t getFPS() const {
+			return fps;
+		}
+		double getLastTickTime() const {
+			return lastTickTime;
+		}
+
 		EventQueue eventQueue;
 		EventDispatcher eventDispatcher;
-		std::function<void(void)> loopBody;
-
-		void enableFramerateLimit(double freq);
-		void disableClock();
-
-		void initDefaultEventQueue();
-		void initDefaultDispatcher();
-		void enableEscToQuit();
-		void run();
-
-		void setExitFlag();
-
-		static EventLoop Basic();
-
-		int64_t getTick();
-		int64_t getFPS();
-		double getLastTickTime();
+		std::function<void(void)> loopBody = [](){};
 	private:
 		std::unique_ptr<Timer> clockTimer;
 		EventQueue clockEventQueue;
-		int64_t tick;
-		int64_t fps;
-		int64_t fpsCounter;
-		double lastFpsUpdateTime;
-		double lastTickTime;
-		bool exitFlag;
+		int64_t tick = 0;
+		int64_t fps = 0;
+		int64_t fpsCounter = 0;
+		double lastFpsUpdateTime = -1.0;
+		double lastTickTime = 0.01;
+		bool exitFlag = false;
 	};
 }
 

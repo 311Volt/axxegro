@@ -5,6 +5,7 @@
 #include <functional>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 
 /**
  * A high-level mechanism for event dispatching.
@@ -19,32 +20,101 @@ namespace al {
 	public:
 		using EventDiscretizerId = uint32_t;
 		struct EventDiscretizer {
-			ALLEGRO_EVENT_TYPE type;
+			ALLEGRO_EVENT_TYPE type = -1;
 			std::function<int64_t(const ALLEGRO_EVENT&)> fn;
 		};
 		enum class DispatchLevel: uint8_t {
-			DEFAULT=0,
-			MATCHED_TYPE=1,
-			MATCHED_VALUE=2
+			Default=0,
+			MatchedType=1,
+			MatchedValue=2
 		};
 
-		EventDispatcher();
-		~EventDispatcher();
+		EventDispatcher() {
+			defaultHandler = [](const auto&){};
+		}
+		~EventDispatcher() = default;
 		
-		void setDefaultHandler(EventHandler handler);
-		void setEventTypeHandler(ALLEGRO_EVENT_TYPE evType, EventHandler handler);
-		void setEventValueHandler(EventDiscretizerId discrId, int64_t value, EventHandler handler);
+		void setDefaultHandler(EventHandler handler) {
+			defaultHandler = std::move(handler);
+		}
+		void setEventTypeHandler(ALLEGRO_EVENT_TYPE evType, EventHandler handler) {
+			eventTypeHandler[evType] = std::move(handler);
+		}
+		void setEventValueHandler(EventDiscretizerId discrId, int64_t value, EventHandler handler) {
+			if(!discretizers.count(discrId)) {
+				throw EventDispatcherError("cannot set value handler: discretizer with id={} does not exist", discrId);
+			}
+			eventValueHandler[discrId][value] = std::move(handler);
+		}
 
-		void deleteEventTypeHandler(ALLEGRO_EVENT_TYPE evType);
-		void deleteEventValueHandler(EventDiscretizerId discrId, int64_t value);
+		void deleteEventTypeHandler(ALLEGRO_EVENT_TYPE evType) {
+			eventTypeHandler.erase(evType);
+		}
 
-		EventDiscretizerId addDiscretizer(EventDiscretizer discretizer);
-		void removeDiscretizer(EventDiscretizerId id);
+		void deleteEventValueHandler(EventDiscretizerId discrId, int64_t value) {
+			if(typeDiscretizers.count(discrId)) {
+				typeDiscretizers[discrId].erase(value);
+			}
+		}
+
+		EventDiscretizerId addDiscretizer(const EventDiscretizer& discretizer) {
+			auto newId = createDiscretizerId();
+			discretizers[newId] = discretizer;
+			typeDiscretizers[discretizer.type].insert(newId);
+			return newId;
+		}
+
+		void removeDiscretizer(EventDiscretizerId id) {
+			typeDiscretizers[discretizers[id].type].erase(id);
+			discretizers.erase(id);
+			eventValueHandler.erase(id);
+		}
 		
-		DispatchLevel checkDispatchLevel(const ALLEGRO_EVENT& event);
-		DispatchLevel dispatch(const ALLEGRO_EVENT& event);
+		DispatchLevel checkDispatchLevel(const ALLEGRO_EVENT& event) {
+			if(typeDiscretizers.count(event.type)) {
+				for(const auto& discretizerId: typeDiscretizers[event.type]) {
+					int64_t value = discretizers[discretizerId].fn(event);
+					if(eventValueHandler.count(discretizerId)) {
+						if(eventValueHandler[discretizerId].count(value)) {
+							return DispatchLevel::MatchedValue;
+						}
+					}
+				}
+			}
+			if(eventTypeHandler.count(event.type) && eventTypeHandler[event.type]) {
+				return DispatchLevel::MatchedType;
+			}
+			return DispatchLevel::Default;
+		}
+		DispatchLevel dispatch(const ALLEGRO_EVENT& event) {
+			//try level 2 (match by type and discretized value)
+			if(typeDiscretizers.count(event.type)) {
+				for(const auto& discretizerId: typeDiscretizers[event.type]) {
+					int64_t value = discretizers[discretizerId].fn(event);
+					if(eventValueHandler.count(discretizerId)) {
+						if(eventValueHandler[discretizerId].count(value)) {
+							eventValueHandler[discretizerId][value](event);
+							return DispatchLevel::MatchedValue;
+						}
+					}
+				}
+			}
+
+			//if no match, try level 1 (match by event type)
+			if(eventTypeHandler.count(event.type) && eventTypeHandler[event.type]) {
+				eventTypeHandler[event.type](event);
+				return DispatchLevel::MatchedType;
+			}
+
+			//if no match, call default handler (level 0)
+			defaultHandler(event);
+			return DispatchLevel::Default;
+		}
 	private:
-		EventDiscretizerId createDiscretizerId();
+		static EventDiscretizerId createDiscretizerId() {
+			static EventDiscretizerId counter = 1;
+			return counter++;
+		}
 
 		EventHandler defaultHandler;
 		std::unordered_map<ALLEGRO_EVENT_TYPE, EventHandler> eventTypeHandler;

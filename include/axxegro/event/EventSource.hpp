@@ -18,37 +18,32 @@ namespace al {
 
 	class UserEventSource: public EventSource
 	{
-		ALLEGRO_EVENT_SOURCE evs;
+		ALLEGRO_EVENT_SOURCE evs {};
 	public:
 		UserEventSource(const UserEventSource&) = delete;
 		UserEventSource& operator=(const UserEventSource&) = delete;
 
-		inline UserEventSource()
-		{
+		UserEventSource() {
 			al_init_user_event_source(&evs);
 			al_set_event_source_data(&evs, (intptr_t)this);
 		}
 
-		inline ~UserEventSource()
-		{
+		~UserEventSource() {
 			al_destroy_user_event_source(&evs);
 		}
 
-		inline ALLEGRO_EVENT_SOURCE* ptr() const override
-		{
+		[[nodiscard]] ALLEGRO_EVENT_SOURCE* ptr() const override {
 			return (ALLEGRO_EVENT_SOURCE*)(&evs);
 		}
 
-		template<class UEvT>
-		void emitEvent(const std::unique_ptr<typename UEvT::DataType> dat)
-		{
+		template<class UEvT> //TODO user event type constraint
+		void emitEvent(const std::unique_ptr<typename UEvT::DataType> dat) {
 			ALLEGRO_EVENT ev = UEvT::Create(dat);
 			emitAllegroEvent<UEvT>(ev);
 		}
 		
 		template<class UEvT>
-		void emitEvent(const typename UEvT::DataType& dat)
-		{
+		void emitEvent(const typename UEvT::DataType& dat) {
 			ALLEGRO_EVENT ev = UEvT::Create(dat);
 			emitAllegroEvent<UEvT>(ev);
 		}
@@ -69,7 +64,12 @@ namespace al {
 
 	};
 
-	UserEventSource& GetUserEventSource(const ALLEGRO_EVENT& ev);
+	inline UserEventSource& GetUserEventSource(const ALLEGRO_EVENT& ev) {
+		if(ev.type < 1024) {
+			throw EventSourceError("GetUserEventSource called on non-user event");
+		}
+		return *(UserEventSource*)al_get_event_source_data(ev.any.source);
+	}
 }
 
 #endif /* INCLUDE_AXXEGRO_EVENT_EVENTSOURCE */
