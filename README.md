@@ -71,9 +71,6 @@ If Allegro can be found by CMake, no further configuration is required.
 If you prefer to not install Allegro to your toolchain/system path, you may
 specify a custom `CMAKE_PREFIX_PATH`.
 
-Note that only linkage to `allegro_monolith` is supported as of now.
-This will be fixed soon™.
-
 # Integration
 
 Since axxegro is plain C++20, it is enough to copy the headers to a working Allegro5 project
