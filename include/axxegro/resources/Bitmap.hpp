@@ -8,7 +8,6 @@
 #include <algorithm>
 #include <string>
 #include <memory>
-#include <format>
 #include <iostream>
 
 #include "../math/math.hpp"
@@ -67,7 +66,7 @@ namespace al {
 				: Resource(al_create_bitmap(w,h))
 		{
 			if(!ptr()) {
-				throw ResourceLoadError("Error while creating a {}x{} bitmap", w, h);
+				throw ResourceLoadError("Error while creating a %dx%d bitmap", w, h);
 			}
 		}
 
@@ -88,7 +87,7 @@ namespace al {
 				: Resource(al_load_bitmap(filename.c_str()))
 		{
 			if(!ptr()) {
-				throw ResourceLoadError("Cannot load bitmap from {} - file missing, corrupted or in an unsupported format", filename);
+				throw ResourceLoadError("Cannot load bitmap from %s - file missing, corrupted or in an unsupported format", filename.c_str());
 			}
 		}
 

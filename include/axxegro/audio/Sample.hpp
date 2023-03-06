@@ -31,7 +31,7 @@ namespace al
 		   : Resource<ALLEGRO_SAMPLE>(al_load_sample(filename.c_str()))
 		{
 			if(!ptr()) {
-				throw ResourceLoadError("Cannot load audio file: {}", filename);
+				throw ResourceLoadError("Cannot load audio file: %s", filename.c_str());
 			}
 		}
 

@@ -5,6 +5,8 @@
 #include <axxegro/audio/SampleInstance.hpp>
 #include <axxegro/audio/AudioStream.hpp>
 
+#include <span>
+
 namespace al {
 
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_MIXER, al_destroy_mixer);

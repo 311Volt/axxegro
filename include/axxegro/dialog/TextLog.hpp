@@ -31,7 +31,7 @@ namespace al {
 			: Resource<ALLEGRO_TEXTLOG>(al_open_native_text_log(title.c_str(), flags))
 		{
 			if(!ptr()) {
-				throw al::ResourceLoadError("Cannot open native textlog (title={})", title);
+				throw al::ResourceLoadError("Cannot open native textlog (title=%s)", title.c_str());
 			}
 		}
 

@@ -4,7 +4,6 @@
 #include "axxegro/resources/Resource.hpp"
 #include <axxegro/axxegro.hpp>
 #include <iterator>
-#include <format>
 
 #include <cmath>
 
@@ -270,7 +269,7 @@ int main()
 		al::TargetBitmap.setDepthTest(false);
 		al::TargetBitmap.resetTransform();
 		al::TargetBitmap.resetProjection();
-		builtinFont.draw(std::format("{} fps", loop.getFPS()), al::White, {15, 15});
+		builtinFont.draw(al::Format("%d fps", loop.getFPS()), al::White, {15, 15});
 
 		al::CurrentDisplay.flip();
 	};

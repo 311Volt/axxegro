@@ -2,12 +2,12 @@
 #define AXXEGRO_AUDIOCOMMON_HPP
 
 #include <axxegro/math/math.hpp>
+#include <axxegro/format.hpp>
 
 #include <allegro5/allegro_audio.h>
 
 #include <span>
 #include <string>
-#include <format>
 
 namespace al
 {
@@ -39,7 +39,7 @@ namespace al
 				default: return "invalid";
 			}}(loop);
 
-			return std::format("gain={:.3f}, pan={:.3f}, speed={:.3f}, playmode={}", gain, pan, speed, loopStr);
+			return Format("gain=%.3f, pan=%.3f, speed=%3f, playmode=%s", gain, pan, speed, loopStr.c_str());
 		}
 	};
 
@@ -68,10 +68,10 @@ namespace al
 				case ALLEGRO_CHANNEL_CONF_2: return "stereo"s;
 				case ALLEGRO_CHANNEL_CONF_3: return "3 channels"s;
 				case ALLEGRO_CHANNEL_CONF_4: return "4 channels"s;
-				default: return std::format("{}.1", al::GetChannelCount(conf)-1);
+				default: return Format("%d.1", al::GetChannelCount(conf)-1);
 			}}(chanConf);
 
-			return std::format("{} Hz, {}, {}", frequency, depthStr, chanStr);
+			return Format("%d Hz, %s, %s", frequency, depthStr.c_str(), chanStr.c_str());
 		}
 	};
 

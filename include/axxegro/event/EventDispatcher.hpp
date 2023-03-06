@@ -42,7 +42,7 @@ namespace al {
 		}
 		void setEventValueHandler(EventDiscretizerId discrId, int64_t value, EventHandler handler) {
 			if(!discretizers.count(discrId)) {
-				throw EventDispatcherError("cannot set value handler: discretizer with id={} does not exist", discrId);
+				throw EventDispatcherError("cannot set value handler: discretizer with id=%d does not exist", discrId);
 			}
 			eventValueHandler[discrId][value] = std::move(handler);
 		}

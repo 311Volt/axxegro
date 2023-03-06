@@ -15,7 +15,7 @@ namespace al {
 				: Resource<ALLEGRO_VOICE>(al_create_voice(audioFormat.frequency, audioFormat.depth, audioFormat.chanConf))
 		{
 			if(!ptr()) {
-				throw AudioError("Could not create voice with format: {}", audioFormat.str());
+				throw AudioError("Could not create voice with format: %s", audioFormat.str().c_str());
 			}
 		}
 

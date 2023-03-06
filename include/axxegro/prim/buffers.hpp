@@ -20,7 +20,7 @@ namespace al {
 		)
 		{
 			if(ptr() == nullptr) {
-				throw VertexBufferError("Cannot create vertex buffer of size {}. ", vertices.size());
+				throw VertexBufferError("Cannot create vertex buffer of size %u. ", vertices.size());
 			}
 		}
 
@@ -39,7 +39,7 @@ namespace al {
 		)
 		{
 			if(ptr() == nullptr) {
-				throw IndexBufferError("Cannot create index buffer of size {}. ", indices.size());
+				throw IndexBufferError("Cannot create index buffer of size %u. ", indices.size());
 			}
 		}
 

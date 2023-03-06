@@ -1,6 +1,5 @@
 
 #include <axxegro/axxegro.hpp>
-#include <format>
 
 /**
  * @file
@@ -59,8 +58,8 @@ int main()
 		al::TargetBitmap.resetTransform();
 		al::TargetBitmap.resetProjection();
 		font.draw(
-			std::format(
-				"player pos = ({:.2f}, {:.2f}, {:.2f}), facing {:.2f} deg", 
+			al::Format(
+				"player pos = (%.2f, %.2f, %.2f), facing %.2f deg", 
 				pos.x, pos.y, pos.z, rx
 			), 
 			al::White, {10, 10}

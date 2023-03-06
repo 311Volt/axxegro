@@ -1,7 +1,6 @@
 #include <axxegro/axxegro.hpp>
 
 #include <cmath>
-#include <format>
 #include <iostream>
 
 
@@ -25,24 +24,24 @@ int main()
 	al::Config cfg("data/samplecfg.ini");
 
 	for(auto& section: cfg.sections()) {
-		std::cout << std::format("{}: \n", section);
+		std::cout << al::Format("%s: \n", section.c_str());
 		for(auto& key: cfg.keys(section)) {
 			al::Config::SectionSelector ss(cfg, section);
-			std::cout << std::format("\t{} -> {}\n", key, cfg.getValue(key));
+			std::cout << al::Format("\t%s -> %s\n", key.c_str(), cfg.getValue(key).c_str());
 		}
-		std::cout << std::format("\n\n");
+		std::cout << "\n\n";
 	}
 
 	al::EventLoop loop = al::EventLoop::Basic();
 	loop.enableEscToQuit();
 
 	al::Coord<float> txtPos {320, 240};
-	std::string txtTest = std::format("kb {}B, m {}B", sizeof(ALLEGRO_KEYBOARD_STATE), sizeof(ALLEGRO_MOUSE_STATE));
+	std::string txtTest = al::Format("kb %dB, m %dB", sizeof(ALLEGRO_KEYBOARD_STATE), sizeof(ALLEGRO_MOUSE_STATE));
 	loop.loopBody = [&](){
 		al::TargetBitmap.clearToColor(al::RGB(0,0,0));
 
 		float txtMaxWidth = 10.0 + (0.5+0.5*std::sin(al::GetTime())) * 300.0;
-		std::string txtTest1 = std::format("{}. tick={}", txtTest, loop.getTick());
+		std::string txtTest1 = al::Format("%s. tick=%d", txtTest.c_str(), (int)loop.getTick());
 		std::string txtTestCut = txtTest1.substr(0, font.calcCutoffPoint(txtTest1, txtMaxWidth));
 
 		{

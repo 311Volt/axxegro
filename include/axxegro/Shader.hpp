@@ -5,7 +5,6 @@
 #include <string>
 #include <stdexcept>
 #include <span>
-#include <format>
 
 #include <allegro5/allegro.h>
 
@@ -31,12 +30,12 @@ namespace al {
 
 		void attachSourceCode(const std::string& src, ALLEGRO_SHADER_TYPE type) {
 			if(!al_attach_shader_source(ptr(), type, src.c_str())) {
-				throw ShaderSourceError("Cannot attach shader source: {}\n", std::string(getLog()));
+				throw ShaderSourceError("Cannot attach shader source: %s\n", getLog());
 			}
 		}
 		void attachSourceFile(const std::string& filename, ALLEGRO_SHADER_TYPE type) {
 			if(!al_attach_shader_source_file(ptr(), type, filename.c_str())) {
-				throw ShaderSourceError("Cannot attach shader source file {}: \n{}", filename, std::string(getLog()));
+				throw ShaderSourceError("Cannot attach shader source file %s: \n%s", filename.c_str(), getLog());
 			}
 		}
 

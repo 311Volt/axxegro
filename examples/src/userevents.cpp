@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <string>
 #include <queue>
-#include <format>
 
 /**
  * @file
@@ -62,15 +61,15 @@ int main()
 		const auto& dat = al::GetUserEventData<ExampleEventType>(ev);
 
 		//reading the data we put in
-		messages.push_back(std::format(
-			"[{:.02f}] Received example event: {:.1f} {:.1f} \"{}\"", 
+		messages.push_back(al::Format(
+			"[%.2f] Received example event: %.1f %.1f \"{}\"", 
 			ev.any.timestamp, 
 			dat.a, dat.b, dat.msg
 		));
 
 		//accessing the event source itself
-		messages.push_back(std::format(
-			"Custom event source state: {}",
+		messages.push_back(al::Format(
+			"Custom event source state: %f",
 			static_cast<MyEventSource&>(al::GetUserEventSource(ev)).state
 		));
 

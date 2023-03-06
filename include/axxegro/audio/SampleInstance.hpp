@@ -111,7 +111,7 @@ namespace al
 
 		static inline void ReserveSamples(int numSamples) {
 			if(!al_reserve_samples(numSamples)) {
-				throw AudioError("Cannot reserve {} samples", numSamples);
+				throw AudioError("Cannot reserve %d samples", numSamples);
 			}
 		}
 	};

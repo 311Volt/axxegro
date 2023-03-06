@@ -11,7 +11,7 @@
  * An example on how to use shaders in axxegro.
  */
 
-double random()
+double randf64()
 {
 	return (rand()%64) / 64.0;
 }
@@ -69,7 +69,7 @@ int main()
 
 	evLoop.loopBody = [&](){
 		al::Shader::SetVector("mouse_pos", al::GetMousePos());
-		al::Shader::SetVector("dither_offset", al::Vec2f(random(), random()));
+		al::Shader::SetVector("dither_offset", al::Vec2f(randf64(), randf64()));
 
 		al::DrawFilledRectangle(al::CurrentDisplay.rect());
 

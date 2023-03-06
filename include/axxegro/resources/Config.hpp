@@ -35,7 +35,7 @@ namespace al {
 				: Resource(al_load_config_file(filename.c_str()))
 		{
 			if(!ptr()) {
-				throw ResourceLoadError("Cannot load config from {} - file missing, corrupted or invalid", filename);
+				throw ResourceLoadError("Cannot load config from %s - file missing, corrupted or invalid", filename.c_str());
 			}
 			currentSection = "";
 		}
@@ -228,7 +228,7 @@ namespace al {
 		 */
 		void saveToDisk(const std::string& dstFilename) const {
 			if(!al_save_config_file(dstFilename.c_str(), ptr())) {
-				throw ConfigError("cannot save config file to {}", dstFilename);
+				throw ConfigError("cannot save config file to %s", dstFilename.c_str());
 			}
 		}
 

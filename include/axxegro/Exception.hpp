@@ -8,8 +8,8 @@
 
 #include <exception>
 #include <stdexcept>
-#include <format>
 #include <string_view>
+#include "format.hpp"
 
 namespace al
 {
@@ -18,8 +18,8 @@ namespace al
 		using std::runtime_error::runtime_error;
 
 		template<typename... Args>
-		Exception(const std::format_string<Args...> msg, Args&&... args)
-			: std::runtime_error(std::vformat(msg.get(), std::make_format_args(args...)))
+		Exception(const std::string& msg, Args... args)
+			: std::runtime_error(Format(msg.c_str(), args...))
 		{}
 	};
 

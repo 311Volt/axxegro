@@ -50,7 +50,7 @@ namespace al {
 
 			setPtr(al_grab_font_from_bitmap(bmp.ptr(), (int)ranges.size(), rangesFlat.data()));
 			if(!ptr()) {
-				throw ResourceLoadError("Error while grabbing font from a {}x{} bitmap", bmp.width(), bmp.height());
+				throw ResourceLoadError("Error while grabbing font from a %dx%d bitmap", bmp.width(), bmp.height());
 			}
 		}
 
@@ -58,7 +58,7 @@ namespace al {
 				: Resource(al_load_font(filename.c_str(), size, flags))
 		{
 			if(!ptr()) {
-				throw ResourceLoadError("Cannot load font from {} - file missing, corrupted or invalid", filename);
+				throw ResourceLoadError("Cannot load font from %s - file missing, corrupted or invalid", filename.c_str());
 			}
 		}
 

@@ -95,7 +95,7 @@ namespace al {
 
 		static Transform PerspectiveHFOV(float hFOV, float near, float far, float aspect) {
 			if(hFOV <= 0.0f || hFOV >= 180.0f) {
-				throw InvalidTransformError("Invalid horizontal FOV value: {:.2f} degrees", hFOV);
+				throw InvalidTransformError("Invalid horizontal FOV value: %.2f degrees", hFOV);
 			}
 
 			auto vFOV = float(2.0 * std::atan(std::tan(hFOV*0.5 * DEG2RAD) / aspect) * RAD2DEG);
@@ -104,7 +104,7 @@ namespace al {
 
 		static Transform PerspectiveFOV(float vFOV, float near, float far, float aspect) {
 			if(vFOV <= 0.0f || vFOV >= 180.0f) {
-				throw InvalidTransformError("Invalid vertical FOV value: {:.2f} degrees", vFOV);
+				throw InvalidTransformError("Invalid vertical FOV value: %.2f degrees", vFOV);
 			}
 			auto h = float(near * std::tan(vFOV*0.5 * DEG2RAD));
 			auto w = float(h*aspect);
