@@ -57,6 +57,13 @@ namespace al {
 			al_peek_next_event(ptr(), &ret);
 			return ret;
 		}
+
+		std::optional<ALLEGRO_EVENT> tryPop() { 
+			if(empty()) {
+				return {};
+			}
+			return pop();
+		}
 		
 		/**
 		 * @brief Pops the event. 

@@ -56,6 +56,8 @@ namespace al {
 		std::unique_ptr<T, Deleter> alPtr;
 		ResourceModel model;
 	public:
+		using UnderlyingType = T;
+
 		explicit Resource(T* p, ResourceModel model = ResourceModel::Owning)
 			: model(model)
 		{

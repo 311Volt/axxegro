@@ -35,6 +35,7 @@ if(AXXEGRO_BUILD_EXAMPLES)
 endif()
 
 option(AXXEGRO_BUILD_DOCS "Build documentation" ${AXXEGRO_MASTER_PROJECT})
+
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
 	set(DOXYGEN_GENERATE_HTML YES)

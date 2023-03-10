@@ -107,6 +107,14 @@ namespace al
 			return al_set_sample(ptr(), sample.ptr());
 		}
 
+		bool rewind() {
+			return setPosition(0);
+		}
+
+		bool rewindAndPlay() {
+			return (rewind() && setPlaying(true));
+		}
+
         //setChannelMatrix() //TODO
 
 		static inline void ReserveSamples(int numSamples) {
