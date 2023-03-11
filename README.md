@@ -50,11 +50,9 @@ loop.run(); //will run until window is closed
 ```
 # Compiler support
 
- - GCC: >= 13
- - Clang: >= 15 (`-fexperimental-library` required)
- - MSVC: >= 19.29 (VS 2019 16.10) (**not tested**)
+ - GCC: >= 12
 
-Support for GCC 10 will be brought back soon.
+Should work down to GCC 10. Other compilers have not yet been tested.
 
 # Building
 
@@ -81,6 +79,8 @@ It is also supported to use axxegro as a subdirectory in a CMake project:
 add_subdirectory(axxegro)
 target_link_libraries(my_game axxegro)
 ```
+which will handle the Allegro dependency automatically.
+
 Installation and package config files are still TODO.
 
 

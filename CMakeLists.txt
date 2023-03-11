@@ -22,7 +22,7 @@ if(NOT MSVC)
 endif()
 
 
-add_library(${PROJECT_NAME} INTERFACE)
+add_library(${PROJECT_NAME} INTERFACE ${AXXEGRO_HEADERS})
 
 find_package(Allegro REQUIRED)
 target_link_libraries(${PROJECT_NAME} INTERFACE ${Allegro_LIBRARIES})

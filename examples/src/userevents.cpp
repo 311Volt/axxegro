@@ -1,6 +1,5 @@
 #include <axxegro/axxegro.hpp>
 
-#include <algorithm>
 #include <string>
 #include <queue>
 

@@ -1,9 +1,7 @@
-#include "allegro5/display.h"
 #include <axxegro/axxegro.hpp>
 
 #include <iostream>
 #include <cstdlib>
-#include <stdlib.h>
 
 /**
  * @file

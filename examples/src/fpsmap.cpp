@@ -1,12 +1,7 @@
-#include "axxegro/math/Vec2.hpp"
-#include "axxegro/prim/lldr.hpp"
-#include "axxegro/resources/Bitmap.hpp"
-#include "axxegro/resources/Resource.hpp"
 #include <axxegro/axxegro.hpp>
+
 #include <iterator>
-
 #include <cmath>
-
 #include <iostream>
 
 using namespace al::ColorLiterals;
