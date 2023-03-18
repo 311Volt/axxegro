@@ -70,7 +70,7 @@ namespace al {
 		~Resource()
 		{
 			if(model == ResourceModel::NonOwning) {
-				alPtr.reset();
+				alPtr.release();
 			}
 		}
 
