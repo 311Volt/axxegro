@@ -5,6 +5,10 @@
 #include "Color.hpp"
 
 #include "../Transform.hpp"
+#include "axxegro/com/Exception.hpp"
+#include "axxegro/com/Resource.hpp"
+#include <allegro5/bitmap.h>
+#include <memory>
 
 /**
  * @file
@@ -16,6 +20,7 @@ namespace al {
 
 	class BitmapLockedRegion;
 	class Bitmap;
+	class SubBitmap;
 
 	/**
 	 * @brief Provides a RAII-style mechanism for setting target bitmaps.
@@ -36,7 +41,6 @@ namespace al {
 			al_set_target_bitmap(oldTarget);
 		}
 	};
-
 
 	/**
 	 * @brief Wraps around ALLEGRO_BITMAP.
@@ -247,6 +251,8 @@ namespace al {
 			return Bitmap(al_clone_bitmap(ptr()));
 		}
 
+		[[nodiscard]] SubBitmap createSubBitmap(Rect<int> rect);
+
 		BitmapLockedRegion lock(int format = ALLEGRO_PIXEL_FORMAT_ARGB_8888, int flags = ALLEGRO_LOCK_READWRITE);
 
 		static int GetNewBitmapFlags() {
@@ -346,6 +352,49 @@ namespace al {
 	inline al::BitmapLockedRegion al::Bitmap::lock(int format, int flags)
 	{
 		return BitmapLockedRegion(*this, format, flags);
+	}
+
+
+	class SubBitmap: public Bitmap {
+	public:
+		Vec2i parentXY() {
+			return {al_get_bitmap_x(ptr()), al_get_bitmap_y(ptr())};
+		}
+		Bitmap& getParent() {
+			return parent;
+		}
+		bool reparent(Bitmap& bitmap, Rect<int> rect = {0, 0, -1, -1}) {
+			if(rect.width() < 0) {
+				rect = mrect;
+			}
+			al_reparent_bitmap(bitmap.ptr(), ptr(), rect.a.x, rect.a.y, rect.width(), rect.height());
+			return true;
+		}
+
+		friend class Bitmap;
+
+	private:
+		SubBitmap(Bitmap& parent, const Rect<int> rect)
+			: Bitmap(al_create_sub_bitmap(parent.ptr(), rect.a.x, rect.a.y, rect.width(), rect.height())),
+			  mrect(rect),
+			  parent(parent.ptr(), ResourceModel::NonOwning) 
+		{
+			if(!ptr()) {
+				throw ResourceLoadError(
+					"Error while creating a sub-bitmap of a %dx%d bitmap with position (%d, %d) and size %dx%d",
+					parent.width(), parent.height(),
+					rect.a.x, rect.a.y,
+					rect.width(), rect.height()
+				);
+			}
+		}
+
+		Rect<int> mrect;
+		Bitmap parent;
+	};
+
+	inline SubBitmap Bitmap::createSubBitmap(Rect<int> rect) {
+		return SubBitmap(*this, rect);
 	}
 
 

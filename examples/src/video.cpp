@@ -8,27 +8,22 @@ int main()
 
 	al::Display disp(1024, 768);
 	al::Video vid("data/cssd.ogv");
-	puts("vid loaded");
 	al::Font builtinFont = al::Font::CreateBuiltinFont();
 
 	al::SampleInstance::ReserveSamples(16);
 
 	vid.start();
-	puts("vid started");
 
 	auto evLoop = al::EventLoop::Basic();
 	evLoop.enableEscToQuit();
 	evLoop.loopBody = [&](){
-		printf("getting frame from video\n");
-		//const al::Bitmap* frm = vid.getFrame();
-		ALLEGRO_BITMAP* frm = al_get_video_frame(vid.ptr());
+		al::TargetBitmap.clear();
+
+		const al::Bitmap* frm = vid.getFrame();
 		if(frm) {
-//			printf("drawing frame %dx%d\n", frm->width(), frm->height());
-//			frm->draw({0, 0});
-			printf("drawing frame %dx%d\n", al_get_bitmap_width(frm), al_get_bitmap_height(frm));
-			al_draw_bitmap(frm, 0, 0, 0);
+			frm->draw({0, 0});
 		}
-		builtinFont.draw(al::Format("position: %.2f secs", vid.getPos()), al::PureGreen, {500, 400});
+		builtinFont.draw(al::Format("position: %.2f secs", vid.getPos()), al::PureGreen, {500, 600});
 
 		if(!vid.isPlaying()) {
 			evLoop.setExitFlag();

@@ -56,6 +56,7 @@ namespace al {
 
 		const Bitmap* getFrame() {
 			static Bitmap currentFrame {nullptr, ResourceModel::NonOwning};
+
 			currentFrame.setPtr(al_get_video_frame(ptr()));
 			return currentFrame.ptr() ? &currentFrame : nullptr;
 		}

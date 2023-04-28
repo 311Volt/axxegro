@@ -70,7 +70,7 @@ namespace al {
 		~Resource()
 		{
 			if(model == ResourceModel::NonOwning) {
-				alPtr.reset();
+				alPtr.release();
 			}
 		}
 
@@ -91,6 +91,9 @@ namespace al {
 	protected:
 		void setPtr(T* p)
 		{
+			if(model == ResourceModel::NonOwning) {
+				alPtr.release();
+			}
 			alPtr = decltype(alPtr)(p);
 		}
 	private:
