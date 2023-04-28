@@ -21,6 +21,11 @@ if(NOT MSVC)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
 endif()
 
+# if (WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU") # workaround for clangd+mingw
+# 	set(AXX_TARGET_TRIPLE "i686-w64-mingw32")
+# 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --target=${AXX_TARGET_TRIPLE}")
+# 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --target=${AXX_TARGET_TRIPLE}")
+# endif()
 
 add_library(${PROJECT_NAME} INTERFACE ${AXXEGRO_HEADERS})
 
@@ -50,6 +55,7 @@ if(DOXYGEN_FOUND)
 			ALL
 		)
 	endif()
+
 	
 else(DOXYGEN_FOUND)
 	message("Doxygen not found, won't generate docs")

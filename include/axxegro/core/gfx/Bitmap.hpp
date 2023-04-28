@@ -255,6 +255,8 @@ namespace al {
 		static void SetNewBitmapFlags(int flags) {
 			al_set_new_bitmap_flags(flags);
 		}
+
+		friend class Video;
 	protected:
 	};
 

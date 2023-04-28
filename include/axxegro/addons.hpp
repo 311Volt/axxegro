@@ -7,5 +7,6 @@
 #include "addons/font.hpp"
 #include "addons/prim.hpp"
 #include "addons/dialog.hpp"
+#include "addons/video.hpp"
 
 #endif //AXXEGRO_ADDONS_HPP

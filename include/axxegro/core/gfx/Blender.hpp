@@ -67,7 +67,7 @@ namespace al {
 		return al_get_blend_color();
 	}
 	
-	inline Color SetBlendColor(Color color) {
+	inline void SetBlendColor(Color color) {
 		al_set_blend_color(color);
 	}
 	
