@@ -33,6 +33,7 @@
 
 #include <type_traits>
 #include <memory>
+#include <variant>
 
 namespace al {
 
@@ -51,28 +52,40 @@ namespace al {
 			inline void operator()(type* p){delfn(p);} \
 		}
 
+	template<typename T>
+	struct PtrWrapper {
+		T* mPtr;
+		explicit PtrWrapper(T* ptr) : mPtr(ptr) {}
+		T* get() const {return mPtr;}
+
+		PtrWrapper(const PtrWrapper&) = delete;
+		PtrWrapper& operator=(const PtrWrapper&) = delete;
+		PtrWrapper(PtrWrapper&&) noexcept = default;
+		PtrWrapper& operator=(PtrWrapper&&) noexcept = default;
+	};
+
 	template<typename T, typename Deleter = ::al::Deleter<T>>
 	class Resource {
-		std::unique_ptr<T, Deleter> alPtr;
-		ResourceModel model;
+		std::variant<std::unique_ptr<T, Deleter>, PtrWrapper<T>> alPtr;
+		const ResourceModel model;
 	public:
 		using UnderlyingType = T;
 
 		explicit Resource(T* p, ResourceModel model = ResourceModel::Owning)
 			: model(model)
 		{
+			if(model == ResourceModel::Owning) {
+				alPtr = std::unique_ptr<T, Deleter>();
+			} else {
+				alPtr = PtrWrapper<T>(nullptr);
+			}
 			setPtr(p);
 		}
 
-		Resource(Resource&&) = default;
-		Resource& operator=(Resource&&) = default;
+		Resource(Resource&&) noexcept = default;
+		Resource& operator=(Resource&&) noexcept = default;
 
-		~Resource()
-		{
-			if(model == ResourceModel::NonOwning) {
-				alPtr.release();
-			}
-		}
+		~Resource() = default;
 
 		T* ptr()
 		{
@@ -91,15 +104,16 @@ namespace al {
 	protected:
 		void setPtr(T* p)
 		{
-			if(model == ResourceModel::NonOwning) {
-				alPtr.release();
-			}
-			alPtr = decltype(alPtr)(p);
+			std::visit([p](auto& ptr){
+				ptr = std::move(std::remove_cvref_t<decltype(ptr)>(p));
+			}, alPtr);
 		}
 	private:
 		virtual T* getPointer() const
 		{
-			return alPtr.get();
+			return std::visit([](const auto& ptr){
+				return ptr.get();
+			}, alPtr);
 		}
 	};
 
