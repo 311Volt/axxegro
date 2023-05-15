@@ -26,6 +26,7 @@ namespace al {
 		explicit DisplayBackbuffer(Display& disp)
 			: Bitmap(nullptr), disp(disp)
 		{}
+		virtual ~DisplayBackbuffer() = default;
 	private:
 		[[nodiscard]] ALLEGRO_BITMAP* getPointer() const override;
 
@@ -37,6 +38,7 @@ namespace al {
 		explicit DisplayEventSource(Display& disp)
 			: disp(disp)
 		{}
+		virtual ~DisplayEventSource() = default;
 
 		[[nodiscard]] ALLEGRO_EVENT_SOURCE* ptr() const override;
 	private:

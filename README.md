@@ -91,10 +91,9 @@ Everything in Allegro has an axxegro equivalent, except
 the following missing things:
 
 ### high priority
- - a subset of gfx routines (blending modes, sub-bitmaps)
+ - a subset of gfx routines (blending modes)
  - platform-specific and D3D/OpenGL specific functions
  - native dialog menus
- - video streaming
 
 ### medium priority
  - virtual filesystem, PhysicsFS and memfile

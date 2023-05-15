@@ -11,27 +11,28 @@ int main()
 	al::Font builtinFont = al::Font::CreateBuiltinFont();
 
 	al::SampleInstance::ReserveSamples(16);
-
 	vid.start();
 
-	auto evLoop = al::EventLoop::Basic();
-	evLoop.enableEscToQuit();
-	evLoop.loopBody = [&](){
+	al::EventQueue queue;
+	queue.registerSource(al::GetKeyboardEventSource());
+	queue.registerSource(vid.getEventSource());
+	
+	while(true) {
 		al::TargetBitmap.clear();
-
-		const al::Bitmap* frm = vid.getFrame();
-		if(frm) {
-			frm->draw({0, 0});
+		
+		auto event = queue.wait();
+		if(event.type == ALLEGRO_EVENT_VIDEO_FRAME_SHOW) {
+			const auto* frame = vid.getFrame();
+			frame->draw({0, 0});
+			builtinFont.draw(al::Format("position: %.2f secs", vid.getPos()), al::PureGreen, frame->size());
+		} else if(event.type == ALLEGRO_EVENT_VIDEO_FINISHED) {
+			break;
+		} else if(event.type == ALLEGRO_EVENT_KEY_DOWN) {
+			if(event.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {
+				break;
+			}
 		}
-		builtinFont.draw(al::Format("position: %.2f secs", vid.getPos()), al::PureGreen, {500, 600});
-
-		if(!vid.isPlaying()) {
-			evLoop.setExitFlag();
-		}
-
-		al_flip_display();
-	};
-	evLoop.enableFramerateLimit(30);
-
-	evLoop.run();
+		
+		al::CurrentDisplay.flip();
+	}
 }

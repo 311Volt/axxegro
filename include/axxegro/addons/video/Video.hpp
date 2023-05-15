@@ -2,13 +2,28 @@
 #define INCLUDE_AXXEGRO_ADDONS_VIDEO_VIDEO
 
 #include "../../core.hpp"
+#include "../audio.hpp"
 
 #include <allegro5/allegro_video.h>
 
 namespace al {
 
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_VIDEO, al_close_video);
-
+	
+	class Video;
+	
+	class VideoEventSource: public EventSource {
+	public:
+		explicit VideoEventSource(Video& vid)
+			: vid(vid)
+		{}
+		virtual ~VideoEventSource() = default;
+		
+		[[nodiscard]] ALLEGRO_EVENT_SOURCE* ptr() const override;
+	private:
+		Video& vid;
+	};
+	
 	class Video: public Resource<ALLEGRO_VIDEO> {
 	public:
 
@@ -24,7 +39,8 @@ namespace al {
 			if(!ptr()) {
 				throw ResourceLoadError("Cannot open video: %s", filename.c_str());
 			}
-
+			
+			eventSource = std::make_unique<VideoEventSource>(*this);
 		}
 
 		void rewind() {
@@ -45,9 +61,13 @@ namespace al {
 				al_get_video_scaled_height(ptr())
 			};
 		}
-
-		void start() {
-			al_start_video(ptr(), al_get_default_mixer());
+		
+		void start(Mixer& mixer = DefaultMixer) {
+			al_start_video(ptr(), mixer.ptr());
+		}
+		
+		void start(Voice& voice) {
+			al_start_video_with_voice(ptr(), voice.ptr());
 		}
 
 		[[nodiscard]] bool isPlaying() const {
@@ -60,7 +80,13 @@ namespace al {
 			currentFrame.setPtr(al_get_video_frame(ptr()));
 			return currentFrame.ptr() ? &currentFrame : nullptr;
 		}
+		
+		VideoEventSource& getEventSource() {
+			return *eventSource;
+		}
 	private:
+		
+		std::unique_ptr<VideoEventSource> eventSource;
 
 		static void ensureVideoAddonInitialized() {
 			if(!al_is_video_addon_initialized()) {
@@ -68,6 +94,13 @@ namespace al {
 			}
 		}
 	};
+	
+	
+	ALLEGRO_EVENT_SOURCE *VideoEventSource::ptr() const
+	{
+		return al_get_video_event_source(vid.ptr());
+	}
+	
 }
 
 #endif /* INCLUDE_AXXEGRO_ADDONS_VIDEO_VIDEO */

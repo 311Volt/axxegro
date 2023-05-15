@@ -77,7 +77,7 @@ namespace al {
 	class CDefaultVoice: public Voice {
 	public:
 		using Voice::Voice;
-		ALLEGRO_VOICE* getPointer() const override {
+		[[nodiscard]] ALLEGRO_VOICE* getPointer() const override {
 			return al_get_default_voice();
 		}
 	};
