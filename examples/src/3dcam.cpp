@@ -16,6 +16,7 @@ std::array<al::Vertex, 3> DemoTriangle = {
 
 int main()
 {
+	al::Require<al::PrimitivesAddon>();
 	al::Display disp(800, 600);
 
 	auto skyColor = al::RGB(100, 190, 240);

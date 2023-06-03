@@ -8,6 +8,7 @@
 #include "../../com/Initializable.hpp"
 #include "FontAddon.hpp"
 #include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
 
 namespace al {
 	struct TTFAddon {

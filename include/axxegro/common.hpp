@@ -5,7 +5,6 @@
 #include "com/Initializable.hpp"
 #include "com/Exception.hpp"
 #include "com/format.hpp"
-#include "com/LegacyInit.hpp"
 #include "com/Resource.hpp"
 #include "com/math/math.hpp"
 

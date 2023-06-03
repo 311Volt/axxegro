@@ -6,6 +6,7 @@
 #define AXXEGRO_AUDIOADDON_HPP
 
 #include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
 
 #include "../../com/Initializable.hpp"
 
