@@ -30,7 +30,7 @@ namespace al {
 
 	///@return Current keyboard state.
 	inline KeyboardState GetKeyboardState() {
-		Require<KeyboardDriver>();
+		InternalRequire<KeyboardDriver>();
 		ALLEGRO_KEYBOARD_STATE ret;
 		al_get_keyboard_state(&ret);
 		return ret;
@@ -68,7 +68,7 @@ namespace al {
 
 	///@brief See: https://liballeg.org/a5docs/trunk/keyboard.html#al_set_keyboard_leds
 	inline bool SetKeyboardLEDs(int ledBitField) {
-		Require<KeyboardDriver>();
+		InternalRequire<KeyboardDriver>();
 		return al_set_keyboard_leds(ledBitField);
 	}
 

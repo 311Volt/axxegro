@@ -9,7 +9,7 @@ namespace al {
 	using DisplayMode = ALLEGRO_DISPLAY_MODE;
 
 	inline std::vector<DisplayMode> GetDisplayModes() {
-		Require<CoreAllegro>();
+		InternalRequire<CoreAllegro>();
 
 		std::vector<al::DisplayMode> ret;
 		int num = al_get_num_display_modes();

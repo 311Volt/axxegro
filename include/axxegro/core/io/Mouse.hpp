@@ -61,17 +61,17 @@ namespace al {
 	}
 	
 	inline unsigned GetNumAxes() {
-		Require<MouseDriver>();
+		InternalRequire<MouseDriver>();
 		return al_get_mouse_num_axes();
 	}
 
 	inline unsigned GetNumButtons() {
-		Require<MouseDriver>();
+		InternalRequire<MouseDriver>();
 		return al_get_mouse_num_buttons();
 	}
 
 	inline MouseState GetMouseState() {
-		Require<MouseDriver>();
+		InternalRequire<MouseDriver>();
 		MouseState ret;
 		al_get_mouse_state(&ret);
 		return ret;
@@ -82,7 +82,7 @@ namespace al {
 	}
 
 	inline bool SetMousePos(Coord<int> p) {
-		Require<MouseDriver>();
+		InternalRequire<MouseDriver>();
 		return al_set_mouse_xy(al_get_current_display(), int(p.x), int(p.y));
 	}
 	inline Coord<int> GetMousePos() {
@@ -90,7 +90,7 @@ namespace al {
 		return {st.x, st.y};
 	}
 	inline Coord<int> GetMouseDesktopPos() {
-		Require<MouseDriver>();
+		InternalRequire<MouseDriver>();
 		int x,y;
 		al_get_mouse_cursor_position(&x, &y);
 		return {x, y};

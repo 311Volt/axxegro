@@ -52,7 +52,7 @@ namespace al {
 		Font(const std::string& filename, int size, int flags = 0)
 				: Resource(nullptr)
 		{
-			Require<TTFAddon>();
+			InternalRequire<TTFAddon>();
 			if(auto* p = al_load_font(filename.c_str(), size, flags)) {
 				setPtr(p);
 			} else {

@@ -38,7 +38,7 @@ namespace al {
 				: Resource<ALLEGRO_AUDIO_STREAM>(nullptr),
 				  evSource(new AudioStreamEventSource(*this))
 		{
-			Require<AudioCodecAddon>();
+			InternalRequire<AudioCodecAddon>();
 			if(auto* p = al_load_audio_stream(filename.c_str(), bufferCount, samples)) {
 				setPtr(p);
 			} else {

@@ -56,6 +56,14 @@ namespace al {
 			Require<TRest...>();
 		}
 	}
+	
+	template<Initializable T, Initializable... TRest>
+	inline void InternalRequire()
+	{
+#ifndef AXXEGRO_NO_AUTO_INIT
+		Require<T, TRest...>();
+#endif
+	}
 
 
 	template<Initializable TComp1, Initializable... TCompRest>
@@ -67,7 +75,7 @@ namespace al {
 
 	template<Initializable TComp1, Initializable... TCompRest>
 	class RequiresInitializables {
-#ifndef AXXEGRO_NOOP_REQUIREMENTS
+#ifndef AXXEGRO_NO_AUTO_INIT
 		[[no_unique_address]] InitializableRequirement<TComp1, TCompRest...> axx_comp_req_;
 #endif
 	};

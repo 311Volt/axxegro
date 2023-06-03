@@ -41,7 +41,7 @@ namespace al {
  * This function is intended for use as a global terminate handler function.
  */
 	inline void Terminate() {
-		Require<NativeDialogAddon>();
+		InternalRequire<NativeDialogAddon>();
 		std::string errMsg = "The program exited unexpectedly because of an error.";
 
 		std::string exMsg;

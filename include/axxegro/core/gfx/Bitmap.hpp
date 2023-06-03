@@ -81,7 +81,7 @@ namespace al {
 		explicit Bitmap(const std::string& filename)
 				: Resource(nullptr)
 		{
-			Require<ImageAddon>();
+			InternalRequire<ImageAddon>();
 			if(auto* p = al_load_bitmap(filename.c_str())) {
 				setPtr(p);
 			} else {

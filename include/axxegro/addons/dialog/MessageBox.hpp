@@ -32,7 +32,7 @@ namespace al {
 		std::optional<std::reference_wrapper<Display>> parentDisplay = std::nullopt
 	)
 	{
-		Require<NativeDialogAddon>();
+		InternalRequire<NativeDialogAddon>();
 		return al_show_native_message_box(
 				parentDisplay ? parentDisplay->get().ptr() : nullptr,
 				title.c_str(),
