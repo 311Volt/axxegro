@@ -16,7 +16,7 @@
 
 
 namespace al {
-	class EventLoop {
+	class EventLoop: RequiresInitializables<CoreAllegro> {
 		
 		//copy elision for Basic()
 		class BasicInit{};

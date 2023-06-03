@@ -59,7 +59,7 @@ namespace al {
 		int end = -1
 	)
 	{
-		AXX_CHECK_PRIM_IF_DEBUG
+		InternalRequire<PrimitivesAddon>();
 		return al_draw_prim(
 			vertices.data(), 
 			nullptr, 
@@ -77,7 +77,7 @@ namespace al {
 		ALLEGRO_PRIM_TYPE type = ALLEGRO_PRIM_TRIANGLE_LIST
 	)
 	{
-		AXX_CHECK_PRIM_IF_DEBUG
+		InternalRequire<PrimitivesAddon>();
 		return al_draw_indexed_prim(
 			vertices.data(), 
 			nullptr, 
@@ -97,7 +97,7 @@ namespace al {
 		int end = -1
 	)
 	{
-		AXX_CHECK_PRIM_IF_DEBUG
+		InternalRequire<PrimitivesAddon>();
 		static VertexDecl vd = VertexDecl::Init<VertexDeclFor<VType>>();
 		al_draw_prim(
 			vertices.data(), 
@@ -117,7 +117,7 @@ namespace al {
 		ALLEGRO_PRIM_TYPE type = ALLEGRO_PRIM_TRIANGLE_LIST
 	)
 	{
-		AXX_CHECK_PRIM_IF_DEBUG
+		InternalRequire<PrimitivesAddon>();
 		static VertexDecl vd = VertexDecl::Init<VertexDeclFor<VType>>();
 		al_draw_indexed_prim(
 			vertices.data(), 

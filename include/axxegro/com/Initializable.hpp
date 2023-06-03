@@ -47,11 +47,10 @@ namespace al {
 	template<Initializable T, Initializable... TRest>
 	inline void Require()
 	{
-		if(T::isInitialized()) {
-			return;
+		if(not T::isInitialized()) [[unlikely]] {
+			T::DependsOn::InitializeAll();
+			Initialize<T>();
 		}
-		T::DependsOn::InitializeAll();
-		Initialize<T>();
 		if constexpr(sizeof...(TRest)) {
 			Require<TRest...>();
 		}
