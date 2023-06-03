@@ -9,13 +9,18 @@ namespace al {
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_MIXER, al_destroy_mixer);
 
 	class Mixer:
+			RequiresInitializables<AudioAddon>,
 			public Resource<ALLEGRO_MIXER>,
 			public AddAudioFormatQuery<Mixer> {
 	public:
 		explicit Mixer(AudioFormat audioFormat = {})
-		    : Resource<ALLEGRO_MIXER>(al_create_mixer(audioFormat.frequency, audioFormat.depth, audioFormat.chanConf))
+		    : Resource<ALLEGRO_MIXER>(nullptr)
 		{
-
+			if(auto* p = al_create_mixer(audioFormat.frequency, audioFormat.depth, audioFormat.chanConf)) {
+				setPtr(p);
+			} else {
+				throw AudioError("Cannot create mixer with format: %s", audioFormat.str().c_str());
+			}
 		}
 		~Mixer()
 		{

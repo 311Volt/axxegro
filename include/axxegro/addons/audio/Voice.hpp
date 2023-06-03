@@ -8,7 +8,9 @@ namespace al {
 
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_VOICE, al_destroy_voice);
 
-	class Voice: public Resource<ALLEGRO_VOICE> {
+	class Voice:
+			RequiresInitializables<AudioAddon>,
+			public Resource<ALLEGRO_VOICE> {
 	public:
 		explicit Voice(AudioFormat audioFormat = {})
 				: Resource<ALLEGRO_VOICE>(al_create_voice(audioFormat.frequency, audioFormat.depth, audioFormat.chanConf))

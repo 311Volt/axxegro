@@ -1,6 +1,7 @@
 #ifndef INCLUDE_AXXEGRO_PRIM_BUFFERS
 #define INCLUDE_AXXEGRO_PRIM_BUFFERS
 
+#include "PrimitivesAddon.hpp"
 #include "common.hpp"
 
 #include <span>
@@ -11,7 +12,9 @@ namespace al {
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_VERTEX_BUFFER, al_destroy_vertex_buffer);
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_INDEX_BUFFER, al_destroy_index_buffer);
 
-	class VertexBuffer: public Resource<ALLEGRO_VERTEX_BUFFER> {
+	class VertexBuffer:
+			RequiresInitializables<PrimitivesAddon>,
+			public Resource<ALLEGRO_VERTEX_BUFFER> {
 	public:
 		explicit VertexBuffer(const std::span<Vertex> vertices, int flags = ALLEGRO_PRIM_BUFFER_STATIC)
 				: Resource<ALLEGRO_VERTEX_BUFFER>(
@@ -30,7 +33,9 @@ namespace al {
 	};
 	//TODO locking
 
-	class IndexBuffer: public Resource<ALLEGRO_INDEX_BUFFER> {
+	class IndexBuffer:
+			RequiresInitializables<PrimitivesAddon>,
+			public Resource<ALLEGRO_INDEX_BUFFER> {
 	public:
 		explicit IndexBuffer(const std::span<int> indices, int flags = ALLEGRO_PRIM_BUFFER_STATIC)
 				: Resource<ALLEGRO_INDEX_BUFFER>(

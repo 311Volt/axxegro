@@ -12,7 +12,9 @@ namespace al {
 		virtual ALLEGRO_EVENT_SOURCE* ptr() const = 0;
 	};
 
-	class UserEventSource: public EventSource
+	class UserEventSource:
+			RequiresInitializables<CoreAllegro>,
+			public EventSource
 	{
 		ALLEGRO_EVENT_SOURCE evs {};
 	public:

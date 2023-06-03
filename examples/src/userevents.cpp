@@ -40,7 +40,6 @@ public:
 
 int main()
 {
-	al::FullInit();
 	al::Display disp(640, 480);
 	const auto& font = al::Font::BuiltinFont();
 
@@ -61,15 +60,15 @@ int main()
 
 		//reading the data we put in
 		messages.push_back(al::Format(
-			"[%.2f] Received example event: %.1f %.1f \"{}\"", 
+			"[%.2f] Received example event: %.1f %.1f \"%s\"",
 			ev.any.timestamp, 
-			dat.a, dat.b, dat.msg
+			dat.a, dat.b, dat.msg.c_str()
 		));
 
 		//accessing the event source itself
 		messages.push_back(al::Format(
 			"Custom event source state: %f",
-			static_cast<MyEventSource&>(al::GetUserEventSource(ev)).state
+			dynamic_cast<MyEventSource&>(al::GetUserEventSource(ev)).state
 		));
 
 		//delete old lines

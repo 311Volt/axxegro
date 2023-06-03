@@ -6,8 +6,8 @@
 
 namespace al {
 
-	/* A convenient wrapper for snprintf when std::format is
-	 * not available. */
+	/* A convenient wrapper for snprintf for when std::format is
+	 * not available. (e.g. GCC before version 13) */
 
 	template<typename... Args>
 	inline std::string Format(const char* fmt, Args... args)

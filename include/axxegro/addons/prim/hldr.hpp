@@ -2,6 +2,7 @@
 #define INCLUDE_AXXEGRO_PRIM_HLDR
 
 #include "common.hpp"
+#include "PrimitivesAddon.hpp"
 
 #include <vector>
 #include <array>
@@ -10,6 +11,7 @@
  * @file
  * high level drawing routines
  */
+
 
 namespace al {
 	constexpr al::Color PRIM_DEFAULT_COLOR = al::RGB(255,255,255);
@@ -21,6 +23,7 @@ namespace al {
 		const Color& color = PRIM_DEFAULT_COLOR,
 		float thickness = PRIM_DEFAULT_THICKNESS
 	) {
+		AXX_CHECK_PRIM_IF_DEBUG
 		al_draw_line(a.x, a.y, b.x, b.y, color, thickness);
 	}
 
@@ -31,6 +34,7 @@ namespace al {
 		const Color& color = PRIM_DEFAULT_COLOR, 
 		float thickness = PRIM_DEFAULT_THICKNESS
 	) {
+		AXX_CHECK_PRIM_IF_DEBUG
 		al_draw_triangle(a.x, a.y, b.x, b.y, c.x, c.y, color, thickness);
 	}
 
@@ -40,6 +44,7 @@ namespace al {
 		const Coord<>& c, 
 		const Color& color = PRIM_DEFAULT_COLOR
 	) {
+		AXX_CHECK_PRIM_IF_DEBUG
 		al_draw_filled_triangle(a.x, a.y, b.x, b.y, c.x, c.y, color);
 	}
 
@@ -48,6 +53,7 @@ namespace al {
 		const Color& color = PRIM_DEFAULT_COLOR,
 		float thickness = PRIM_DEFAULT_THICKNESS
 	) {
+		AXX_CHECK_PRIM_IF_DEBUG
 		al_draw_rectangle(r.a.x, r.a.y, r.b.x, r.b.y, color, thickness);
 	}
 
@@ -55,6 +61,7 @@ namespace al {
 		const Rect<>& rect,
 		const Color& color = PRIM_DEFAULT_COLOR
 	) {
+		AXX_CHECK_PRIM_IF_DEBUG
 		al_draw_filled_rectangle(rect.a.x, rect.a.y, rect.b.x, rect.b.y, color);
 	}
 
@@ -64,6 +71,7 @@ namespace al {
 		const Color& color = PRIM_DEFAULT_COLOR,
 		float thickness = PRIM_DEFAULT_THICKNESS
 	) {
+		AXX_CHECK_PRIM_IF_DEBUG
 		al_draw_rounded_rectangle(
 				rect.a.x, rect.a.y, rect.b.x, rect.b.y,
 				radius.x, radius.y,
@@ -76,6 +84,7 @@ namespace al {
 		const Vec2<>& radius = {0, 0},
 		const Color& color = PRIM_DEFAULT_COLOR
 	) {
+		AXX_CHECK_PRIM_IF_DEBUG
 		al_draw_filled_rounded_rectangle(
 				rect.a.x, rect.a.y, rect.b.x, rect.b.y,
 				radius.x, radius.y,
@@ -91,6 +100,7 @@ namespace al {
 		const Color& color = PRIM_DEFAULT_COLOR,
 		float thickness = PRIM_DEFAULT_THICKNESS
 	) {
+		AXX_CHECK_PRIM_IF_DEBUG
 		al_draw_pieslice(
 				center.x, center.y,
 				radius,
@@ -106,6 +116,7 @@ namespace al {
 		float deltaTheta,
 		const Color& color = PRIM_DEFAULT_COLOR
 	) {
+		AXX_CHECK_PRIM_IF_DEBUG
 		al_draw_filled_pieslice(
 				center.x, center.y,
 				radius,
@@ -120,6 +131,7 @@ namespace al {
 		const Color& color = PRIM_DEFAULT_COLOR,
 		float thickness = PRIM_DEFAULT_THICKNESS
 	) {
+		AXX_CHECK_PRIM_IF_DEBUG
 		al_draw_ellipse(
 				center.x, center.y,
 				radius.x, radius.y,
@@ -132,6 +144,7 @@ namespace al {
 		const Vec2<>& radius,
 		const Color& color = PRIM_DEFAULT_COLOR
 	) {
+		AXX_CHECK_PRIM_IF_DEBUG
 		al_draw_filled_ellipse(
 				center.x, center.y,
 				radius.x, radius.y,
@@ -145,6 +158,7 @@ namespace al {
 		const Color& color = PRIM_DEFAULT_COLOR,
 		float thickness = PRIM_DEFAULT_THICKNESS
 	) {
+		AXX_CHECK_PRIM_IF_DEBUG
 		al_draw_circle(
 				center.x, center.y,
 				radius,
@@ -157,6 +171,7 @@ namespace al {
 		float radius,
 		const Color& color = PRIM_DEFAULT_COLOR
 	) {
+		AXX_CHECK_PRIM_IF_DEBUG
 		al_draw_filled_circle(
 				center.x, center.y,
 				radius,
@@ -172,6 +187,7 @@ namespace al {
 		const Color& color = PRIM_DEFAULT_COLOR,
 		float thickness = PRIM_DEFAULT_THICKNESS
 	) {
+		AXX_CHECK_PRIM_IF_DEBUG
 		al_draw_arc(
 				center.x, center.y,
 				radius,
@@ -188,6 +204,7 @@ namespace al {
 		const Color& color = PRIM_DEFAULT_COLOR,
 		float thickness = PRIM_DEFAULT_THICKNESS
 	) {
+		AXX_CHECK_PRIM_IF_DEBUG
 		al_draw_elliptical_arc(
 				center.x, center.y,
 				radius.x, radius.y,
@@ -201,6 +218,7 @@ namespace al {
 		const Color& color = PRIM_DEFAULT_COLOR,
 		float thickness = PRIM_DEFAULT_THICKNESS
 	) {
+		AXX_CHECK_PRIM_IF_DEBUG
 		std::vector<float> pts(8);
 		for(unsigned i=0; i<points.size(); i++) {
 			pts[i*2 + 0] = points[i].x;
@@ -217,6 +235,7 @@ namespace al {
 		float thickness,
 		int numPoints
 	) {
+		AXX_CHECK_PRIM_IF_DEBUG
 		std::vector<float> outData(2*numPoints*(1 + (thickness > 0)));
 		al_calculate_arc(
 				outData.data(), 2*sizeof(outData[0]),

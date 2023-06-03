@@ -20,7 +20,9 @@ namespace al {
 
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_CONFIG, al_destroy_config);
 
-	class Config: public Resource<ALLEGRO_CONFIG> {
+	class Config:
+			RequiresInitializables<CoreAllegro>,
+			public Resource<ALLEGRO_CONFIG> {
 	public:
 		using Resource::Resource;
 		Config()

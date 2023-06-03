@@ -10,6 +10,7 @@
 #include <allegro5/bitmap.h>
 #include <memory>
 
+#include "../../addons/image.hpp"
 /**
  * @file
  * An ALLEGRO_BITMAP wrapper plus utilities.
@@ -45,7 +46,9 @@ namespace al {
 	/**
 	 * @brief Wraps around ALLEGRO_BITMAP.
 	 */
-	class Bitmap: public Resource<ALLEGRO_BITMAP> {
+	class Bitmap:
+			RequiresInitializables<CoreAllegro>,
+			public Resource<ALLEGRO_BITMAP> {
 	public:
 		using Resource::Resource;
 		Bitmap() = delete;
@@ -76,9 +79,12 @@ namespace al {
 		 * @param filename Path to the file with the image.
 		 **/
 		explicit Bitmap(const std::string& filename)
-				: Resource(al_load_bitmap(filename.c_str()))
+				: Resource(nullptr)
 		{
-			if(!ptr()) {
+			Require<ImageAddon>();
+			if(auto* p = al_load_bitmap(filename.c_str())) {
+				setPtr(p);
+			} else {
 				throw ResourceLoadError("Cannot load bitmap from %s - file missing, corrupted or in an unsupported format", filename.c_str());
 			}
 		}
@@ -370,6 +376,9 @@ namespace al {
 			al_reparent_bitmap(bitmap.ptr(), ptr(), rect.a.x, rect.a.y, rect.width(), rect.height());
 			return true;
 		}
+
+		SubBitmap(SubBitmap&&) = delete;
+		SubBitmap& operator=(SubBitmap&&) = delete;
 
 		friend class Bitmap;
 

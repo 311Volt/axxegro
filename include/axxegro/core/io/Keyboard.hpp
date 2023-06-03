@@ -12,7 +12,16 @@
 namespace al {
 	using KeyboardState = ALLEGRO_KEYBOARD_STATE;
 
-	class KeyboardEventSource: public EventSource {
+	struct KeyboardDriver {
+		static constexpr char name[] = "Keyboard driver";
+		[[nodiscard]] static bool init() {return al_install_keyboard();}
+		[[nodiscard]] static bool isInitialized() {return al_is_keyboard_installed();}
+		using DependsOn = InitDependencies<CoreAllegro>;
+	};
+
+	class KeyboardEventSource:
+			RequiresInitializables<KeyboardDriver>,
+			public EventSource {
 	public:
 		[[nodiscard]] ALLEGRO_EVENT_SOURCE* ptr() const override {
 			return al_get_keyboard_event_source();
@@ -21,6 +30,7 @@ namespace al {
 
 	///@return Current keyboard state.
 	inline KeyboardState GetKeyboardState() {
+		Require<KeyboardDriver>();
 		ALLEGRO_KEYBOARD_STATE ret;
 		al_get_keyboard_state(&ret);
 		return ret;
@@ -58,6 +68,7 @@ namespace al {
 
 	///@brief See: https://liballeg.org/a5docs/trunk/keyboard.html#al_set_keyboard_leds
 	inline bool SetKeyboardLEDs(int ledBitField) {
+		Require<KeyboardDriver>();
 		return al_set_keyboard_leds(ledBitField);
 	}
 

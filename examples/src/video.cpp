@@ -3,7 +3,6 @@
 
 int main()
 {
-	al::FullInit();
 	std::set_terminate(al::Terminate);
 
 	al::Display disp(1024, 768);

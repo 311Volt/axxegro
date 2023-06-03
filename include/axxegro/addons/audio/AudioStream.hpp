@@ -17,23 +17,33 @@ namespace al {
     AXXEGRO_DEFINE_DELETER(ALLEGRO_AUDIO_STREAM, al_destroy_audio_stream);
 
 	class AudioStream:
+			RequiresInitializables<AudioAddon>,
 			public Resource<ALLEGRO_AUDIO_STREAM>,
 			public AddPlaybackParams<AudioStream>,
 			public AddAudioFormatQuery<AudioStream> {
     public:
 
 		explicit AudioStream(size_t bufferCount = 4, unsigned samples = 2048, AudioFormat format = {})
-				: Resource<ALLEGRO_AUDIO_STREAM>(al_create_audio_stream(bufferCount, samples, format.frequency, format.depth, format.chanConf)),
+				: Resource<ALLEGRO_AUDIO_STREAM>(nullptr),
 				  evSource(new AudioStreamEventSource(*this))
 		{
-
+			if(auto* p = al_create_audio_stream(bufferCount, samples, format.frequency, format.depth, format.chanConf)) {
+				setPtr(p);
+			} else {
+				throw AudioError("Cannot create audio stream with %d x %d bufs and format %s", (int)bufferCount, (int)samples, format.str().c_str());
+			}
 		}
 
 		explicit AudioStream(const std::string& filename, size_t bufferCount = 4, unsigned samples = 4096)
-				: Resource<ALLEGRO_AUDIO_STREAM>(al_load_audio_stream(filename.c_str(), bufferCount, samples)),
+				: Resource<ALLEGRO_AUDIO_STREAM>(nullptr),
 				  evSource(new AudioStreamEventSource(*this))
 		{
-
+			Require<AudioCodecAddon>();
+			if(auto* p = al_load_audio_stream(filename.c_str(), bufferCount, samples)) {
+				setPtr(p);
+			} else {
+				throw AudioError("Cannot load audio stream from file %s", filename.c_str());
+			}
 		}
 
 //		static AudioStream& Play(const std::string& filename); //5.2.8 unstable

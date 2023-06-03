@@ -1,6 +1,8 @@
 #ifndef INCLUDE_AXXEGRO_ADDONS_FONT_FONT
 #define INCLUDE_AXXEGRO_ADDONS_FONT_FONT
 
+#include "FontAddon.hpp"
+#include "TTFAddon.hpp"
 #include "../../core.hpp"
 
 #include <allegro5/allegro_font.h>
@@ -8,7 +10,9 @@
 namespace al {
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_FONT, al_destroy_font);
 
-	class Font: public Resource<ALLEGRO_FONT> {
+	class Font:
+			RequiresInitializables<FontAddon>,
+			public Resource<ALLEGRO_FONT> {
 		Font()
 				: Resource(al_create_builtin_font())
 		{
@@ -46,9 +50,12 @@ namespace al {
 		}
 
 		Font(const std::string& filename, int size, int flags = 0)
-				: Resource(al_load_font(filename.c_str(), size, flags))
+				: Resource(nullptr)
 		{
-			if(!ptr()) {
+			Require<TTFAddon>();
+			if(auto* p = al_load_font(filename.c_str(), size, flags)) {
+				setPtr(p);
+			} else {
 				throw ResourceLoadError("Cannot load font from %s - file missing, corrupted or invalid", filename.c_str());
 			}
 		}

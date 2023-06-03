@@ -26,10 +26,12 @@ namespace al
 #define AXXEGRO_DEF_EXCEPTION(cparent, exname) struct exname: public cparent {using cparent::cparent;};
 
 	AXXEGRO_DEF_EXCEPTION(Exception, InitJobFailed);
+	AXXEGRO_DEF_EXCEPTION(Exception, InitializeFailed);
 	AXXEGRO_DEF_EXCEPTION(Exception, ShaderError);
 		AXXEGRO_DEF_EXCEPTION(ShaderError, ShaderSourceError);
 		AXXEGRO_DEF_EXCEPTION(ShaderError, ShaderBuildError);
     AXXEGRO_DEF_EXCEPTION(Exception, AudioError);
+	AXXEGRO_DEF_EXCEPTION(Exception, AddonError);
 	AXXEGRO_DEF_EXCEPTION(Exception, DisplayCreationError);
 	AXXEGRO_DEF_EXCEPTION(Exception, BitmapLockError);
 	AXXEGRO_DEF_EXCEPTION(Exception, ResourceLoadError);

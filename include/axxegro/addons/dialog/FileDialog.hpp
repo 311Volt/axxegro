@@ -2,6 +2,7 @@
 #define INCLUDE_AXXEGRO_DIALOG_FILEDIALOG
 
 #include "axxegro/common.hpp"
+#include "NativeDialogAddon.hpp"
 #include <allegro5/allegro_native_dialog.h>
 
 #include <vector>
@@ -20,7 +21,9 @@ namespace al {
 		}
 	};
 
-	class FileDialog: public Resource<ALLEGRO_FILECHOOSER> {
+	class FileDialog:
+			RequiresInitializables<NativeDialogAddon>,
+			public Resource<ALLEGRO_FILECHOOSER> {
 	public:
 		explicit FileDialog(
 			const std::string& initial_path = "",

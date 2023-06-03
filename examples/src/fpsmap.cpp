@@ -201,7 +201,7 @@ Mesh CreateTerrain(int sx, int sy, float height)
 int main()
 {
 	std::set_terminate(al::Terminate);
-	al::FullInit();
+	al::Require<al::PrimitivesAddon>();
 
 	al::Display display(1024, 768, 0, {}, {
 		{ALLEGRO_DEPTH_SIZE, 32}, 

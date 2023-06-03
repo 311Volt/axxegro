@@ -2,7 +2,7 @@
 #define INCLUDE_AXXEGRO_DIALOG_MESSAGEBOX
 
 #include "axxegro/common.hpp"
-#include <allegro5/allegro_native_dialog.h>
+#include "NativeDialogAddon.hpp"
 
 #include <string>
 #include <optional>
@@ -32,6 +32,7 @@ namespace al {
 		std::optional<std::reference_wrapper<Display>> parentDisplay = std::nullopt
 	)
 	{
+		Require<NativeDialogAddon>();
 		return al_show_native_message_box(
 				parentDisplay ? parentDisplay->get().ptr() : nullptr,
 				title.c_str(),

@@ -14,8 +14,8 @@
 
 int main()
 {
+	al::Require<al::PrimitivesAddon>();
 
-	al::FullInit();
 	al::Display disp(1024, 768, ALLEGRO_WINDOWED | ALLEGRO_RESIZABLE);
 	al::Bitmap::SetNewBitmapFlags(ALLEGRO_MIPMAP | ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
 	al::Bitmap bg("data/bg.jpg");

@@ -2,6 +2,7 @@
 #define AXXEGRO_AUDIOCOMMON_HPP
 
 #include "../../core.hpp"
+#include "AudioAddon.hpp"
 
 #include <allegro5/allegro_audio.h>
 

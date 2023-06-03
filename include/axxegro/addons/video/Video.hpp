@@ -3,6 +3,7 @@
 
 #include "../../core.hpp"
 #include "../audio.hpp"
+#include "VideoAddon.hpp"
 
 #include <allegro5/allegro_video.h>
 
@@ -24,7 +25,9 @@ namespace al {
 		Video& vid;
 	};
 	
-	class Video: public Resource<ALLEGRO_VIDEO> {
+	class Video:
+			RequiresInitializables<VideoAddon>,
+			public Resource<ALLEGRO_VIDEO> {
 	public:
 
 		static std::string Identify(const std::string& filename) {

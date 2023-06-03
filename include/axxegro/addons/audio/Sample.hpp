@@ -20,7 +20,10 @@ namespace al
 		}
     };
 
-	class Sample: public Resource<ALLEGRO_SAMPLE>, public AddAudioFormatQuery<Sample> {
+	class Sample:
+			RequiresInitializables<AudioAddon>,
+			public Resource<ALLEGRO_SAMPLE>,
+			public AddAudioFormatQuery<Sample> {
 	public:
 		explicit Sample(const std::string& filename)
 		   : Resource<ALLEGRO_SAMPLE>(al_load_sample(filename.c_str()))

@@ -10,7 +10,10 @@ namespace al
 {
     AXXEGRO_DEFINE_DELETER(ALLEGRO_SAMPLE_INSTANCE, al_destroy_sample_instance);
 
-    class SampleInstance: public Resource<ALLEGRO_SAMPLE_INSTANCE>, public AddPlaybackParams<SampleInstance> {
+    class SampleInstance:
+			RequiresInitializables<AudioAddon>,
+			public Resource<ALLEGRO_SAMPLE_INSTANCE>,
+			public AddPlaybackParams<SampleInstance> {
     public:
         explicit SampleInstance(const Sample& sample)
 				: Resource<ALLEGRO_SAMPLE_INSTANCE>(al_create_sample_instance(sample.constPtr())) {

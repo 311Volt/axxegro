@@ -9,7 +9,9 @@
 
 namespace al {
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_EVENT_QUEUE, al_destroy_event_queue);
-	class EventQueue: public Resource<ALLEGRO_EVENT_QUEUE> {
+	class EventQueue:
+			RequiresInitializables<CoreAllegro>,
+			public Resource<ALLEGRO_EVENT_QUEUE> {
 	public:
 		EventQueue()
 		: Resource(al_create_event_queue())

@@ -6,6 +6,7 @@
 #define AXXEGRO_TERMINATE_HPP
 
 #include "axxegro/common.hpp"
+#include "NativeDialogAddon.hpp"
 #include <allegro5/allegro_native_dialog.h>
 
 #include <string>
@@ -40,6 +41,7 @@ namespace al {
  * This function is intended for use as a global terminate handler function.
  */
 	inline void Terminate() {
+		Require<NativeDialogAddon>();
 		std::string errMsg = "The program exited unexpectedly because of an error.";
 
 		std::string exMsg;

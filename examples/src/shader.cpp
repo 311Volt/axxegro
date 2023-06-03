@@ -18,7 +18,7 @@ int main()
 {
 	std::srand(1);
 	std::set_terminate(al::Terminate); //for a nice error message if there's an exception
-	al::FullInit();
+	al::Require<al::PrimitivesAddon>();
 
 	//the rest is pretty self-explanatory, I think
 

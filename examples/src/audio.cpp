@@ -4,7 +4,6 @@
 
 int main()
 {
-	al::FullInit();
 	std::set_terminate(al::Terminate);
 	al::Display disp(640, 480);
 	al::EventLoop evLoop = al::EventLoop::Basic();

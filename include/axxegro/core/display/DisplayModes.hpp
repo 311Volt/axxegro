@@ -1,6 +1,7 @@
 #ifndef INCLUDE_AXXEGRO_DISPLAY_DISPLAYMODES
 #define INCLUDE_AXXEGRO_DISPLAY_DISPLAYMODES
 
+#include "../../com/Initializable.hpp"
 #include <allegro5/allegro.h>
 #include <vector>
 
@@ -8,6 +9,8 @@ namespace al {
 	using DisplayMode = ALLEGRO_DISPLAY_MODE;
 
 	inline std::vector<DisplayMode> GetDisplayModes() {
+		Require<CoreAllegro>();
+
 		std::vector<al::DisplayMode> ret;
 		int num = al_get_num_display_modes();
 		ret.reserve(num);

@@ -9,17 +9,31 @@ namespace al {
 
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_MOUSE_CURSOR, al_destroy_mouse_cursor);
 
-	class MouseCursor: public Resource<ALLEGRO_MOUSE_CURSOR> {
+
+	struct MouseDriver {
+		static constexpr char name[] = "Mouse driver";
+		[[nodiscard]] static bool init() {return al_install_mouse();}
+		[[nodiscard]] static bool isInitialized() {return al_is_mouse_installed();}
+		using DependsOn = InitDependencies<CoreAllegro>;
+	};
+
+	class MouseCursor:
+			RequiresInitializables<MouseDriver>,
+			public Resource<ALLEGRO_MOUSE_CURSOR> {
 	public:
 		MouseCursor(const Bitmap& bmp, Coord<int> focus)
 				: Resource(al_create_mouse_cursor(bmp.ptr(), focus.x, focus.y))
 		{
-
+			if(!ptr()) {
+				throw ResourceLoadError("Cannot create mouse cursor from a %dx%d bitmap", bmp.width(), bmp.height());
+			}
 		}
 
 	};
 
-	class MouseEventSource: public EventSource {
+	class MouseEventSource:
+			RequiresInitializables<MouseDriver>,
+			public EventSource {
 	public:
 		[[nodiscard]] ALLEGRO_EVENT_SOURCE* ptr() const override {
 			return al_get_mouse_event_source();
@@ -47,14 +61,17 @@ namespace al {
 	}
 	
 	inline unsigned GetNumAxes() {
+		Require<MouseDriver>();
 		return al_get_mouse_num_axes();
 	}
 
 	inline unsigned GetNumButtons() {
+		Require<MouseDriver>();
 		return al_get_mouse_num_buttons();
 	}
 
 	inline MouseState GetMouseState() {
+		Require<MouseDriver>();
 		MouseState ret;
 		al_get_mouse_state(&ret);
 		return ret;
@@ -65,6 +82,7 @@ namespace al {
 	}
 
 	inline bool SetMousePos(Coord<int> p) {
+		Require<MouseDriver>();
 		return al_set_mouse_xy(al_get_current_display(), int(p.x), int(p.y));
 	}
 	inline Coord<int> GetMousePos() {
@@ -72,6 +90,7 @@ namespace al {
 		return {st.x, st.y};
 	}
 	inline Coord<int> GetMouseDesktopPos() {
+		Require<MouseDriver>();
 		int x,y;
 		al_get_mouse_cursor_position(&x, &y);
 		return {x, y};

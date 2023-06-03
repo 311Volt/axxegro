@@ -23,7 +23,7 @@ AXXEGRO_VERTEX_DECL(MyVertex) {
 
 int main()
 {
-	al::FullInit();
+	al::Require<al::PrimitivesAddon>();
 	al::Display disp(800, 600);
 	al::TargetBitmap.clearToColor(al::RGB(100,100,100));
 	al::Bitmap bg("data/bg.jpg");

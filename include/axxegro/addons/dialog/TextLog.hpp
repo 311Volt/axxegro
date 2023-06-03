@@ -3,6 +3,7 @@
 
 #include "axxegro/common.hpp"
 #include "axxegro/core/event.hpp"
+#include "NativeDialogAddon.hpp"
 
 #include <allegro5/allegro_native_dialog.h>
 
@@ -24,7 +25,9 @@ namespace al {
 	};
 
 
-	class TextLog: public Resource<ALLEGRO_TEXTLOG> {
+	class TextLog:
+			RequiresInitializables<NativeDialogAddon>,
+			public Resource<ALLEGRO_TEXTLOG> {
 	public:
 		explicit TextLog(const std::string& title = "Log", int flags = 0)
 			: Resource<ALLEGRO_TEXTLOG>(al_open_native_text_log(title.c_str(), flags))

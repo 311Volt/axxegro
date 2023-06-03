@@ -10,7 +10,6 @@
 
 int main()
 {
-	al::FullInit();
 	al::Display disp(1024, 768, ALLEGRO_MIN_LINEAR|ALLEGRO_MIPMAP);
 
 	al::Bitmap dvdLogo("data/dvdlogo.png");

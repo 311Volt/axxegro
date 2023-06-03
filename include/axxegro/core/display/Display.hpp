@@ -45,7 +45,9 @@ namespace al {
 		Display& disp;
 	};
 
-	class Display: public Resource<ALLEGRO_DISPLAY> {
+	class Display:
+			RequiresInitializables<CoreAllegro>,
+			public Resource<ALLEGRO_DISPLAY> {
 	public:
 		using Resource::Resource;
 		struct Option {
