@@ -22,7 +22,7 @@ int main()
         auto rect = al::Rect<int>::XYWH(x*16, y*16, 16, 16);
         auto sub = parent.createSubBitmap(rect);
 
-        sub.drawScaled(sub.rect(), al::Rect<>::XYWH(100, 100, 64, 64));
+        sub.drawScaled(sub.rect(), al::RectF::XYWH(100, 100, 64, 64));
 
         al::CurrentDisplay.flip();
     };

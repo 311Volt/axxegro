@@ -148,27 +148,27 @@ namespace al
 	};
 	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
 	struct SampleType<ALLEGRO_CHANNEL_CONF_2, AudioDepth> {
-		using Type = Vec2<typename AudioFragType<AudioDepth>::Type>;
+		using Type = Vec<typename AudioFragType<AudioDepth>::Type, 2>;
 	};
 	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
 	struct SampleType<ALLEGRO_CHANNEL_CONF_3, AudioDepth> {
-		using Type = Vec3<typename AudioFragType<AudioDepth>::Type>;
+		using Type = Vec<typename AudioFragType<AudioDepth>::Type, 3>;
 	};
 	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
 	struct SampleType<ALLEGRO_CHANNEL_CONF_4, AudioDepth> {
-		using Type = Vec4<typename AudioFragType<AudioDepth>::Type>;
+		using Type = Vec<typename AudioFragType<AudioDepth>::Type, 4>;
 	};
 	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
 	struct SampleType<ALLEGRO_CHANNEL_CONF_5_1, AudioDepth> {
-		using Type = std::array<typename AudioFragType<AudioDepth>::Type, 6>;
+		using Type = Vec<typename AudioFragType<AudioDepth>::Type, 6>;
 	};
 	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
 	struct SampleType<ALLEGRO_CHANNEL_CONF_6_1, AudioDepth> {
-		using Type = std::array<typename AudioFragType<AudioDepth>::Type, 7>;
+		using Type = Vec<typename AudioFragType<AudioDepth>::Type, 7>;
 	};
 	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
 	struct SampleType<ALLEGRO_CHANNEL_CONF_7_1, AudioDepth> {
-		using Type = std::array<typename AudioFragType<AudioDepth>::Type, 8>;
+		using Type = Vec<typename AudioFragType<AudioDepth>::Type, 8>;
 	};
 
 }

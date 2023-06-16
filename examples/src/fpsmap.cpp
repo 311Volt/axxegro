@@ -3,6 +3,7 @@
 #include <iterator>
 #include <cmath>
 #include <iostream>
+#include <format>
 
 using namespace al::ColorLiterals;
 
@@ -42,7 +43,7 @@ public:
 		float n[4];
 		for(int i=0; i<4; i++) {
 			al::Vec2f ipos = floorPos + al::Vec2f(!!(i&1), !!(i&2));
-			n[i] = randomGradient(ipos).dot(pos-ipos);
+			n[i] = randomGradient(ipos.i()).dot(pos-ipos);
 		}
 
 		float ix0 = interpolate(n[0], n[1], interp.x);
@@ -164,7 +165,7 @@ struct Skybox {
 	void scaleUV()
 	{
 		for(auto& vtx: skyboxMesh.vertices) {
-			vtx.setUV(vtx.getUV().hadamard({1.0/4.0,1.0/3.0}).hadamard(al::Vec2f(texture.size())));
+			vtx.setUV(vtx.getUV().hadamard({1.0/4.0,1.0/3.0}).hadamard(texture.size().f32()));
 		}
 	}
 

@@ -21,7 +21,7 @@ namespace al {
 			RequiresInitializables<MouseDriver>,
 			public Resource<ALLEGRO_MOUSE_CURSOR> {
 	public:
-		MouseCursor(const Bitmap& bmp, Coord<int> focus)
+		MouseCursor(const Bitmap& bmp, Vec2<int> focus)
 				: Resource(al_create_mouse_cursor(bmp.ptr(), focus.x, focus.y))
 		{
 			if(!ptr()) {
@@ -81,15 +81,15 @@ namespace al {
 		return GetMouseState().isButtonDown(btn);
 	}
 
-	inline bool SetMousePos(Coord<int> p) {
+	inline bool SetMousePos(Vec2<int> p) {
 		InternalRequire<MouseDriver>();
 		return al_set_mouse_xy(al_get_current_display(), int(p.x), int(p.y));
 	}
-	inline Coord<int> GetMousePos() {
+	inline Vec2<int> GetMousePos() {
 		MouseState st = GetMouseState();
 		return {st.x, st.y};
 	}
-	inline Coord<int> GetMouseDesktopPos() {
+	inline Vec2<int> GetMouseDesktopPos() {
 		InternalRequire<MouseDriver>();
 		int x,y;
 		al_get_mouse_cursor_position(&x, &y);

@@ -78,7 +78,7 @@ namespace al {
 			UStr ustr(text);
 			int x,y,w,h;
 			al_get_ustr_dimensions(ptr(), ustr.ptr(), &x, &y, &w, &h);
-			Coord<int> pos{x,y}, size{w,h};
+			Vec2<int> pos{x,y}, size{w,h};
 			return {pos, pos+size};
 		}
 
@@ -112,12 +112,12 @@ namespace al {
 		}
 
 		//TODO fastDraw()
-		void draw(const std::string& text, Color color, Coord<float> pos, int align = ALLEGRO_ALIGN_LEFT, bool alignInteger = true) const {
+		void draw(const std::string& text, Color color, Vec2<int> pos, int align = ALLEGRO_ALIGN_LEFT, bool alignInteger = true) const {
 			int actualAlign = align | (alignInteger * ALLEGRO_ALIGN_INTEGER);
 			al_draw_text(ptr(), color, pos.x, pos.y, actualAlign, text.c_str());
 		}
 
-		void drawJustified(const std::string& text, Color color, Coord<float> pos, float xMax, float diffMax, bool alignInteger = true) const {
+		void drawJustified(const std::string& text, Color color, Vec2<int> pos, float xMax, float diffMax, bool alignInteger = true) const {
 			al_draw_justified_text(ptr(), color, pos.x, xMax, pos.y, diffMax, alignInteger * ALLEGRO_ALIGN_INTEGER, text.c_str());
 		}
 	private:

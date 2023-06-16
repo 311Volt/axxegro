@@ -33,7 +33,7 @@ int main()
 	al::EventLoop loop = al::EventLoop::Basic();
 	loop.enableEscToQuit();
 
-	al::Coord<float> txtPos {320, 240};
+	al::Vec2f txtPos {320, 240};
 	std::string txtTest = al::Format("kb %dB, m %dB", sizeof(ALLEGRO_KEYBOARD_STATE), sizeof(ALLEGRO_MOUSE_STATE));
 	loop.loopBody = [&](){
 		al::TargetBitmap.clearToColor(al::RGB(0,0,0));
@@ -45,7 +45,7 @@ int main()
 		{
 			int y = loop.getTick() % (bg.height()-10);
 			int x = loop.getTick() % (bg.width()-10);
-			al::Coord<int> p{x, y}, bb{2, 2};
+			al::Vec2i p{x, y}, bb{2, 2};
 			al::BitmapLockedRegion lr(bg, {p, p+bb}, ALLEGRO_PIXEL_FORMAT_ABGR_8888, ALLEGRO_LOCK_READWRITE);
 			lr.rowData<uint32_t>(1)[1] = 0xFF00FF;
 		}
@@ -74,7 +74,7 @@ int main()
 		
 
 		for(int i=0; i<16; i++) {
-			al::DrawFilledRectangle(al::Rect<>::XYWH(16*i, 0, 16, 16), al::CGA(i));
+			al::DrawFilledRectangle(al::RectI::XYWH(16*i, 0, 16, 16), al::CGA(i));
 		}
 
 		al::CurrentDisplay.flip();

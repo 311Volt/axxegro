@@ -117,15 +117,15 @@ namespace al {
 		   always called with flags=0. use transforms/texcoords for flipping. */
 
 		/// @brief Corresponds to al_draw_bitmap(). Refer to Allegro5 documentation for more info on this and other drawX() methods.
-		void draw(Coord<float> p0) const {
+		void draw(Vec2<float> p0) const {
 			al_draw_bitmap(ptr(), p0.x, p0.y, 0);
 		}
 
-		void drawTinted(Coord<float> p0, Color tint) const {
+		void drawTinted(Vec2<float> p0, Color tint) const {
 			al_draw_tinted_bitmap(ptr(), tint, p0.x, p0.y, 0);
 		}
 
-		void drawRegion(Rect<float> srcRegion, Coord<float> dst) const {
+		void drawRegion(Rect<float> srcRegion, Vec2<float> dst) const {
 			al_draw_bitmap_region(
 					ptr(),
 					srcRegion.a.x, srcRegion.a.y,
@@ -145,7 +145,7 @@ namespace al {
 					0
 			);
 		}
-		void drawRotated(Coord<float> centerSrc, Coord<float> centerDst, float angle) const {
+		void drawRotated(Vec2<float> centerSrc, Vec2<float> centerDst, float angle) const {
 			al_draw_rotated_bitmap(
 					ptr(),
 					centerSrc.x, centerSrc.y,
@@ -167,7 +167,7 @@ namespace al {
 			);
 		}
 
-		void drawTintedRegion(Rect<float> srcRegion, Coord<float> dst, Color tint) const {
+		void drawTintedRegion(Rect<float> srcRegion, Vec2<float> dst, Color tint) const {
 			al_draw_tinted_bitmap_region(
 					ptr(),
 					tint,
@@ -178,7 +178,7 @@ namespace al {
 			);
 		}
 
-		void drawTintedRotated(Color tint, Coord<float> centerSrc, Coord<float> centerDst, float angle) const {
+		void drawTintedRotated(Color tint, Vec2<float> centerSrc, Vec2<float> centerDst, float angle) const {
 			al_draw_tinted_rotated_bitmap(
 					ptr(),
 					tint,
@@ -189,7 +189,7 @@ namespace al {
 			);
 		}
 
-		void drawScaledRotated(Coord<float> centerSrc, Coord<float> centerDst, Vec2<float> scale, float angle) const {
+		void drawScaledRotated(Vec2<float> centerSrc, Vec2<float> centerDst, Vec2<float> scale, float angle) const {
 			al_draw_scaled_rotated_bitmap(
 					ptr(),
 					centerSrc.x, centerSrc.y,
@@ -200,7 +200,7 @@ namespace al {
 			);
 		}
 
-		void drawTintedScaledRotated(Color tint, Coord<float> centerSrc, Coord<float> centerDst, Vec2<float> scale, float angle) const {
+		void drawTintedScaledRotated(Color tint, Vec2<float> centerSrc, Vec2<float> centerDst, Vec2<float> scale, float angle) const {
 			al_draw_tinted_scaled_rotated_bitmap(
 					ptr(),
 					tint,
@@ -212,7 +212,7 @@ namespace al {
 			);
 		}
 
-		void drawTintedScaledRotatedRegion(Rect<float> srcRegion, Color tint, Coord<float> centerSrc, Coord<float> centerDst, Vec2<float> scale, float angle) const {
+		void drawTintedScaledRotatedRegion(Rect<float> srcRegion, Color tint, Vec2<float> centerSrc, Vec2<float> centerDst, Vec2<float> scale, float angle) const {
 			al_draw_tinted_scaled_rotated_bitmap_region(
 					ptr(),
 					srcRegion.a.x, srcRegion.a.y,
@@ -435,7 +435,7 @@ namespace al {
 			useTransform(al::Transform::Identity());
 		}
 		void resetProjection() {
-			useProjectionTransform(al::Transform::Orthographic({0,0}, {size()}, -1, 1));
+			useProjectionTransform(al::Transform::Orthographic({0,0}, size().as<float>(), -1, 1));
 		}
 
 		Transform currentTransform() { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC

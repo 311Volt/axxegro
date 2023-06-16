@@ -1,13 +1,13 @@
 #ifndef INCLUDE_AXXEGRO_MATH_RECT
 #define INCLUDE_AXXEGRO_MATH_RECT
 
-#include "Vec2.hpp"
+#include "Vec.hpp"
 #include <algorithm>
 #include <cstdint>
 
 namespace al {
 
-	template<typename T = float>
+	template<typename T>
 	class Rect {
 	public:
 		Vec2<T> a, b;
@@ -31,7 +31,7 @@ namespace al {
 
 		template<typename U>
 		constexpr Rect(const Rect<U>& r)
-			: Rect(r.a, r.b)
+			: Rect(r.a.template as<T>(), r.b.template as<T>())
 		{}
 
 		constexpr T width() const
@@ -137,7 +137,7 @@ namespace al {
 		static constexpr uint8_t TEST_Y_NOT_IN_RANGE = 0x0C;
 		
 		///@returns a point that is clipped to the rectangle's area
-		constexpr Coord<T> clip(const Coord<T>& point) const
+		constexpr Vec2<T> clip(const Vec2<T>& point) const
 		{
 			return {
 				std::clamp(point.x, a.x, b.x),
@@ -186,6 +186,11 @@ namespace al {
 			return ret;
 		}
 	};
+	
+	using RectF = Rect<float>;
+	using RectD = Rect<double>;
+	using RectI = Rect<int>;
+	using RectU = Rect<unsigned>;
 }
 
 #endif /* INCLUDE_AXXEGRO_MATH_RECT */

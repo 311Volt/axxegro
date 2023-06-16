@@ -40,10 +40,10 @@ int main()
 
 		//bouncing
 		uint8_t test = scrRect.test(logoRect);
-		if(test & al::Rect<>::TEST_X_NOT_IN_RANGE) {
+		if(test & al::RectF::TEST_X_NOT_IN_RANGE) {
 			speed.x *= -1.0f;
 		}
-		if(test & al::Rect<>::TEST_Y_NOT_IN_RANGE) {
+		if(test & al::RectF::TEST_Y_NOT_IN_RANGE) {
 			speed.y *= -1.0f;
 		}
 		logoRect = scrRect.clamp(logoRect);

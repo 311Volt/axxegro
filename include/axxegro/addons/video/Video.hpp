@@ -45,7 +45,8 @@ namespace al {
 			
 			eventSource = std::make_unique<VideoEventSource>(*this);
 		}
-
+		
+		
 		void rewind() {
 			al_seek_video(ptr(), 0.0);
 		}

@@ -19,18 +19,18 @@ namespace al {
 	
 	class Vertex: public ALLEGRO_VERTEX {
 	public:
-		Vertex(const Vec3<> pos = {0,0,0}, const Vec2<> uv = {0,0}, Color color = al::White) : ALLEGRO_VERTEX() {
+		Vertex(const Vec3f pos = {0,0,0}, const Vec2f uv = {0,0}, Color color = al::White) : ALLEGRO_VERTEX() {
 			setPos(pos);
 			setUV(uv);
 			setColor(color);
 		}
 
-		void setPos(const Vec3<> pos) {
+		void setPos(const Vec3f pos) {
 			x = pos.x;
 			y = pos.y;
 			z = pos.z;
 		}
-		void setUV(const Vec2<> uv) {
+		void setUV(const Vec2f uv) {
 			u = uv.x;
 			v = uv.y;
 		}
@@ -38,10 +38,10 @@ namespace al {
 			this->color = color;
 		}
 
-		[[nodiscard]] Vec3<> getPos() const {
+		[[nodiscard]] Vec3f getPos() const {
 			return {x,y,z};
 		}
-		[[nodiscard]] Vec2<> getUV() const {
+		[[nodiscard]] Vec2f getUV() const {
 			return {u,v};
 		}
 		[[nodiscard]] Color getColor() const {

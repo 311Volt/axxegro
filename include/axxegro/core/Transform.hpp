@@ -173,45 +173,45 @@ namespace al {
 		}
 		
 		/// @brief Transforms 2D coordinates.
-		[[nodiscard]] Coord2<float> transform(Coord2<float> v) const {
-			al::Coord2<float> ret(v);
+		[[nodiscard]] Vec2<float> transform(Vec2<float> v) const {
+			al::Vec2<float> ret(v);
 			al_transform_coordinates(this, &ret.x, &ret.y);
 			return ret;
 		}
 
 		/// @brief Transforms 3D coordinates. Use transformProjective() for projection transforms.
-		[[nodiscard]] Coord3<float> transform(Coord3<float> v) const {
-			al::Coord3<float> ret(v);
+		[[nodiscard]] Vec3<float> transform(Vec3<float> v) const {
+			al::Vec3<float> ret(v);
 			al_transform_coordinates_3d(this, &ret.x, &ret.y, &ret.z);
 			return ret;
 		}
 
 		/// @brief Transforms 4D coordinates.
-		[[nodiscard]] Coord4<float> transform(Coord4<float> v) const {
-			al::Coord4<float> ret(v);
+		[[nodiscard]] Vec4<float> transform(Vec4<float> v) const {
+			al::Vec4<float> ret(v);
 			al_transform_coordinates_4d(this, &ret.x, &ret.y, &ret.z, &ret.w);
 			return ret;
 		}
 
 		/// @brief https://liballeg.org/a5docs/trunk/transformations.html#al_transform_coordinates_3d_projective
-		[[nodiscard]] Coord3<float> transformProjective(const Coord3<float> v) const {
-			al::Coord3<float> ret(v);
+		[[nodiscard]] Vec3<float> transformProjective(const Vec3<float> v) const {
+			al::Vec3<float> ret(v);
 			al_transform_coordinates_3d_projective(this, &ret.x, &ret.y, &ret.z);
 			return ret;
 		}
 
-		/// @brief Same as transform(Coord2<>).
-		[[nodiscard]] Coord2<float> operator()(Coord2<float> v) const {
+		/// @brief Same as transform(Vec2<>).
+		[[nodiscard]] Vec2<float> operator()(Vec2<float> v) const {
 			return transform(v);
 		}
 
-		/// @brief Same as transform(Coord3<>). Use transformProjective() for projection transforms.
-		[[nodiscard]] Coord3<float> operator()(Coord3<float> v) const {
+		/// @brief Same as transform(Vec3<>). Use transformProjective() for projection transforms.
+		[[nodiscard]] Vec3<float> operator()(Vec3<float> v) const {
 			return transform(v);
 		}
 
-		/// @brief Same as transform(Coord4<>).
-		[[nodiscard]] Coord4<float> operator()(Coord4<float> v) const {
+		/// @brief Same as transform(Vec4<>).
+		[[nodiscard]] Vec4<float> operator()(Vec4<float> v) const {
 			return transform(v);
 		}
 		

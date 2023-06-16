@@ -18,8 +18,8 @@ namespace al {
 	constexpr float PRIM_DEFAULT_THICKNESS = 1.0f;
 
 	inline void DrawLine(
-		const Coord<>& a, 
-		const Coord<>& b, 
+		const Vec2f& a,
+		const Vec2f& b,
 		const Color& color = PRIM_DEFAULT_COLOR,
 		float thickness = PRIM_DEFAULT_THICKNESS
 	) {
@@ -28,9 +28,9 @@ namespace al {
 	}
 
 	inline void DrawTriangle(
-		const Coord<>& a, 
-		const Coord<>& b, 
-		const Coord<>& c, 
+		const Vec2f& a,
+		const Vec2f& b,
+		const Vec2f& c,
 		const Color& color = PRIM_DEFAULT_COLOR, 
 		float thickness = PRIM_DEFAULT_THICKNESS
 	) {
@@ -39,9 +39,9 @@ namespace al {
 	}
 
 	inline void DrawFilledTriangle(
-		const Coord<>& a, 
-		const Coord<>& b, 
-		const Coord<>& c, 
+		const Vec2f& a,
+		const Vec2f& b,
+		const Vec2f& c,
 		const Color& color = PRIM_DEFAULT_COLOR
 	) {
 		InternalRequire<PrimitivesAddon>();
@@ -49,7 +49,7 @@ namespace al {
 	}
 
 	inline void DrawRectangle(
-		const Rect<>& r,
+		const RectF& r,
 		const Color& color = PRIM_DEFAULT_COLOR,
 		float thickness = PRIM_DEFAULT_THICKNESS
 	) {
@@ -58,7 +58,7 @@ namespace al {
 	}
 
 	inline void DrawFilledRectangle(
-		const Rect<>& rect,
+		const RectF& rect,
 		const Color& color = PRIM_DEFAULT_COLOR
 	) {
 		InternalRequire<PrimitivesAddon>();
@@ -66,8 +66,8 @@ namespace al {
 	}
 
 	inline void DrawRoundRect(
-		const Rect<>& rect,
-		const Vec2<>& radius = {0, 0},
+		const RectF& rect,
+		const Vec2f& radius = {0, 0},
 		const Color& color = PRIM_DEFAULT_COLOR,
 		float thickness = PRIM_DEFAULT_THICKNESS
 	) {
@@ -80,8 +80,8 @@ namespace al {
 	}
 
 	inline void DrawFilledRoundRect(
-		const Rect<>& rect,
-		const Vec2<>& radius = {0, 0},
+		const RectF& rect,
+		const Vec2f& radius = {0, 0},
 		const Color& color = PRIM_DEFAULT_COLOR
 	) {
 		InternalRequire<PrimitivesAddon>();
@@ -93,7 +93,7 @@ namespace al {
 	}
 
 	inline void DrawPieslice(
-		const Coord<>& center,
+		const Vec2f& center,
 		float radius,
 		float startTheta,
 		float deltaTheta,
@@ -110,7 +110,7 @@ namespace al {
 	}
 
 	inline void DrawFilledPieslice(
-		const Coord<>& center,
+		const Vec2f& center,
 		float radius,
 		float startTheta,
 		float deltaTheta,
@@ -126,8 +126,8 @@ namespace al {
 	}
 
 	inline void DrawEllipse(
-		const Coord<>& center,
-		const Vec2<>& radius,
+		const Vec2f& center,
+		const Vec2f& radius,
 		const Color& color = PRIM_DEFAULT_COLOR,
 		float thickness = PRIM_DEFAULT_THICKNESS
 	) {
@@ -140,8 +140,8 @@ namespace al {
 	}
 
 	inline void DrawFilledEllipse(
-		const Coord<>& center,
-		const Vec2<>& radius,
+		const Vec2f& center,
+		const Vec2f& radius,
 		const Color& color = PRIM_DEFAULT_COLOR
 	) {
 		InternalRequire<PrimitivesAddon>();
@@ -153,7 +153,7 @@ namespace al {
 	}
 
 	inline void DrawCircle(
-		const Coord<>& center,
+		const Vec2f& center,
 		float radius,
 		const Color& color = PRIM_DEFAULT_COLOR,
 		float thickness = PRIM_DEFAULT_THICKNESS
@@ -167,7 +167,7 @@ namespace al {
 	}
 
 	inline void DrawFilledCircle(
-		const Coord<>& center,
+		const Vec2f& center,
 		float radius,
 		const Color& color = PRIM_DEFAULT_COLOR
 	) {
@@ -180,7 +180,7 @@ namespace al {
 	}
 
 	inline void DrawArc(
-		const Coord<>& center,
+		const Vec2f& center,
 		float radius,
 		float startTheta,
 		float deltaTheta,
@@ -197,8 +197,8 @@ namespace al {
 	}
 
 	inline void DrawEllipticalArc(
-		const Coord<>& center,
-		const Vec2<>& radius,
+		const Vec2f& center,
+		const Vec2f& radius,
 		float startTheta,
 		float deltaTheta,
 		const Color& color = PRIM_DEFAULT_COLOR,
@@ -214,7 +214,7 @@ namespace al {
 	}
 
 	inline void DrawSpline(
-		const std::array<Coord<>, 4>& points,
+		const std::array<Vec2f, 4>& points,
 		const Color& color = PRIM_DEFAULT_COLOR,
 		float thickness = PRIM_DEFAULT_THICKNESS
 	) {
@@ -227,9 +227,9 @@ namespace al {
 		al_draw_spline(pts.data(), color, thickness);
 	}
 
-	inline std::vector<Coord<>> CalculateArc(
-		const Coord<>& center,
-		const Coord<>& radius,
+	inline std::vector<Vec2f> CalculateArc(
+		const Vec2f& center,
+		const Vec2f& radius,
 		float startTheta,
 		float deltaTheta,
 		float thickness,
@@ -245,7 +245,7 @@ namespace al {
 				thickness,
 				numPoints
 		);
-		std::vector<Coord<>> ret(outData.size() / 2);
+		std::vector<Vec2f> ret(outData.size() / 2);
 		for(unsigned i=0; i<ret.size(); i++) {
 			ret[i] = {outData[i*2 + 0], outData[i*2 + 1]};
 		}

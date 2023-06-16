@@ -32,7 +32,7 @@ int main()
 	al::Bitmap tex("data/bg.jpg");
 
 	//position and forward-facing vector
-	al::Vec3<> pos{0,0,-5}, fwd{0,0,1};
+	al::Vec3f pos{0,0,-5}, fwd{0,0,1};
 
 	auto evLoop = al::EventLoop::Basic();
 	evLoop.enableEscToQuit();

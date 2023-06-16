@@ -166,7 +166,7 @@ namespace al {
 		/**
 		 * @return The position of the display relative to the desktop. 
 		 */
-		[[nodiscard]] Coord<int> getPosition() const {
+		[[nodiscard]] Vec2<int> getPosition() const {
 			int x, y;
 			al_get_window_position(ptr(), &x, &y);
 			return {x, y};
@@ -177,7 +177,7 @@ namespace al {
 		 * 
 		 * @param pos Position in pixels, relative to the desktop
 		 */
-		void setPosition(Coord<int> pos) {
+		void setPosition(Vec2<int> pos) {
 			al_set_window_position(ptr(), pos.x, pos.y);
 		}
 
