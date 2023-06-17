@@ -110,9 +110,14 @@ namespace al {
 			return al_get_display_height(ptr());
 		}
 
-		///@return Refresh rate of the display in Hz. Keep in mind that THIS RETURNS 0 FOR WINDOWED DISPLAYS
-		[[nodiscard]] int getRefreshRate() const {
-			return al_get_display_refresh_rate(ptr());
+		///@return Refresh rate of the display in Hz if the display is fullscreen, empty value otherwise.
+		[[nodiscard]] std::optional<int> getRefreshRate() const {
+			int val = al_get_display_refresh_rate(ptr());
+			if(val == 0) {
+				return std::nullopt;
+			} else {
+				return val;
+			}
 		}
 
 		///@return Dimensions of the display in pixels.
@@ -285,8 +290,8 @@ namespace al {
 		 * If that fails, it returns 300.
 		 * The return value is clamped between 60 and 300.
 		 */
-		[[nodiscard]] int findFramerateCap() const {
-			int ret = getRefreshRate();
+		[[nodiscard]] int findGoodFramerateLimit() const {
+			int ret = getRefreshRate().value_or(0);
 			if(ret == 0) {
 				auto modes = GetDisplayModes();
 				ret = 0;

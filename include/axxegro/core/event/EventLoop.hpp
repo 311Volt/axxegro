@@ -33,8 +33,8 @@ namespace al {
 		EventLoop() = default;
 		~EventLoop() = default;
 
-		void enableFramerateLimit(double freq) {
-			clockTimer = std::make_unique<Timer>(FreqToPeriod(freq));
+		void enableFramerateLimit(Freq freq = al::Hz(al::CurrentDisplay.findGoodFramerateLimit())) {
+			clockTimer = std::make_unique<Timer>(freq);
 			clockEventQueue.registerSource(clockTimer->getEventSource());
 			clockTimer->start();
 		}

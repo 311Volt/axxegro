@@ -27,6 +27,7 @@ int main()
         al::CurrentDisplay.flip();
     };
 
+	loop.enableFramerateLimit();
     loop.run();
 
     return 0;

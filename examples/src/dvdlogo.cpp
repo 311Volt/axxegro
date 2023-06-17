@@ -52,7 +52,7 @@ int main()
 	};
 
 	//enable the frame limiter
-	evLoop.enableFramerateLimit(disp.findFramerateCap());
+	evLoop.enableFramerateLimit();
 
 	evLoop.run();
 }

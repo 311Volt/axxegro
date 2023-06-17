@@ -107,6 +107,6 @@ int main()
 		txtTest = "RIGHT was pressed";
 	});
 
-	loop.enableFramerateLimit(165);
+	loop.enableFramerateLimit();
 	loop.run();
 }

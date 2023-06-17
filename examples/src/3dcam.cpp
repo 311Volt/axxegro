@@ -71,6 +71,6 @@ int main()
 		al::CurrentDisplay.flip();
 	};
 	
-	evLoop.enableFramerateLimit(disp.findFramerateCap());
+	evLoop.enableFramerateLimit();
 	evLoop.run();
 }

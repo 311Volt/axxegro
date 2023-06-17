@@ -99,6 +99,6 @@ int main()
 		al::CurrentDisplay.flip();
 	};
 
-	evLoop.enableFramerateLimit(60); //cap to 60Hz
+	evLoop.enableFramerateLimit();
 	evLoop.run();
 }

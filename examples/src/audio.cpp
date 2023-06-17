@@ -2,8 +2,10 @@
 
 #include <axxegro/axxegro.hpp>
 
+
 int main()
 {
+	using namespace al::FreqLiterals;
 	std::set_terminate(al::Terminate);
 	al::Display disp(640, 480);
 	al::EventLoop evLoop = al::EventLoop::Basic();
@@ -33,6 +35,6 @@ int main()
 		}
 	});
 
-	evLoop.enableFramerateLimit(30);
+	evLoop.enableFramerateLimit(30_Hz);
 	evLoop.run();
 }
