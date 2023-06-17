@@ -4,6 +4,7 @@
 #include "../../common.hpp"
 #include "../gfx/Bitmap.hpp"
 #include "../io/Mouse.hpp"
+#include "../time/FreqPeriod.hpp"
 
 #include "DisplayModes.hpp"
 
@@ -290,7 +291,7 @@ namespace al {
 		 * If that fails, it returns 300.
 		 * The return value is clamped between 60 and 300.
 		 */
-		[[nodiscard]] int findGoodFramerateLimit() const {
+		[[nodiscard]] Freq findGoodFramerateLimit() const {
 			int ret = getRefreshRate().value_or(0);
 			if(ret == 0) {
 				auto modes = GetDisplayModes();
@@ -300,9 +301,9 @@ namespace al {
 				}
 			}
 			if(ret == 0) {
-				return 300;
+				ret = 300;
 			}
-			return std::clamp(ret, 60, 300);
+			return Hz(std::clamp(ret, 60, 300));
 		}
 
 	protected:

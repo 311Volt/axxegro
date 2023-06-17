@@ -616,6 +616,13 @@ namespace al {
 			vec::BaseNamedCoords<T,N>
 		>
 	>;
+
+	template<typename T>
+	concept VectorType = requires{
+		typename T::ValueType;
+		typename T::ImplType;
+		{T::NumElements} -> std::integral;
+	};
 	
 	template<typename T>
 	using Vec2 = Vec<T, 2>;
