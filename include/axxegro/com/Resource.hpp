@@ -85,7 +85,7 @@ namespace al {
 		Resource(Resource&&) noexcept = default;
 		Resource& operator=(Resource&&) noexcept = default;
 
-		~Resource() = default;
+		virtual ~Resource() = default;
 
 		T* ptr()
 		{
