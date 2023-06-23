@@ -1,10 +1,18 @@
 
 add_custom_target(axxegro_examples ALL)
 
-add_custom_command(TARGET axxegro_examples POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/examples/data/ ${CMAKE_CURRENT_BINARY_DIR}/data
-)
+if(${CMAKE_VERSION} VERSION_LESS "3.26.0")
+    add_custom_command(TARGET axxegro_examples POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/examples/data/ ${CMAKE_CURRENT_BINARY_DIR}/data
+            )
+else ()
+    add_custom_command(TARGET axxegro_examples POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+            ${CMAKE_SOURCE_DIR}/examples/data/ ${CMAKE_CURRENT_BINARY_DIR}/data
+            )
+endif()
+
 
 # if(WIN32)
 #     add_custom_command(TARGET axxegro_examples POST_BUILD
@@ -13,9 +21,10 @@ add_custom_command(TARGET axxegro_examples POST_BUILD
 #     )
 # endif()
 
+
 function(axxegro_add_example name)
     add_executable("axx_ex_${name}" "src/${name}.cpp")
-    add_dependencies("axx_ex_${name}" axxegro_examples)
+    add_dependencies(axxegro_examples "axx_ex_${name}")
     target_link_libraries("axx_ex_${name}" axxegro)
 endfunction()
 
@@ -25,6 +34,7 @@ axxegro_add_example("dvdlogo")
 axxegro_add_example("userevents")
 axxegro_add_example("vertices")
 axxegro_add_example("3dcam")
+axxegro_add_example("config")
 axxegro_add_example("shader")
 axxegro_add_example("fpsmap")
 axxegro_add_example("audio")

@@ -3,21 +3,29 @@
 
 #include <cstdio>
 #include <string>
+#include <stdarg.h>
 
 namespace al {
 
 	/* A convenient wrapper for snprintf for when std::format is
 	 * not available. (e.g. GCC before version 13) */
 
-	template<typename... Args>
-	inline std::string Format(const char* fmt, Args... args)
+	[[gnu::format(printf, 1, 2)]] inline std::string Format(const char* fmt, ...)
 	{
-		int sz = std::snprintf(nullptr, 0, fmt, args...);
+		va_list args;
+
+		va_start(args, fmt);
+		int sz = std::vsnprintf(nullptr, 0, fmt, args);
+		va_end(args);
+
 		if(sz < 0) {
 			return {};
 		}
+
 		std::string ret(sz, '\0');
-		std::snprintf(ret.data(), sz+1, fmt, args...);
+		va_start(args, fmt);
+		std::vsnprintf(ret.data(), sz+1, fmt, args);
+		va_end(args);
 		return ret;
 	}
 

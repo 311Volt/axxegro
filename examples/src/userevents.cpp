@@ -1,6 +1,5 @@
 #include <axxegro/axxegro.hpp>
 
-#include <string>
 #include <queue>
 
 /**
@@ -84,6 +83,7 @@ int main()
 		));
 	});
 
+	//a handler for the simple event
 	evLoop.eventDispatcher.setEventTypeHandler(SimpleEvent::EventTypeID, [&](const ALLEGRO_EVENT& ev){
 		const SimpleEvent& evData = al::GetUserEventData<SimpleEvent>(ev);
 		messages.push_back(al::Format("simple event received: %d, %d", evData.a, evData.b));

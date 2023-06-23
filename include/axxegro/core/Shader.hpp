@@ -108,7 +108,7 @@ namespace al {
 			} else if constexpr(std::is_same_v<typename Vec::ValueType, float>) {
 				return al_set_shader_float_vector(name.c_str(), Vec::NumElements, (float*)&vec, 1);
 			} else {
-				static_assert(std::is_void_v<Vec>, "Cannot set shader vector array uniform for this type");
+				AXXEGRO_STATIC_ASSERT_FALSE(Vec, "Cannot set shader vector array uniform for this type");
 			}
 		}
 
@@ -124,7 +124,7 @@ namespace al {
 			} else if constexpr(std::is_same_v<Vec, float>) {
 				return al_set_shader_float_vector(name.c_str(), 1, vec.data(), vec.size());
 			} else {
-				static_assert(std::is_void_v<Vec>, "Cannot set shader vector array uniform for this type");
+				AXXEGRO_STATIC_ASSERT_FALSE(Vec, "Cannot set shader vector array uniform for this type");
 			}
 		}
 	};

@@ -48,7 +48,7 @@ namespace al {
 	///@brief Maps a vertex type to its BasicVertexDecl
 	template<typename T>
 	class VertexDeclFor {
-		static_assert(std::is_void_v<T>, "The type T does not have a vertex declaration associated with it. ");
+		AXXEGRO_STATIC_ASSERT_FALSE(T, "The type T does not have a vertex declaration associated with it. ");
 	};
 
 	#define AXXEGRO_VERTEX_DECL(vtype) template<> struct al::VertexDeclFor<vtype>: public ::al::BasicVertexDecl<vtype>

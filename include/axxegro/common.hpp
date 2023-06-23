@@ -6,6 +6,7 @@
 #include "com/Exception.hpp"
 #include "com/format.hpp"
 #include "com/Resource.hpp"
+#include "com/Metaprogramming.hpp"
 #include "com/math/math.hpp"
 
 #endif //AXXEGRO_COMMON_HPP

@@ -10,6 +10,7 @@
 #include <allegro5/allegro_opengl.h>
 #include <optional>
 
+
 namespace al::gl {
 
 	inline ALLEGRO_OGL_EXT_LIST& GetExtensionList() {

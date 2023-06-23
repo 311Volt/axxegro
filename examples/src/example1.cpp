@@ -9,6 +9,8 @@
  * The file where I test random things I implement. I guess it can showcase some
  * axxegro features, but for clearer and better explained examples, see other
  * files from this folder.
+ *
+ * Eventually, this file will be removed in favor of focused examples.
  */
 
 
@@ -18,17 +20,6 @@ int main()
 	al::Bitmap::SetNewBitmapFlags(ALLEGRO_MIPMAP | ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
 	al::Bitmap bg("data/bg.jpg");
 	al::Font font("data/roboto.ttf", 24);
-
-	al::Config cfg("data/samplecfg.ini");
-
-	for(auto& section: cfg.sections()) {
-		std::cout << al::Format("%s: \n", section.c_str());
-		for(auto& key: cfg.keys(section)) {
-			al::Config::SectionSelector ss(cfg, section);
-			std::cout << al::Format("\t%s -> %s\n", key.c_str(), cfg.getValue(key).c_str());
-		}
-		std::cout << "\n\n";
-	}
 
 	al::EventLoop loop = al::EventLoop::Basic();
 	loop.enableEscToQuit();

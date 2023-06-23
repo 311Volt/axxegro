@@ -62,7 +62,7 @@ namespace al {
 	}
 
 	template<UserEventType EventT>
-	EventT* GetUserEventPtr(const ALLEGRO_USER_EVENT* ev)
+	EventT* GetUserEventDataPtr(const ALLEGRO_USER_EVENT* ev)
 	{
 		if constexpr (CanStoreInDataFields<EventT>) {
 			return (EventT*)(&ev->data1);
@@ -75,9 +75,9 @@ namespace al {
 	const EventT& GetUserEventData(const ALLEGRO_EVENT& ev)
 	{
 		if(ev.type != EventT::EventTypeID) {
-			throw EventQueueError("User event ID mismatch");
+			throw EventQueueError("User event ID mismatch: expected %d, got %d", EventT::EventTypeID, ev.type);
 		}
-		return *GetUserEventPtr<EventT>(&ev.user);
+		return *GetUserEventDataPtr<EventT>(&ev.user);
 	}
 
 	template<UserEventType EventT>
@@ -85,7 +85,7 @@ namespace al {
 		if(ev.type != EventT::EventTypeID) {
 			return std::nullopt;
 		}
-		return *GetUserEventPtr<EventT>(&ev.user);
+		return *GetUserEventDataPtr<EventT>(&ev.user);
 	}
 
 	class UserEventSource:

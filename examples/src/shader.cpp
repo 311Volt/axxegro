@@ -1,8 +1,5 @@
 #include <axxegro/axxegro.hpp>
 
-#include <iostream>
-#include <cstdlib>
-
 /**
  * @file
  * 

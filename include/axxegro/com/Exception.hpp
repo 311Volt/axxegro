@@ -44,6 +44,7 @@ namespace al
 		AXXEGRO_DEF_EXCEPTION(HardwareBufferError, VertexBufferError);
 		AXXEGRO_DEF_EXCEPTION(HardwareBufferError, IndexBufferError);
 	AXXEGRO_DEF_EXCEPTION(Exception, ConfigError);
+		AXXEGRO_DEF_EXCEPTION(ConfigError, ConfigEntryTypeError);
 	
 
 #undef AXXEGRO_DEF_EXCEPTION

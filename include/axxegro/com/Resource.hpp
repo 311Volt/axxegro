@@ -34,12 +34,13 @@
 #include <type_traits>
 #include <memory>
 #include <variant>
+#include "Metaprogramming.hpp"
 
 namespace al {
 
 	template<typename T>
 	struct Deleter {
-		static_assert(std::is_same_v<T, void>, "Deleter for T not defined. Use AXXEGRO_DEFINE_DELETER");
+		AXXEGRO_STATIC_ASSERT_FALSE(T, "Deleter for T not defined. Use AXXEGRO_DEFINE_DELETER");
 	};
 
 	enum class ResourceModel: char {
