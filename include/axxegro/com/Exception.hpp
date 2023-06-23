@@ -9,6 +9,7 @@
 #include <exception>
 #include <stdexcept>
 #include <string_view>
+#include <cstdarg>
 #include "format.hpp"
 
 namespace al
@@ -17,13 +18,31 @@ namespace al
 	{
 		using std::runtime_error::runtime_error;
 
-		template<typename... Args>
-		Exception(const std::string& msg, Args... args)
-			: std::runtime_error(Format(msg.c_str(), args...))
-		{}
+		[[gnu::format(printf, 2, 3)]] explicit Exception(const char* msg, ...)
+			: std::runtime_error("")
+		{
+			std::va_list args;
+			va_start(args, msg);
+			setMsg(msg, args);
+			va_end(args);
+		}
+	protected:
+		void setMsg(const char* msg, std::va_list args) {
+			auto msgstr = VFormat(msg, args);
+			static_cast<std::runtime_error*>(this)->operator=(std::runtime_error(msgstr));
+		}
 	};
 
-#define AXXEGRO_DEF_EXCEPTION(cparent, exname) struct exname: public cparent {using cparent::cparent;};
+#define AXXEGRO_DEF_EXCEPTION(cparent, exname) \
+	struct exname: public cparent { \
+		explicit exname(const std::string& msg) : cparent(msg) {} \
+		[[gnu::format(printf, 2, 3)]] explicit exname(const char* msg, ...) : cparent("%s", "") {  \
+			std::va_list args; \
+			va_start(args, msg); \
+            setMsg(msg, args); \
+			va_end(args); \
+		} \
+	};
 
 	AXXEGRO_DEF_EXCEPTION(Exception, InitJobFailed);
 	AXXEGRO_DEF_EXCEPTION(Exception, InitializeFailed);
