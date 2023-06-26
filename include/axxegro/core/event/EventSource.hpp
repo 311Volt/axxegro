@@ -9,6 +9,7 @@ namespace al {
 	class EventSource {
 	public:
 		virtual ALLEGRO_EVENT_SOURCE* ptr() const = 0;
+		virtual ~EventSource() = default;
 	};
 
 }
