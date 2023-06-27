@@ -72,30 +72,21 @@ int main()
 		al::CurrentDisplay.flip();
 	};
 
-	loop.eventDispatcher.setEventTypeHandler(
-		ALLEGRO_EVENT_MOUSE_BUTTON_DOWN, 
-		[&](const ALLEGRO_EVENT& ev){
-			txtPos = {float(ev.mouse.x), float(ev.mouse.y)};
-		}
-	);
-
-	auto keycodeDiscr = loop.eventDispatcher.addDiscretizer({
-		ALLEGRO_EVENT_KEY_DOWN,
-		[&](const ALLEGRO_EVENT& ev) {
-			return ev.keyboard.keycode;
-		}
+	loop.eventDispatcher.onMouseDown(al::LMB, [&](const al::MouseEvent& ev) {
+		txtPos = {ev.x, ev.y};
 	});
 
-	loop.eventDispatcher.setEventValueHandler(keycodeDiscr, ALLEGRO_KEY_UP, [&](const auto&) {
+
+	loop.eventDispatcher.onKeyDown(ALLEGRO_KEY_UP, [&](){
 		txtTest = "UP was pressed";
 	});
-	loop.eventDispatcher.setEventValueHandler(keycodeDiscr, ALLEGRO_KEY_DOWN, [&](const auto&) {
+	loop.eventDispatcher.onKeyDown(ALLEGRO_KEY_DOWN, [&](){
 		txtTest = "DOWN was pressed";
 	});
-	loop.eventDispatcher.setEventValueHandler(keycodeDiscr, ALLEGRO_KEY_LEFT, [&](const auto&) {
+	loop.eventDispatcher.onKeyDown(ALLEGRO_KEY_LEFT, [&](){
 		txtTest = "LEFT was pressed";
 	});
-	loop.eventDispatcher.setEventValueHandler(keycodeDiscr, ALLEGRO_KEY_RIGHT, [&](const auto&) {
+	loop.eventDispatcher.onKeyDown(ALLEGRO_KEY_RIGHT, [&](){
 		txtTest = "RIGHT was pressed";
 	});
 

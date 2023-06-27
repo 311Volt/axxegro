@@ -1,4 +1,5 @@
 #include <axxegro/axxegro.hpp>
+#include <axxegro/core/event/EventDispatcher.hpp>
 
 #include <queue>
 
@@ -13,7 +14,7 @@
 //Define a data structure for the event.
 struct ExampleEvent {
 	//Let axxegro know its type ID
-	static constexpr ALLEGRO_EVENT_TYPE EventTypeID = 1437;
+	static constexpr al::EventType EventTypeID = 1437;
 
 	float a,b;
 	std::string msg;
@@ -26,7 +27,7 @@ struct ExampleEvent {
  * allocation needed.
  */
 struct SimpleEvent {
-	static constexpr ALLEGRO_EVENT_TYPE EventTypeID = 1438;
+	static constexpr al::EventType EventTypeID = 1438;
 	int a, b;
 };
 
@@ -51,6 +52,7 @@ public:
 
 int main()
 {
+
 	al::Display disp(640, 480);
 	const auto& font = al::Font::BuiltinFont();
 
@@ -65,40 +67,33 @@ int main()
 	evLoop.eventQueue.registerSource(mySource);
 
 	//a handler for ExampleEvent
-	evLoop.eventDispatcher.setEventTypeHandler(ExampleEvent::EventTypeID, [&](const ALLEGRO_EVENT& ev){
-
-		const ExampleEvent& evData = al::GetUserEventData<ExampleEvent>(ev);
+	evLoop.eventDispatcher.setUserEventHandler<ExampleEvent>([&](const ExampleEvent& ev, const al::AnyEvent& meta){
 
 		//reading the data we put in
 		messages.push_back(al::Format(
 			"[%.2f] Received example event: %.1f %.1f \"%s\"",
-			ev.any.timestamp, 
-			evData.a, evData.b, evData.msg.c_str()
+			meta.timestamp,
+			ev.a, ev.b, ev.msg.c_str()
 		));
 
 		//accessing the event source itself
 		messages.push_back(al::Format(
 			"Custom event source state: %f",
-			dynamic_cast<MyEventSource&>(al::GetUserEventSource(ev)).state
+			dynamic_cast<MyEventSource&>(al::GetUserEventSource(meta)).state
 		));
 	});
 
 	//a handler for the simple event
-	evLoop.eventDispatcher.setEventTypeHandler(SimpleEvent::EventTypeID, [&](const ALLEGRO_EVENT& ev){
-		const SimpleEvent& evData = al::GetUserEventData<SimpleEvent>(ev);
-		messages.push_back(al::Format("simple event received: %d, %d", evData.a, evData.b));
+	evLoop.eventDispatcher.setUserEventHandler<SimpleEvent>([&](const SimpleEvent& ev){
+		messages.push_back(al::Format("simple event received: %d, %d", ev.a, ev.b));
 	});
 
 
-	evLoop.eventDispatcher.setEventTypeHandler(ALLEGRO_EVENT_KEY_CHAR, [&](const ALLEGRO_EVENT& ev){
-		if(ev.keyboard.keycode == ALLEGRO_KEY_A) {
-			mySource.customEmitEvent();
-		} else if(ev.keyboard.keycode == ALLEGRO_KEY_Z) {
-			mySource.emitEvent(SimpleEvent{.a = 1, .b = 2});
-		}
-	});
+	evLoop.eventDispatcher
+		.onKeyCharKeycode(ALLEGRO_KEY_A, [&](){mySource.customEmitEvent();})
+		.onKeyCharKeycode(ALLEGRO_KEY_Z, [&](){mySource.emitEvent(SimpleEvent{.a = 1, .b = 2});});
 
-	
+
 	evLoop.loopBody = [&](){
 		al::TargetBitmap.clearToColor(al::RGB(0,0,60));
 

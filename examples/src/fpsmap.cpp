@@ -270,8 +270,8 @@ int main()
 	};
 
 	//rotate the camera when we move the mouse
-	loop.eventDispatcher.setEventTypeHandler(ALLEGRO_EVENT_MOUSE_AXES, [&](const ALLEGRO_EVENT& ev){
-		al::Vec2f delta(ev.mouse.dx, ev.mouse.dy);
+	loop.eventDispatcher.onMouseMove([&](const al::MouseEvent& ev){
+		al::Vec2f delta = {ev.dx, ev.dy};
 		camera.rotate((delta * 0.002).transposed());
 	});
 

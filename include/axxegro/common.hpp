@@ -4,9 +4,9 @@
 
 #include "com/Initializable.hpp"
 #include "com/Exception.hpp"
-#include "com/format.hpp"
+#include "axxegro/com/util/format.hpp"
 #include "com/Resource.hpp"
-#include "com/Metaprogramming.hpp"
+#include "axxegro/com/util/Metaprogramming.hpp"
 #include "com/math/math.hpp"
 
 #endif //AXXEGRO_COMMON_HPP

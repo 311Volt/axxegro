@@ -2,6 +2,7 @@
 #define INCLUDE_AXXEGRO_CORE_EVENT_EVENTLOOP
 
 #include "EventQueue.hpp"
+#include "LegacyEventDispatcher.hpp"
 #include "EventDispatcher.hpp"
 
 #include "../../common.hpp"
@@ -38,7 +39,7 @@ namespace al {
 			clockEventQueue.registerSource(clockTimer->getEventSource());
 			clockTimer->start();
 		}
-		void disableClock() {
+		void disableFramerateLimit() {
 			clockTimer.reset();
 		}
 
@@ -49,22 +50,18 @@ namespace al {
 		}
 
 		void initDefaultDispatcher() {
-			eventDispatcher.setEventTypeHandler(ALLEGRO_EVENT_DISPLAY_CLOSE, [this](const ALLEGRO_EVENT&){
+			eventDispatcher.setEventHandler<DisplayEvent>(ALLEGRO_EVENT_DISPLAY_CLOSE, [this](){
 				exitFlag = true;
 			});
-
-			eventDispatcher.setEventTypeHandler(ALLEGRO_EVENT_DISPLAY_RESIZE, [](const ALLEGRO_EVENT&){
+			eventDispatcher.setEventHandler<DisplayEvent>(ALLEGRO_EVENT_DISPLAY_RESIZE, [](){
 				CurrentDisplay.acknowledgeResize();
 			});
 		}
 		void enableEscToQuit() {
-			auto keycodeDiscretizer = eventDispatcher.addDiscretizer({ALLEGRO_EVENT_KEY_DOWN, [](const ALLEGRO_EVENT& ev){
-				return ev.keyboard.keycode;
-			}});
-
-			eventDispatcher.setEventValueHandler(keycodeDiscretizer, ALLEGRO_KEY_ESCAPE, [this](const ALLEGRO_EVENT&){
+			eventDispatcher.onKeyDown(ALLEGRO_KEY_ESCAPE, [this](){
 				exitFlag = true;
 			});
+
 		}
 		void run() {
 			while(!exitFlag) {

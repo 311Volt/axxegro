@@ -41,8 +41,7 @@ namespace al {
 	};
 
 	/// @brief Mouse button numbers used by Allegro
-	using MouseButton = int;
-	enum {
+	enum MouseButton {
 		LMB = 1,
 		RMB = 2,
 		MMB = 3

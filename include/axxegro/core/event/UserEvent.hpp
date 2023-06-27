@@ -3,19 +3,18 @@
 
 #include "../../common.hpp"
 #include "EventSource.hpp"
+#include "Event.hpp"
 
 namespace al {
 
-	template<ALLEGRO_EVENT_TYPE ID>
+	template<EventType ID>
 	constexpr bool IsIDNonReserved = ID >= 1024;
 
-	template<typename T>
-	constexpr bool IsIDPresent = std::is_same_v<std::remove_cvref_t<decltype(T::EventTypeID)>, ALLEGRO_EVENT_TYPE>;
 
 	template<typename T>
 	concept UserEventType = requires {
 		requires std::copy_constructible<T> || std::move_constructible<T>;
-		requires IsIDPresent<T>;
+		{ T::EventTypeID } -> std::convertible_to<EventType>;
 		requires IsIDNonReserved<T::EventTypeID>;
 	};
 
@@ -27,19 +26,19 @@ namespace al {
 
 
 	template<UserEventType EventT>
-	inline ALLEGRO_EVENT InitUserEvent()
+	inline Event InitUserEvent()
 	{
-		ALLEGRO_EVENT ev;
+		Event ev;
 		memset(&ev, 0, sizeof(ev));
 		ev.any.type = EventT::EventTypeID;
 		return ev;
 	}
 
 	template<UserEventTypeRef EventRefT>
-	inline ALLEGRO_EVENT CreateUserEvent(EventRefT&& ref)
+	inline Event CreateUserEvent(EventRefT&& ref)
 	{
 		using EventT = std::remove_cvref_t<EventRefT>;
-		ALLEGRO_EVENT ret = InitUserEvent<EventT>();
+		Event ret = InitUserEvent<EventT>();
 
 		if constexpr(CanStoreInDataFields<EventT>) {
 			memcpy(&ret.user.data1, &ref, sizeof(EventT));
@@ -72,7 +71,7 @@ namespace al {
 	}
 
 	template<UserEventType EventT>
-	const EventT& GetUserEventData(const ALLEGRO_EVENT& ev)
+	const EventT& GetUserEventData(const Event& ev)
 	{
 		if(ev.type != EventT::EventTypeID) {
 			throw EventQueueError("User event ID mismatch: expected %d, got %d", EventT::EventTypeID, ev.type);
@@ -81,7 +80,7 @@ namespace al {
 	}
 
 	template<UserEventType EventT>
-	std::optional<std::reference_wrapper<const EventT>> TryGetUserEventData(const ALLEGRO_EVENT& ev) {
+	std::optional<std::reference_wrapper<const EventT>> TryGetUserEventData(const Event& ev) {
 		if(ev.type != EventT::EventTypeID) {
 			return std::nullopt;
 		}
@@ -113,25 +112,46 @@ namespace al {
 		template<UserEventTypeRef EventRefT>
 		void emitEvent(EventRefT&& event) {
 			using EventT = std::remove_cvref_t<EventRefT>;
-			ALLEGRO_EVENT ev = CreateUserEvent(std::forward<EventRefT>(event));
+			Event ev = CreateUserEvent(std::forward<EventRefT>(event));
 			emitAllegroEvent<EventT>(ev);
 		}
 
 	private:
 		template<UserEventType EventT>
-		void emitAllegroEvent(ALLEGRO_EVENT& ev)
+		void emitAllegroEvent(Event& ev)
 		{
 			al_emit_user_event(&evs, &ev, UserEventDtor<EventT>);
 		}
 
 	};
 
-	inline UserEventSource& GetUserEventSource(const ALLEGRO_EVENT& ev) {
-		if(ev.type < 1024) {
+
+
+	inline UserEventSource& GetUserEventSource(const AnyEvent& any) {
+		if(any.type < 1024) {
 			throw EventSourceError("GetUserEventSource called on non-user event");
 		}
-		return *(UserEventSource*)al_get_event_source_data(ev.any.source);
+		return *(UserEventSource*)al_get_event_source_data(any.source);
 	}
+
+	inline UserEventSource& GetUserEventSource(const Event& ev) {
+		return GetUserEventSource(ev.any);
+	}
+
+
+	template<typename T>
+	concept EventDataType = BuiltinEventType<T> || UserEventType<T>;
+
+	template<BuiltinEventType T>
+	inline const T& GetEventData(const Event& ev) {
+		return BuiltinEventMember<T>{}(ev);
+	}
+
+	template<UserEventType T>
+	inline const T& GetEventData(const Event& ev) {
+		return GetUserEventData<T>(ev);
+	}
+
 
 }
 

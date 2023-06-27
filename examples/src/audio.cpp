@@ -29,10 +29,8 @@ int main()
 		al::CurrentDisplay.flip();
 	};
 
-	evLoop.eventDispatcher.setEventTypeHandler(ALLEGRO_EVENT_KEY_DOWN, [&](const ALLEGRO_EVENT& ev) {
-		if(ev.keyboard.keycode == ALLEGRO_KEY_F) {
-			uuhhh.play();
-		}
+	evLoop.eventDispatcher.onKeyDown(ALLEGRO_KEY_F, [&](){
+		uuhhh.play();
 	});
 
 	evLoop.enableFramerateLimit(30_Hz);
