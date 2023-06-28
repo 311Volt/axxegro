@@ -190,12 +190,12 @@ namespace al {
 		
 		template<InstOfBaseNamedCoordsWithFSS Inst>
 		AXXEGRO_FORCE_INLINE inline auto At(Inst& v, int i) -> typename Inst::ElementType& {
-			return reinterpret_cast<Inst::ElementType*>(&v)[i];
+			return reinterpret_cast<typename Inst::ElementType*>(&v)[i];
 		}
 		
 		template<InstOfBaseNamedCoordsWithFSS Inst>
 		AXXEGRO_FORCE_INLINE inline auto At(const Inst& v, int i) -> typename Inst::ElementType const& {
-			return reinterpret_cast<const Inst::ElementType*>(&v)[i];
+			return reinterpret_cast<const typename Inst::ElementType*>(&v)[i];
 		}
 		
 		template<InstOfBaseNamedCoordsWithoutFSS Inst, int Begin = 0>
@@ -265,11 +265,11 @@ namespace al {
 		
 		template<int I, typename T>
 		AXXEGRO_FORCE_INLINE inline constexpr auto Get(T& v) -> typename T::ValueType& {
-			return std::get<I>(static_cast<T::ImplType&>(v));
+			return std::get<I>(static_cast<typename T::ImplType&>(v));
 		}
 		template<int I, typename T>
 		AXXEGRO_FORCE_INLINE inline constexpr auto Get(const T& v) -> typename T::ValueType const& {
-			return std::get<I>(static_cast<const T::ImplType&>(v));
+			return std::get<I>(static_cast<const typename T::ImplType&>(v));
 		}
 		
 		template<typename T, int N>
