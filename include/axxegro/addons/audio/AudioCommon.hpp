@@ -68,7 +68,7 @@ namespace al
 				case ALLEGRO_CHANNEL_CONF_2: return "stereo"s;
 				case ALLEGRO_CHANNEL_CONF_3: return "3 channels"s;
 				case ALLEGRO_CHANNEL_CONF_4: return "4 channels"s;
-				default: return Format("%d.1", al::GetChannelCount(conf)-1);
+				default: return Format("%d.1", (int)al::GetChannelCount(conf)-1);
 			}}(chanConf);
 
 			return Format("%d Hz, %s, %s", frequency, depthStr.c_str(), chanStr.c_str());

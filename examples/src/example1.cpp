@@ -26,7 +26,7 @@ int main()
 	loop.enableEscToQuit();
 
 	al::Vec2f txtPos {320, 240};
-	std::string txtTest = al::Format("kb %dB, m %dB", sizeof(ALLEGRO_KEYBOARD_STATE), sizeof(ALLEGRO_MOUSE_STATE));
+	std::string txtTest = al::Format("kb %dB, m %dB", (int)sizeof(ALLEGRO_KEYBOARD_STATE), (int)sizeof(ALLEGRO_MOUSE_STATE));
 	loop.loopBody = [&](){
 		al::TargetBitmap.clearToColor(al::RGB(0,0,0));
 

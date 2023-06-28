@@ -22,6 +22,18 @@ namespace al {
 		[[nodiscard]] const Event& get() const {
 			return event;
 		}
+		
+		EventOwner& operator=(EventOwner&& other) noexcept {
+			memcpy(&event, &other.event, sizeof(Event));
+			other.event.type = 0;
+			return *this;
+		}
+		EventOwner(EventOwner&& other) {
+			(*this) = std::move(other);
+		}
+		
+		EventOwner(const EventOwner&) = delete;
+		EventOwner& operator=(const EventOwner&) = delete;
 	private:
 		Event event;
 	};
