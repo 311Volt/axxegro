@@ -1,6 +1,7 @@
 #ifndef INCLUDE_AXXEGRO_EVENT_EVENTQUEUE
 #define INCLUDE_AXXEGRO_EVENT_EVENTQUEUE
 
+#include "Event.hpp"
 #include "EventSource.hpp"
 #include "../../common.hpp"
 
@@ -9,6 +10,22 @@
 
 namespace al {
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_EVENT_QUEUE, al_destroy_event_queue);
+
+	struct EventOwner {
+		explicit EventOwner(Event event): event(event) {}
+		~EventOwner() {
+			if(ALLEGRO_EVENT_TYPE_IS_USER(event.type)) {
+				al_unref_user_event(&event.user);
+			}
+		}
+
+		[[nodiscard]] const Event& get() const {
+			return event;
+		}
+	private:
+		Event event;
+	};
+
 	class EventQueue:
 			RequiresInitializables<CoreAllegro>,
 			public Resource<ALLEGRO_EVENT_QUEUE> {
@@ -39,26 +56,26 @@ namespace al {
 		}
 		
 		///@brief Pops the event at the front of the queue and returns it.
-		ALLEGRO_EVENT pop() {
+		EventOwner pop() {
 			if(empty()) {
 				throw EventQueueError("pop() called on an empty event queue. always check the queue with empty()");
 			}
 			ALLEGRO_EVENT ret;
 			al_get_next_event(ptr(), &ret);
-			return ret;
+			return EventOwner(ret);
 		}
 
 		///@brief Returns the event at the front of the queue without popping it.
-		ALLEGRO_EVENT peek() {
+		EventOwner peek() {
 			if(empty()) {
 				throw EventQueueError("peek() called on an empty event queue. always check the queue with empty()");
 			}
 			ALLEGRO_EVENT ret;
 			al_peek_next_event(ptr(), &ret);
-			return ret;
+			return EventOwner(ret);
 		}
 
-		std::optional<ALLEGRO_EVENT> tryPop() { 
+		std::optional<EventOwner> tryPop() {
 			if(empty()) {
 				return {};
 			}
@@ -90,10 +107,10 @@ namespace al {
 		 * When an event appears, it is popped and returned.
 		 * @return The event.
 		 */
-		ALLEGRO_EVENT wait() {
+		EventOwner wait() {
 			ALLEGRO_EVENT ret;
 			al_wait_for_event(ptr(), &ret);
-			return ret;
+			return EventOwner(ret);
 		}
 
 		/**
@@ -101,11 +118,11 @@ namespace al {
 		 * @return The event (on success)
 		 * @return std::nullopt (on timeout)
 		 */
-		std::optional<ALLEGRO_EVENT> waitFor(float seconds) {
+		std::optional<EventOwner> waitFor(float seconds) {
 			ALLEGRO_EVENT ev;
 			if(!al_wait_for_event_timed(ptr(), &ev, seconds))
 				return std::nullopt;
-			return {ev};
+			return EventOwner(ev);
 		}
 		
 	private:

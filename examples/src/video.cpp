@@ -20,14 +20,14 @@ int main()
 		al::TargetBitmap.clear();
 		
 		auto event = queue.wait();
-		if(event.type == ALLEGRO_EVENT_VIDEO_FRAME_SHOW) {
+		if(event.get().type == ALLEGRO_EVENT_VIDEO_FRAME_SHOW) {
 			const auto* frame = vid.getFrame();
 			frame->draw({0, 0});
 			builtinFont.draw(al::Format("position: %.2f secs", vid.getPos()), al::PureGreen, frame->size());
-		} else if(event.type == ALLEGRO_EVENT_VIDEO_FINISHED) {
+		} else if(event.get().type == ALLEGRO_EVENT_VIDEO_FINISHED) {
 			break;
-		} else if(event.type == ALLEGRO_EVENT_KEY_DOWN) {
-			if(event.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {
+		} else if(event.get().type == ALLEGRO_EVENT_KEY_DOWN) {
+			if(event.get().keyboard.keycode == ALLEGRO_KEY_ESCAPE) {
 				break;
 			}
 		}

@@ -53,10 +53,10 @@ namespace al {
 	void UserEventDtor(ALLEGRO_USER_EVENT* ev)
 	{
 		if constexpr (CanStoreInDataFields<EventT>) {
+			// trivially copyable implies trivially destructible - nothing to do
+		} else {
 			auto* obj = (EventT*)(ev->data1);
 			delete obj;
-		} else {
-			// trivially copyable implies trivially destructible - nothing to do
 		}
 	}
 

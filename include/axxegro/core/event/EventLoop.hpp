@@ -67,8 +67,8 @@ namespace al {
 			while(!exitFlag) {
 				double t0 = GetTime();
 				while(!eventQueue.empty()) {
-					ALLEGRO_EVENT ev = eventQueue.pop();
-					eventDispatcher.dispatch(ev);
+					auto event = eventQueue.pop();
+					eventDispatcher.dispatch(event.get());
 				}
 				if(clockTimer) {
 					clockEventQueue.wait();
