@@ -53,40 +53,47 @@ namespace al {
 			inline void operator()(type* p){delfn(p);} \
 		}
 
-	template<typename T>
-	struct PtrWrapper {
-		T* mPtr;
-		explicit PtrWrapper(T* ptr) : mPtr(ptr) {}
-		T* get() const {return mPtr;}
-
-		PtrWrapper(const PtrWrapper&) = delete;
-		PtrWrapper& operator=(const PtrWrapper&) = delete;
-		PtrWrapper(PtrWrapper&&) noexcept = default;
-		PtrWrapper& operator=(PtrWrapper&&) noexcept = default;
-	};
 
 	template<typename T, typename Deleter = ::al::Deleter<T>>
 	class Resource {
-		std::variant<std::unique_ptr<T, Deleter>, PtrWrapper<T>> alPtr;
-		const ResourceModel model;
+	private:
+		T* ptr_;
+		void (*dtor)(T*);
 	public:
-		using UnderlyingType = T;
+		using ManagedType = T;
 
 		explicit Resource(T* p, ResourceModel model = ResourceModel::Owning)
-			: model(model)
 		{
 			if(model == ResourceModel::Owning) {
-				alPtr = std::unique_ptr<T, Deleter>();
+				dtor = [](T* p){
+					Deleter{}(p);
+				};
 			} else {
-				alPtr = PtrWrapper<T>(nullptr);
+				dtor = nullptr;
 			}
 			setPtr(p);
 		}
 
-		Resource(Resource&&) noexcept = default;
-		Resource& operator=(Resource&&) noexcept = default;
+		Resource(Resource&& rhs) noexcept {
+			(*this) = std::move(rhs);
+		}
 
-		virtual ~Resource() = default;
+		Resource& operator=(Resource&& rhs) noexcept {
+			ptr_ = rhs.ptr_;
+			dtor = rhs.dtor;
+			rhs.ptr_ = nullptr;
+			rhs.dtor = nullptr;
+			return *this;
+		};
+
+		Resource(const Resource&) = delete;
+		Resource& operator=(const Resource&) = delete;
+
+		virtual ~Resource() {
+			if(dtor) {
+				dtor(ptr_);
+			}
+		}
 
 		T* ptr()
 		{
@@ -105,16 +112,20 @@ namespace al {
 	protected:
 		void setPtr(T* p)
 		{
-			std::visit([p](auto& ptr){
-				ptr = std::move(std::remove_cvref_t<decltype(ptr)>(p));
-			}, alPtr);
+			ptr_ = p;
+		}
+
+		ResourceModel getResourceModel() {
+			if(dtor) {
+				return ResourceModel::Owning;
+			} else {
+				return ResourceModel::NonOwning;
+			}
 		}
 	private:
 		virtual T* getPointer() const
 		{
-			return std::visit([](const auto& ptr){
-				return ptr.get();
-			}, alPtr);
+			return ptr_;
 		}
 	};
 
