@@ -43,6 +43,7 @@ namespace al
 		}
 	};
 
+
 	struct AudioFormat {
 		unsigned frequency = 44100;
 		ALLEGRO_AUDIO_DEPTH depth = ALLEGRO_AUDIO_DEPTH_FLOAT32;
@@ -74,6 +75,8 @@ namespace al
 			return Format("%d Hz, %s, %s", frequency, depthStr.c_str(), chanStr.c_str());
 		}
 	};
+	
+
 
 	template<typename Derived>
 	struct AddPlaybackParams
@@ -112,28 +115,28 @@ namespace al
 	};
 
 	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
-	struct AudioFragType {
+	struct AudioSampleType {
 		using Type=void;
 	};
 
 	template<>
-	struct AudioFragType<ALLEGRO_AUDIO_DEPTH_INT8> {
+	struct AudioSampleType<ALLEGRO_AUDIO_DEPTH_INT8> {
 		using Type = int8_t;
 	};
 	template<>
-	struct AudioFragType<ALLEGRO_AUDIO_DEPTH_INT16> {
+	struct AudioSampleType<ALLEGRO_AUDIO_DEPTH_INT16> {
 		using Type = int16_t;
 	};
 	template<>
-	struct AudioFragType<ALLEGRO_AUDIO_DEPTH_UINT8> {
+	struct AudioSampleType<ALLEGRO_AUDIO_DEPTH_UINT8> {
 		using Type = uint8_t;
 	};
 	template<>
-	struct AudioFragType<ALLEGRO_AUDIO_DEPTH_UINT16> {
+	struct AudioSampleType<ALLEGRO_AUDIO_DEPTH_UINT16> {
 		using Type = uint16_t;
 	};
 	template<>
-	struct AudioFragType<ALLEGRO_AUDIO_DEPTH_FLOAT32> {
+	struct AudioSampleType<ALLEGRO_AUDIO_DEPTH_FLOAT32> {
 		using Type = float;
 	};
 
@@ -144,31 +147,31 @@ namespace al
 
 	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
 	struct SampleType<ALLEGRO_CHANNEL_CONF_1, AudioDepth> {
-		using Type = typename AudioFragType<AudioDepth>::Type;
+		using Type = typename AudioSampleType<AudioDepth>::Type;
 	};
 	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
 	struct SampleType<ALLEGRO_CHANNEL_CONF_2, AudioDepth> {
-		using Type = Vec<typename AudioFragType<AudioDepth>::Type, 2>;
+		using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 2>;
 	};
 	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
 	struct SampleType<ALLEGRO_CHANNEL_CONF_3, AudioDepth> {
-		using Type = Vec<typename AudioFragType<AudioDepth>::Type, 3>;
+		using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 3>;
 	};
 	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
 	struct SampleType<ALLEGRO_CHANNEL_CONF_4, AudioDepth> {
-		using Type = Vec<typename AudioFragType<AudioDepth>::Type, 4>;
+		using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 4>;
 	};
 	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
 	struct SampleType<ALLEGRO_CHANNEL_CONF_5_1, AudioDepth> {
-		using Type = Vec<typename AudioFragType<AudioDepth>::Type, 6>;
+		using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 6>;
 	};
 	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
 	struct SampleType<ALLEGRO_CHANNEL_CONF_6_1, AudioDepth> {
-		using Type = Vec<typename AudioFragType<AudioDepth>::Type, 7>;
+		using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 7>;
 	};
 	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
 	struct SampleType<ALLEGRO_CHANNEL_CONF_7_1, AudioDepth> {
-		using Type = Vec<typename AudioFragType<AudioDepth>::Type, 8>;
+		using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 8>;
 	};
 
 }

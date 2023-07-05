@@ -138,9 +138,18 @@ namespace al {
 		return GetUserEventSource(ev.any);
 	}
 
+//
+//	template<typename T>
+//	concept EventDataType = BuiltinEventType<T> || UserEventType<T>;
 
 	template<typename T>
-	concept EventDataType = BuiltinEventType<T> || UserEventType<T>;
+	concept EventDataType = true; /* TODO FIX THIS SHIT */
+
+	template<typename T>
+	inline const T& GetEventData(const Event& ev) {
+		AXXEGRO_STATIC_ASSERT_FALSE(T, "GetEventData not supported for this type");
+		return BuiltinEventMember<T>{}(ev);
+	}
 
 	template<BuiltinEventType T>
 	inline const T& GetEventData(const Event& ev) {
