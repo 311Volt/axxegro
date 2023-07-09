@@ -98,7 +98,12 @@ namespace al {
 					std::function<void(const std::span<typename Traits::FragmentType>)> fn)
 			{
 				using FragT = typename Traits::FragmentType;
-				return [fn](const RawAudioRecorderEvent& ev, [[maybe_unused]] const al::AnyEvent& meta) {
+
+				return [fn, this](const RawAudioRecorderEvent& ev, [[maybe_unused]] const al::AnyEvent& meta) {
+					if(ev.source != this->ptr()) {
+						throw AudioError("Audio recorder event is being handled by a handler created by another recorder");
+					}
+
 					fn(std::span<FragT>((FragT*)ev.buffer, (FragT*)ev.buffer + ev.samples));
 					return EventHandled;
 				};
@@ -131,6 +136,10 @@ namespace al {
 		EventHandler<RawAudioRecorderEvent> createHandler(std::function<void(const std::span<typename Traits::FragmentType>)> fn) {
 			return [fn, this](const RawAudioRecorderEvent& ev, [[maybe_unused]] const al::AnyEvent& meta) {
 				using ImplFragT = typename ImplTraits::FragmentType;
+
+				if(ev.source != this->ptr()) {
+					throw AudioError("Audio recorder event is being handled by a handler created by another recorder");
+				}
 
 				floatFragBuffer.resize(ev.samples);
 				std::span<ImplFragT> inputBuffer((ImplFragT*)ev.buffer, (ImplFragT*)ev.buffer + ev.samples);
