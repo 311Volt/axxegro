@@ -1,0 +1,5 @@
+site_name: A Tour of axxegro
+theme: readthedocs
+docs_dir: tutorial
+nav:
+  - Home: 00-index.md
