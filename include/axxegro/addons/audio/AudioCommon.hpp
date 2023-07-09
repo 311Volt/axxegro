@@ -43,9 +43,7 @@ namespace al
 		}
 	};
 
-
-	struct AudioFormat {
-		unsigned frequency = 44100;
+	struct AudioFragmentFormat {
 		ALLEGRO_AUDIO_DEPTH depth = ALLEGRO_AUDIO_DEPTH_FLOAT32;
 		ALLEGRO_CHANNEL_CONF chanConf = ALLEGRO_CHANNEL_CONF_2;
 
@@ -72,10 +70,21 @@ namespace al
 				default: return Format("%d.1", (int)al::GetChannelCount(conf)-1);
 			}}(chanConf);
 
-			return Format("%d Hz, %s, %s", frequency, depthStr.c_str(), chanStr.c_str());
+			return Format("%s, %s", depthStr.c_str(), chanStr.c_str());
 		}
 	};
-	
+
+
+	struct AudioFormat {
+		unsigned frequency = 44100;
+		ALLEGRO_AUDIO_DEPTH depth = ALLEGRO_AUDIO_DEPTH_FLOAT32;
+		ALLEGRO_CHANNEL_CONF chanConf = ALLEGRO_CHANNEL_CONF_2;
+
+		[[nodiscard]] std::string str() const
+		{
+			return Format("%d Hz, %s", frequency, AudioFragmentFormat(depth, chanConf).str().c_str());
+		}
+	};
 
 
 	template<typename Derived>
@@ -141,38 +150,72 @@ namespace al
 	};
 
 	template<ALLEGRO_CHANNEL_CONF ChanConf, ALLEGRO_AUDIO_DEPTH AudioDepth>
-	struct SampleType {
+	struct AudioFragmentType {
 		using Type = void;
 	};
 
 	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
-	struct SampleType<ALLEGRO_CHANNEL_CONF_1, AudioDepth> {
+	struct AudioFragmentType<ALLEGRO_CHANNEL_CONF_1, AudioDepth> {
 		using Type = typename AudioSampleType<AudioDepth>::Type;
 	};
 	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
-	struct SampleType<ALLEGRO_CHANNEL_CONF_2, AudioDepth> {
+	struct AudioFragmentType<ALLEGRO_CHANNEL_CONF_2, AudioDepth> {
 		using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 2>;
 	};
 	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
-	struct SampleType<ALLEGRO_CHANNEL_CONF_3, AudioDepth> {
+	struct AudioFragmentType<ALLEGRO_CHANNEL_CONF_3, AudioDepth> {
 		using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 3>;
 	};
 	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
-	struct SampleType<ALLEGRO_CHANNEL_CONF_4, AudioDepth> {
+	struct AudioFragmentType<ALLEGRO_CHANNEL_CONF_4, AudioDepth> {
 		using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 4>;
 	};
 	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
-	struct SampleType<ALLEGRO_CHANNEL_CONF_5_1, AudioDepth> {
+	struct AudioFragmentType<ALLEGRO_CHANNEL_CONF_5_1, AudioDepth> {
 		using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 6>;
 	};
 	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
-	struct SampleType<ALLEGRO_CHANNEL_CONF_6_1, AudioDepth> {
+	struct AudioFragmentType<ALLEGRO_CHANNEL_CONF_6_1, AudioDepth> {
 		using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 7>;
 	};
 	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
-	struct SampleType<ALLEGRO_CHANNEL_CONF_7_1, AudioDepth> {
+	struct AudioFragmentType<ALLEGRO_CHANNEL_CONF_7_1, AudioDepth> {
 		using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 8>;
 	};
+
+	template<int N>
+	concept ValidChannelCount = N > 0 && N <= 9 && N != 5;
+
+	template<typename T>
+	concept ValidSampleType = std::disjunction_v<
+	        std::is_same<T, int8_t>,
+			std::is_same<T, int16_t>,
+			std::is_same<T, uint8_t>,
+			std::is_same<T, uint16_t>,
+			std::is_same<T, float>>;
+
+	template<typename T>
+	concept ValidMultiChannelFragmentType = ValidSampleType<typename T::ElementType> && requires {
+		{T::NumElements} -> std::convertible_to<int>;
+	};
+
+	template<typename T>
+	concept ValidFragmentType = ValidSampleType<T> || ValidMultiChannelFragmentType<T>;
+
+	template<ValidSampleType T>
+	constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf = ALLEGRO_AUDIO_DEPTH_INT8;
+
+	template<> constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<int8_t> = ALLEGRO_AUDIO_DEPTH_INT8;
+	template<> constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<uint8_t> = ALLEGRO_AUDIO_DEPTH_UINT8;
+	template<> constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<int16_t> = ALLEGRO_AUDIO_DEPTH_INT16;
+	template<> constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<uint16_t> = ALLEGRO_AUDIO_DEPTH_UINT16;
+	template<> constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<float> = ALLEGRO_AUDIO_DEPTH_FLOAT32;
+
+	inline constexpr ALLEGRO_CHANNEL_CONF Mono = ALLEGRO_CHANNEL_CONF_1;
+	inline constexpr ALLEGRO_CHANNEL_CONF Stereo = ALLEGRO_CHANNEL_CONF_2;
+
+	template<ValidMultiChannelFragmentType TFrag, ValidSampleType TNewSmp>
+	using ConvertFragSampleType = Vec<TNewSmp, TFrag::NumElements>;
 
 }
 

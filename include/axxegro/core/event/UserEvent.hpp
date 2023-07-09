@@ -3,7 +3,8 @@
 
 #include "../../common.hpp"
 #include "EventSource.hpp"
-#include "Event.hpp"
+#include "EventDataGetter.hpp"
+#include "BuiltinEvents.hpp"
 
 namespace al {
 
@@ -125,8 +126,6 @@ namespace al {
 
 	};
 
-
-
 	inline UserEventSource& GetUserEventSource(const AnyEvent& any) {
 		if(any.type < 1024) {
 			throw EventSourceError("GetUserEventSource called on non-user event");
@@ -138,30 +137,12 @@ namespace al {
 		return GetUserEventSource(ev.any);
 	}
 
-//
-//	template<typename T>
-//	concept EventDataType = BuiltinEventType<T> || UserEventType<T>;
-
-	template<typename T>
-	concept EventDataType = true; /* TODO FIX THIS SHIT */
-
-	template<typename T>
-	inline const T& GetEventData(const Event& ev) {
-		AXXEGRO_STATIC_ASSERT_FALSE(T, "GetEventData not supported for this type");
-		return BuiltinEventMember<T>{}(ev);
-	}
-
-	template<BuiltinEventType T>
-	inline const T& GetEventData(const Event& ev) {
-		return BuiltinEventMember<T>{}(ev);
-	}
-
 	template<UserEventType T>
-	inline const T& GetEventData(const Event& ev) {
-		return GetUserEventData<T>(ev);
-	}
-
-
+	struct EventDataGetter<T> {
+		const T& operator()(const Event(ev)) {
+			return GetUserEventData<T>(ev);
+		}
+	};
 }
 
 #endif /* INCLUDE_AXXEGRO_EVENT_USEREVENT */

@@ -141,7 +141,7 @@ namespace al {
 		}
 
 		EventHandledStatus handle(const Event& ev) override {
-			return handler_(GetEventData<EventT>(ev), ev.any);
+			return handler_(EventDataGetter<EventT>{}(ev), ev.any);
 		}
 	protected:
 		std::function<EventHandledStatus(const EventType&, const AnyEvent&)> handler_;

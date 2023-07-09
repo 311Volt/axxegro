@@ -151,9 +151,9 @@ namespace al {
 		}
 
 		template<ALLEGRO_CHANNEL_CONF ChanConf, ALLEGRO_AUDIO_DEPTH AudioDepth>
-		bool setFragment(void (*filler)(std::span<typename SampleType<ChanConf, AudioDepth>::Type>))
+		bool setFragment(void (*filler)(std::span<typename AudioFragmentType<ChanConf, AudioDepth>::Type>))
 		{
-			using SmpType = typename SampleType<ChanConf, AudioDepth>::Type;
+			using SmpType = typename AudioFragmentType<ChanConf, AudioDepth>::Type;
 			void* fragData = getFragmentData();
 			if(getFragmentData()) {
 				std::span<SmpType> typedFragData {static_cast<SmpType*>(fragData), getLength()};

@@ -185,6 +185,16 @@ namespace al {
 			}
 			return ret;
 		}
+
+		constexpr Rect scale(Vec2d factor, Vec2d scaleCenter = {NAN, NAN}) const {
+			if(std::isnan(scaleCenter.x) || std::isnan(scaleCenter.y)) {
+				scaleCenter = Vec2d(this->center());
+			}
+
+			Vec2d diffA = scaleCenter - Vec2d(a);
+			Vec2d diffB = scaleCenter - Vec2d(b);
+			return Rect<double>(scaleCenter - factor.hadamard(diffA), scaleCenter - factor.hadamard(diffB));
+		}
 	};
 	
 	using RectF = Rect<float>;

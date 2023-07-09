@@ -96,9 +96,9 @@ namespace al {
 		}
 
 		template<ALLEGRO_CHANNEL_CONF ChanConf, ALLEGRO_AUDIO_DEPTH AudioDepth>
-		bool setPostprocessCallback(void (*callback)(std::span<typename SampleType<ChanConf, AudioDepth>::Type>))
+		bool setPostprocessCallback(void (*callback)(std::span<typename AudioFragmentType<ChanConf, AudioDepth>::Type>))
 		{
-			using SmpType = typename SampleType<ChanConf, AudioDepth>::Type;
+			using SmpType = typename AudioFragmentType<ChanConf, AudioDepth>::Type;
 			return setCStylePostprocessCallback([callback](void* buf, unsigned samples, [[maybe_unused]] void* userdata){
 				callback({static_cast<SmpType*>(buf), samples});
 			}, nullptr);

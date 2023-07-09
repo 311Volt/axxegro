@@ -301,6 +301,7 @@ namespace al {
 			
 			
 			using ValueType = T;
+			using ElementType = T;
 			using ImplType = TImpl;
 			static constexpr int NumElements = N;
 			
@@ -568,15 +569,15 @@ namespace al {
 			}
 			
 			/*
-			 * implicit conversion, restricted to between floating point vectors
+			 * implicit conversion, implicit only between floating point vectors
 			 */
-			template<typename OtherVecT> requires (
+			template<typename OtherVecT> explicit (!(
 				std::floating_point<ValueType> &&
 				std::floating_point<typename OtherVecT::ValueType> &&
 				std::convertible_to<ValueType, typename OtherVecT::ValueType> &&
 				!std::same_as<ValueType, typename OtherVecT::ValueType> &&
 				NumElements == OtherVecT::NumElements
-			)
+			))
 			constexpr BaseVec(const OtherVecT& other)
 				: BaseVec(other.template as<ValueType, TImpl>())
 			{

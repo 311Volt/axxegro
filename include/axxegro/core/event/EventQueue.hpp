@@ -1,7 +1,7 @@
 #ifndef INCLUDE_AXXEGRO_EVENT_EVENTQUEUE
 #define INCLUDE_AXXEGRO_EVENT_EVENTQUEUE
 
-#include "Event.hpp"
+#include "BuiltinEvents.hpp"
 #include "EventSource.hpp"
 #include "../../common.hpp"
 

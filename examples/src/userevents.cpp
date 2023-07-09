@@ -63,6 +63,7 @@ int main()
 	auto evLoop = al::EventLoop::Basic();
 	evLoop.enableEscToQuit();
 
+
 	MyEventSource mySource;
 	evLoop.eventQueue.registerSource(mySource);
 

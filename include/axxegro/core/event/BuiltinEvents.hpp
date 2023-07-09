@@ -7,7 +7,7 @@
 
 #include <allegro5/allegro.h>
 #include <concepts>
-#include "../../com/util/Metaprogramming.hpp"
+#include "EventDataGetter.hpp"
 
 namespace al {
 
@@ -32,30 +32,27 @@ namespace al {
 		std::same_as<T, TimerEvent> ||
 		std::same_as<T, TouchEvent>;
 
-	template<BuiltinEventType EvT>
-	struct BuiltinEventMember {AXXEGRO_STATIC_ASSERT_FALSE(EvT, "");};
-
-	template<> struct BuiltinEventMember<DisplayEvent> {
+	template<> struct EventDataGetter<DisplayEvent> {
 		const DisplayEvent& operator()(const Event& ev) {return ev.display;}
 	};
 
-	template<> struct BuiltinEventMember<JoystickEvent> {
+	template<> struct EventDataGetter<JoystickEvent> {
 		const JoystickEvent& operator()(const Event& ev) {return ev.joystick;}
 	};
 
-	template<> struct BuiltinEventMember<KeyboardEvent> {
+	template<> struct EventDataGetter<KeyboardEvent> {
 		const KeyboardEvent& operator()(const Event& ev) {return ev.keyboard;}
 	};
 
-	template<> struct BuiltinEventMember<MouseEvent> {
+	template<> struct EventDataGetter<MouseEvent> {
 		const MouseEvent& operator()(const Event& ev) {return ev.mouse;}
 	};
 
-	template<> struct BuiltinEventMember<TimerEvent> {
+	template<> struct EventDataGetter<TimerEvent> {
 		const TimerEvent& operator()(const Event& ev) {return ev.timer;}
 	};
 
-	template<> struct BuiltinEventMember<TouchEvent> {
+	template<> struct EventDataGetter<TouchEvent> {
 		const TouchEvent& operator()(const Event& ev) {return ev.touch;}
 	};
 
