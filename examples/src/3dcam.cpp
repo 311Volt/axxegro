@@ -56,12 +56,12 @@ int main()
 		//render HUD
 		al::TargetBitmap.resetTransform();
 		al::TargetBitmap.resetProjection();
-		font.draw(
-			al::Format(
-				"player pos = (%.2f, %.2f, %.2f), facing %.2f deg", 
-				pos.x, pos.y, pos.z, rx
-			), 
-			al::White, {10, 10}
+		font.drawText(
+				al::Format(
+						"player pos = (%.2f, %.2f, %.2f), facing %.2f deg",
+						pos.x, pos.y, pos.z, rx
+				),
+				al::White, {10, 10}
 		);
 		
 		//render 3D scene (in this case, one triangle)

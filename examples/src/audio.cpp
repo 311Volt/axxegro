@@ -25,7 +25,7 @@ int main()
 
 	evLoop.loopBody = [&](){
 		al::TargetBitmap.clearToColor(al::Blue);
-		font.draw("press F to oof", al::White, {100, 100});
+		font.drawText("press F to oof", al::White, {100, 100});
 		al::CurrentDisplay.flip();
 	};
 

@@ -23,7 +23,7 @@ int main()
 		if(event.get().type == ALLEGRO_EVENT_VIDEO_FRAME_SHOW) {
 			const auto* frame = vid.getFrame();
 			frame->draw({0, 0});
-			builtinFont.draw(al::Format("position: %.2f secs", vid.getPos()), al::PureGreen, frame->size());
+			builtinFont.drawText(al::Format("position: %.2f secs", vid.getPos()), al::PureGreen, frame->size());
 		} else if(event.get().type == ALLEGRO_EVENT_VIDEO_FINISHED) {
 			break;
 		} else if(event.get().type == ALLEGRO_EVENT_KEY_DOWN) {

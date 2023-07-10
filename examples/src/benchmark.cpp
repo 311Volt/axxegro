@@ -53,7 +53,9 @@ int main()
 		if(loop.getTick() >= BenchmarkTicks) {
 			loop.setExitFlag();
 		}
-		font.draw(al::Format("tick=%d, avg frametime: %.09f ms", (int)loop.getTick(), 1000.0 * frametimes.getAvg()), al::PureYellow, {100, 100});
+		font.drawText(
+				al::Format("tick=%d, avg frametime: %.09f ms", (int) loop.getTick(), 1000.0 * frametimes.getAvg()),
+				al::PureYellow, {100, 100});
 		
 		al::CurrentDisplay.flip();
 		

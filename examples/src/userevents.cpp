@@ -98,7 +98,8 @@ int main()
 	evLoop.loopBody = [&](){
 		al::TargetBitmap.clearToColor(al::RGB(0,0,60));
 
-		font.draw("Press A or Z to emit events", al::White, {al::CurrentDisplay.width()/2.f, 10.f}, ALLEGRO_ALIGN_CENTER);
+		font.drawText("Press A or Z to emit events", al::White, {al::CurrentDisplay.width() / 2.f, 10.f},
+					  ALLEGRO_ALIGN_CENTER);
 
 		//delete old lines from log
 		while(messages.size() >= 25) {
@@ -107,7 +108,7 @@ int main()
 
 		int y = 50;
 		for(auto& line: messages) {
-			font.draw(line, al::White, {50.f, float(y)});
+			font.drawText(line, al::White, {50.f, float(y)});
 			y += font.getLineHeight() + 3;
 		}
 

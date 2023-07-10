@@ -50,10 +50,10 @@ int main()
 			t.translate(txtPos);
 			al::ScopedTransform st(t);
 			al::DrawLine({}, {txtMaxWidth,0.0f}, al::Red, 4.0);
-			font.draw(
-				txtTestCut,
-				al::RGB(255,255,255), 
-				{0, 0}
+			font.drawText(
+					txtTestCut,
+					al::RGB(255, 255, 255),
+					{0, 0}
 			);
 		}
 		

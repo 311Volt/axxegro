@@ -112,12 +112,12 @@ namespace al {
 		}
 
 		//TODO fastDraw()
-		void draw(const std::string& text, Color color, Vec2<int> pos, int align = ALLEGRO_ALIGN_LEFT, bool alignInteger = true) const {
+		void drawText(const std::string& text, Color color, Vec2<int> pos, int align = ALLEGRO_ALIGN_LEFT, bool alignInteger = true) const {
 			int actualAlign = align | (alignInteger * ALLEGRO_ALIGN_INTEGER);
 			al_draw_text(ptr(), color, pos.x, pos.y, actualAlign, text.c_str());
 		}
 
-		void drawJustified(const std::string& text, Color color, Vec2<int> pos, float xMax, float diffMax, bool alignInteger = true) const {
+		void drawJustifiedText(const std::string& text, Color color, Vec2<int> pos, float xMax, float diffMax, bool alignInteger = true) const {
 			al_draw_justified_text(ptr(), color, pos.x, xMax, pos.y, diffMax, alignInteger * ALLEGRO_ALIGN_INTEGER, text.c_str());
 		}
 	private:

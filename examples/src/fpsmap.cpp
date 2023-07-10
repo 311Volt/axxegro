@@ -264,7 +264,7 @@ int main()
 		al::TargetBitmap.setDepthTest(false);
 		al::TargetBitmap.resetTransform();
 		al::TargetBitmap.resetProjection();
-		builtinFont.draw(al::Format("%d fps", (int)loop.getFPS()), al::White, {15, 15});
+		builtinFont.drawText(al::Format("%d fps", (int) loop.getFPS()), al::White, {15, 15});
 
 		al::CurrentDisplay.flip();
 	};

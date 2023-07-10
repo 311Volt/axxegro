@@ -99,7 +99,7 @@ int main()
 		 * Draw info text and peak meters
 		 */
 		auto msg = al::Format("peaks: L %02.1f dB | R %02.1f dB", dB(meter.leftPeak), dB(meter.rightPeak));
-		font.draw(msg, al::White, {50, 50});
+		font.drawText(msg, al::White, {50, 50});
 
 		al::DrawFilledRectangle(meterRectL, al::RGB(20, 20, 20));
 		al::DrawFilledRectangle(meterRectR, al::RGB(20, 20, 20));

@@ -5,7 +5,7 @@
  * @file
  * 
  * a quick example on how to create custom vertex declarations
- * and use them to draw primitives
+ * and use them to drawText primitives
  */
 
 struct MyVertex {
