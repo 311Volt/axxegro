@@ -6,12 +6,18 @@
 #define AXXEGRO_AUDIOUTIL_HPP
 
 #include "AudioCommon.hpp"
+#include <ranges>
 
 namespace al {
 
+	template<typename T>
+	concept RangeConvertibleToSpan = std::ranges::range<T> && requires(T r) {
+		{std::span(r)};
+	};
+
 	template<ValidMultiChannelFragmentType TFrag, typename... TArgs>
 	requires (
-			(IndirectlyConvertibleTo<TArgs, std::span<typename TFrag::ElementType>> && ...) &&
+			(RangeConvertibleToSpan<TArgs> && ...) &&
 			sizeof...(TArgs) == TFrag::NumElements
 			)
 	bool UnzipChannels(const std::span<TFrag> inputFragments, TArgs&&... outputChannels) {
