@@ -5,6 +5,7 @@
 #include "axxegro/addons/audio/AudioStream.hpp"
 #include "axxegro/addons/audio/AudioUtil.hpp"
 #include "axxegro/addons/audio/Mixer.hpp"
+#include "axxegro/addons/audio/RingBuffer.hpp"
 #include "axxegro/addons/audio/Sample.hpp"
 #include "axxegro/addons/audio/SampleInstance.hpp"
 #include "axxegro/addons/audio/Voice.hpp"

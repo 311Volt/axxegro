@@ -157,7 +157,7 @@ namespace al {
 		return U32_RGB((r&0xAA0000) | (g&0x00AA00) | (b&0x0000AA) | (i&0x555555));
 	}
 
-	namespace Colors
+	inline namespace Colors
 	{
 		constexpr Color Black = CGA(0);
 		constexpr Color Blue = CGA(1);
@@ -184,16 +184,18 @@ namespace al {
 		constexpr Color PureMagenta = U32_RGB(0xFF00FF);
 		constexpr Color PureYellow =  U32_RGB(0xFFFF00);
 	}
-	using namespace Colors;
 
 
-	
-	namespace ColorLiterals {
-		constexpr Color operator""_RGB(unsigned long long color)
-		{
-			return U32_RGB(color);
+	inline namespace Literals {
+		inline namespace ColorLiterals {
+			constexpr Color operator""_RGB(unsigned long long color)
+			{
+				return U32_RGB(color);
+			}
 		}
 	}
+
+
 }
 
 #endif /* INCLUDE_AXXEGRO_COLOR */

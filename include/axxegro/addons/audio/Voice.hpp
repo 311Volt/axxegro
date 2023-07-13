@@ -30,7 +30,7 @@ namespace al {
 		bool attachMixer(Mixer& mixer) {
 			return al_attach_mixer_to_voice(mixer.ptr(), ptr());
 		}
-		bool attachAudioStream(AudioStream& audio) {
+		bool attachAudioStream(BaseAudioStream& audio) {
 			return al_attach_audio_stream_to_voice(audio.ptr(), ptr());
 		}
 		bool attachSampleInstance(SampleInstance& sampleInstance) {

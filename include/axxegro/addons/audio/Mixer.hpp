@@ -32,7 +32,7 @@ namespace al {
 		bool attachMixer(Mixer& mixer) {
 			return al_attach_mixer_to_mixer(mixer.ptr(), ptr());
 		}
-		bool attachAudioStream(AudioStream& audio) {
+		bool attachAudioStream(BaseAudioStream& audio) {
 			return al_attach_audio_stream_to_mixer(audio.ptr(), ptr());
 		}
 		bool attachSampleInstance(SampleInstance& sampleInstance) {
@@ -91,7 +91,7 @@ namespace al {
 			return al_detach_mixer(ptr());
 		}
 
-		bool setCStylePostprocessCallback(void (*cb)(void* buf, unsigned samples, void* userdata), void* userdata) {
+		bool setPostprocessCallbackFnPtr(void (*cb)(void* buf, unsigned samples, void* userdata), void* userdata) {
 			return al_set_mixer_postprocess_callback(ptr(), cb, userdata);
 		}
 
@@ -99,27 +99,37 @@ namespace al {
 		bool setPostprocessCallback(void (*callback)(std::span<typename AudioFragmentType<ChanConf, AudioDepth>::Type>))
 		{
 			using SmpType = typename AudioFragmentType<ChanConf, AudioDepth>::Type;
-			return setCStylePostprocessCallback([callback](void* buf, unsigned samples, [[maybe_unused]] void* userdata){
-				callback({static_cast<SmpType*>(buf), samples});
-			}, nullptr);
+			return setPostprocessCallbackFnPtr(
+				[callback](void *buf, unsigned samples, [[maybe_unused]] void *userdata) {
+					callback({static_cast<SmpType *>(buf), samples});
+				},
+				nullptr
+			);
 		}
 	private:
-		friend class CDefaultMixer;
 		using Resource::Resource;
 		ALLEGRO_MIXER* prevDefaultMixer = nullptr;
 	};
 
-	class CDefaultMixer: public Mixer
-	{
-	public:
-		using Mixer::Mixer;
-	private:
-		[[nodiscard]] ALLEGRO_MIXER* getPointer() const override {
-			return al_get_default_mixer();
-		}
-	};
+	namespace internal {
+		class CDefaultMixer: public Mixer
+		{
+		public:
+			using Mixer::Mixer;
 
-	inline CDefaultMixer DefaultMixer {nullptr, al::ResourceModel::NonOwning};
+		private:
+			[[nodiscard]] ALLEGRO_MIXER* getPointer() const override {
+				if(!al_get_default_mixer()) {
+					al_restore_default_mixer();
+				}
+				return al_get_default_mixer();
+			}
+		};
+	}
+
+
+
+	inline internal::CDefaultMixer DefaultMixer {nullptr, al::ResourceModel::NonOwning};
 
 }
 

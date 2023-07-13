@@ -64,8 +64,8 @@ namespace al {
 			end = vBuf.size();
 		}
 		return al_draw_vertex_buffer(
-			vBuf.constPtr(), 
-			texture ? texture->get().constPtr() : nullptr, 
+			vBuf.ptr(),
+			texture ? texture->get().ptr() : nullptr,
 			start, end, type
 		); 
 	}
@@ -82,9 +82,9 @@ namespace al {
 			end = iBuf.size();
 		}
 		return al_draw_indexed_buffer(
-			vBuf.constPtr(), 
-			texture ? texture->get().constPtr() : nullptr, 
-			iBuf.constPtr(), 
+			vBuf.ptr(),
+			texture ? texture->get().ptr() : nullptr,
+			iBuf.ptr(),
 			start, end, type
 		);
 	}

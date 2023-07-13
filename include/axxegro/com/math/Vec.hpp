@@ -304,6 +304,7 @@ namespace al {
 			using ElementType = T;
 			using ImplType = TImpl;
 			static constexpr int NumElements = N;
+			static constexpr int IsContiguous = (sizeof(BaseVec) == sizeof(T)*NumElements);
 			
 			static constexpr bool isIndexValid(int i) {
 				return i>0 && i<NumElements;

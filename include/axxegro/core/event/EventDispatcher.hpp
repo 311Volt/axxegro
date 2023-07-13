@@ -198,6 +198,15 @@ namespace al {
 			return *this;
 		}
 
+		EventDispatcher& setEventHandler(EventType eventType, GenericEventHandler handler) {
+			auto key = EventHandlerCoord {
+				.type = eventType,
+				.value = std::nullopt
+			};
+			handlers[key] = std::make_unique<GenericEventHandler>(std::move(handler));
+			return *this;
+		}
+
 		template<UserEventType EventT>
 		EventDispatcher& setUserEventHandler(EventHandler<EventT> handler) {
 			return setEventHandler(EventT::EventTypeID, std::move(handler));

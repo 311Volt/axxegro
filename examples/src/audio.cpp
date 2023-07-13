@@ -16,7 +16,7 @@ int main()
 
 	al::SampleInstance::ReserveSamples(16);
 
-	al::AudioStream music("data/audio/Spring_In_My_Step.ogg");
+	al::BaseAudioStream music("data/audio/Spring_In_My_Step.ogg");
 	al::DefaultMixer.attachAudioStream(music);
 	music.setGain(0.6);
 	music.setPlayMode(ALLEGRO_PLAYMODE_LOOP);

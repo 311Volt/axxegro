@@ -22,6 +22,10 @@ namespace al
 		return (depth & 0x07) + 1;
 	}
 
+	struct BufferConfig {
+		unsigned numChunks = 16;
+		unsigned fragmentsPerChunk = 1024;
+	};
 
 	struct PlaybackParams {
 		float gain = 1.0;
@@ -88,24 +92,26 @@ namespace al
 
 
 	template<typename Derived>
-	struct AddPlaybackParams
+	struct AddPlaybackParamsQuery
 	{
 		PlaybackParams getPlaybackParams()
 		{
+			auto& self = static_cast<Derived&>(*this);
 			return {
-				.gain = static_cast<Derived*>(this)->getGain(),
-				.pan = static_cast<Derived*>(this)->getPan(),
-				.speed = static_cast<Derived*>(this)->getSpeed(),
-				.loop = static_cast<Derived*>(this)->getPlayMode(),
+				.gain = self.getGain(),
+				.pan = self.getPan(),
+				.speed = self.getSpeed(),
+				.loop = self.getPlayMode(),
 			};
 		}
 
 		bool setPlaybackParams(PlaybackParams params)
 		{
-			if(!static_cast<Derived*>(this)->setGain(params.gain)) return false;
-			if(!static_cast<Derived*>(this)->setPan(params.pan)) return false;
-			if(!static_cast<Derived*>(this)->setSpeed(params.speed)) return false;
-			if(!static_cast<Derived*>(this)->setPlayMode(params.loop)) return false;
+			auto& self = static_cast<Derived&>(*this);
+			if(!self.setGain(params.gain)) return false;
+			if(!self.setPan(params.pan)) return false;
+			if(!self.setSpeed(params.speed)) return false;
+			if(!self.setPlayMode(params.loop)) return false;
 			return true;
 		}
 	};
@@ -115,10 +121,11 @@ namespace al
 	{
 		AudioFormat getAudioFormat()
 		{
+			auto& self = static_cast<Derived&>(*this);
 			return {
-				.frequency = static_cast<Derived*>(this)->getFrequency(),
-				.depth = static_cast<Derived*>(this)->getDepth(),
-				.chanConf = static_cast<Derived*>(this)->getChannelConf()
+				.frequency = self.getFrequency(),
+				.depth = self.getDepth(),
+				.chanConf = self.getChannelConf()
 			};
 		}
 	};

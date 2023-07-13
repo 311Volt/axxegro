@@ -5,6 +5,7 @@
 #include "AudioCommon.hpp"
 #include "AudioUtil.hpp"
 #include "../../core/event/UserEvent.hpp"
+#include "../../core/time/FreqPeriod.hpp"
 
 namespace al {
 
@@ -31,14 +32,22 @@ namespace al {
 
 	class BaseAudioRecorder: public Resource<ALLEGRO_AUDIO_RECORDER> {
 	public:
-		explicit BaseAudioRecorder(AudioFormat fmt = {}, int bufFragCount = 1024, int numBuffers = 16)
+
+		explicit BaseAudioRecorder(
+				AudioFormat fmt = {.depth = ALLEGRO_AUDIO_DEPTH_INT16},
+				BufferConfig bufferConfig = {}
+		)
 		: Resource(nullptr), evSource(std::make_unique<AudioRecorderEventSource>(*this))
 		{
-			setPtr(al_create_audio_recorder(numBuffers, bufFragCount, fmt.frequency, fmt.depth, fmt.chanConf));
+			setPtr(al_create_audio_recorder(
+				bufferConfig.numChunks,
+				bufferConfig.fragmentsPerChunk,
+				fmt.frequency, fmt.depth, fmt.chanConf
+			));
 			if(!ptr()) {
 				throw AudioError(
 					"Cannot create audio recorder (requested config: %s format with %d*%d buffers)",
-					fmt.str().c_str(), numBuffers, bufFragCount
+					fmt.str().c_str(), bufferConfig.numChunks, bufferConfig.fragmentsPerChunk
 				);
 			}
 		}
@@ -81,8 +90,15 @@ namespace al {
 			};
 
 
-			explicit TypedAudioRecorder(unsigned int frequency = 44100, int bufFragCount = 1024, int numBuffers = 16)
-					: BaseAudioRecorder({.frequency = frequency, .depth = Traits::Depth, .chanConf = Traits::ChanConf}, bufFragCount, numBuffers)
+			explicit TypedAudioRecorder(Freq frequency = al::Hz(44100), BufferConfig bufConfig = {})
+				: BaseAudioRecorder(
+					{
+						.frequency = (unsigned)frequency.getFreqHz(),
+						.depth = Traits::Depth,
+						.chanConf = Traits::ChanConf
+					},
+					bufConfig
+			)
 			{
 
 			}
@@ -120,6 +136,7 @@ namespace al {
 	template<ValidSampleType TSample, ALLEGRO_CHANNEL_CONF TPChanConf>
 	class AudioRecorder: public internal::TypedAudioRecorder<TSample, TPChanConf> {
 		using internal::TypedAudioRecorder<TSample, TPChanConf>::TypedAudioRecorder;
+
 		using Traits = internal::TypedAudioRecorder<TSample, TPChanConf>::Traits;
 	};
 
@@ -129,7 +146,7 @@ namespace al {
 	class AudioRecorder<float, TPChanConf>: public internal::TypedAudioRecorder<int16_t, TPChanConf> {
 	public:
 		using Super = internal::TypedAudioRecorder<int16_t, TPChanConf>;
-		using typename Super::TypedAudioRecorder;
+		using internal::TypedAudioRecorder<int16_t, TPChanConf>::TypedAudioRecorder;
 		using ImplTraits = typename Super::Traits;
 		using Traits = ::al::internal::TypedAudioRecorder<float, TPChanConf>::Traits;
 

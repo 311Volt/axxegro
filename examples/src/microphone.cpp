@@ -1,6 +1,6 @@
 
 /*
- * An example on how to use axxegro's type-safe audio recorder.
+ * An example on how to use axxegro's type-safe audio recorders & streams.
  */
 
 
@@ -10,6 +10,12 @@
  */
 #define ALLEGRO_UNSTABLE
 #include <axxegro/axxegro.hpp>
+
+#include <queue>
+#include <ranges>
+#include <numbers>
+
+static constexpr int AudioBufferSize = 1024;
 
 /*
  * Utility
@@ -50,6 +56,54 @@ private:
 };
 
 
+/*
+ * In this example, we will be playing back the user's voice in a funny way.
+ * This will be done with a ring modulator (we basically multiply everything by a sine wave)
+ *
+ * Note the span-based API, which allows the user to write allocation-free code.
+ */
+struct RingModulator {
+
+	explicit RingModulator(double carrierFreq): buffer(10 * AudioBufferSize), carrierFrequency(carrierFreq) {}
+
+	/*
+	 * Take the input, process it and save it in the ring buffer.
+	 */
+	void consume(const std::span<al::Vec2f> input)
+	{
+		static std::vector<al::Vec2f> output;
+		output.resize(input.size());
+
+		for(unsigned i=0; i<input.size(); i++) {
+			double tSecs = double(samplesProcessed++) / sampleRate;
+			double carrier = std::sin(2.0 * std::numbers::pi * (tSecs * carrierFrequency));
+			output[i] = input[i] * carrier;
+		}
+
+		buffer.push(output);
+	}
+
+	/*
+	 * If able to, fill outputBuffer with processed samples.
+	 */
+	bool request(std::span<al::Vec2f> outputBuffer) {
+		if(buffer.size() >= outputBuffer.size()) {
+			buffer.pop(outputBuffer);
+			return true;
+		}
+		return false;
+	}
+
+private:
+	al::RingBuffer<al::Vec2f> buffer;
+
+	int64_t samplesProcessed = 0;
+	double carrierFrequency = 440.0f;
+	double sampleRate = 44100.0;
+
+};
+
+
 int main()
 {
 	al::Display disp(640, 480);
@@ -66,14 +120,23 @@ int main()
 	 * depth is currently broken.
 	 * This behavior is opt-out with AXXEGRO_USE_NATIVE_FLOAT32_AUDIO_RECORDER.
 	 */
-	al::AudioRecorder<float, al::Stereo> recorder;
+	al::AudioRecorder<float, al::Stereo> recorder(al::Hz(44100), {.fragmentsPerChunk = AudioBufferSize});
+
+
+	/*
+	 * The stream. Will be used to play back the user's voice to them.
+	 */
+	al::AudioStream<float, al::Stereo> stream(al::Hz(44100), {.fragmentsPerChunk = AudioBufferSize});
+	al::DefaultMixer.attachAudioStream(stream);
 
 	AudioMeter meter;
+	RingModulator modulator(440);
 
 	al::EventLoop loop = al::EventLoop::Basic();
 	loop.enableEscToQuit();
 
 	loop.eventQueue.registerSource(recorder.getEventSource());
+	loop.eventQueue.registerSource(stream.getEventSource());
 
 	/*
 	 * The recorder will NOT generate any events unless started. You can query its status
@@ -81,11 +144,30 @@ int main()
 	 */
 	recorder.start();
 
+	/*
+	 * The stream will also not generate any events unless it's set as "playing".
+	 */
+	stream.setPlaying(true);
 
 	loop.eventDispatcher.setEventHandler(
 		ALLEGRO_EVENT_AUDIO_RECORDER_FRAGMENT,
 		recorder.createHandler([&](const std::span<al::Vec2f> buffer) {
+
+			// We just got audio data from the microphone, let's handle it
+
+			modulator.consume(buffer);
 			meter.onBuffer(buffer);
+		})
+	);
+
+	loop.eventDispatcher.setEventHandler(
+		ALLEGRO_EVENT_AUDIO_STREAM_FRAGMENT,
+		stream.createChunkEventHandler([&](std::span<al::Vec2f> streamData) {
+
+			/* The audio stream is ready for a new buffer. Let's ask our signal
+			 * processor for audio data. */
+
+			modulator.request(streamData);
 		})
 	);
 

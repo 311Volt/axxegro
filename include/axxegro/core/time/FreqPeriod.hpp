@@ -38,22 +38,25 @@ namespace al {
 		return Freq::kHz(val);
 	}
 
-	namespace FreqLiterals {
+	inline namespace Literals {
+		inline namespace FreqLiterals {
 
-		Freq operator""_Hz(long double val) {
-			return Freq::Hz(static_cast<double>(val));
-		}
-		Freq operator""_Hz(unsigned long long val) {
-			return Freq::Hz(static_cast<double>(val));
-		}
+			Freq operator""_Hz(long double val) {
+				return Freq::Hz(static_cast<double>(val));
+			}
+			Freq operator""_Hz(unsigned long long val) {
+				return Freq::Hz(static_cast<double>(val));
+			}
 
-		Freq operator""_kHz(long double val) {
-			return Freq::kHz(static_cast<double>(val) * 1000.0);
-		}
-		Freq operator""_kHz(unsigned long long val) {
-			return Freq::Hz(static_cast<double>(val) * 1000.0);
+			Freq operator""_kHz(long double val) {
+				return Freq::kHz(static_cast<double>(val) * 1000.0);
+			}
+			Freq operator""_kHz(unsigned long long val) {
+				return Freq::Hz(static_cast<double>(val) * 1000.0);
+			}
 		}
 	}
+
 
 
 	struct Period {

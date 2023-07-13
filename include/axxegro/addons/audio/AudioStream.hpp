@@ -5,41 +5,46 @@
 
 namespace al {
 
-	class AudioStream;
+	class BaseAudioStream;
 	struct AudioStreamEventSource: public EventSource {
 	public:
-		explicit AudioStreamEventSource(AudioStream& stream) : stream(stream) {}
+		explicit AudioStreamEventSource(BaseAudioStream& stream) : stream(stream) {}
 		[[nodiscard]] ALLEGRO_EVENT_SOURCE* ptr() const override;
 	private:
-		AudioStream& stream;
+		BaseAudioStream& stream;
 	};
 
     AXXEGRO_DEFINE_DELETER(ALLEGRO_AUDIO_STREAM, al_destroy_audio_stream);
 
-	class AudioStream:
+	class BaseAudioStream:
 			RequiresInitializables<AudioAddon>,
 			public Resource<ALLEGRO_AUDIO_STREAM>,
-			public AddPlaybackParams<AudioStream>,
-			public AddAudioFormatQuery<AudioStream> {
+			public AddPlaybackParamsQuery<BaseAudioStream>,
+			public AddAudioFormatQuery<BaseAudioStream> {
     public:
 
-		explicit AudioStream(size_t bufferCount = 4, unsigned samples = 2048, AudioFormat format = {})
+		explicit BaseAudioStream(AudioFormat format = {}, BufferConfig bufConfig = {})
 				: Resource<ALLEGRO_AUDIO_STREAM>(nullptr),
+				  bufferConfig(bufConfig),
 				  evSource(new AudioStreamEventSource(*this))
 		{
-			if(auto* p = al_create_audio_stream(bufferCount, samples, format.frequency, format.depth, format.chanConf)) {
+			if(auto* p = al_create_audio_stream(
+					bufConfig.numChunks, bufConfig.fragmentsPerChunk,
+					format.frequency, format.depth, format.chanConf
+			)) {
 				setPtr(p);
 			} else {
-				throw AudioError("Cannot create audio stream with %d x %d bufs and format %s", (int)bufferCount, (int)samples, format.str().c_str());
+				throw AudioError("Cannot create audio stream with %d x %d bufs and format %s", (int)bufConfig.numChunks, (int)bufConfig.fragmentsPerChunk, format.str().c_str());
 			}
 		}
 
-		explicit AudioStream(const std::string& filename, size_t bufferCount = 4, unsigned samples = 4096)
-				: Resource<ALLEGRO_AUDIO_STREAM>(nullptr),
-				  evSource(new AudioStreamEventSource(*this))
+		explicit BaseAudioStream(const std::string& filename, BufferConfig bufConfig = {})
+			: 	Resource<ALLEGRO_AUDIO_STREAM>(nullptr),
+				bufferConfig(bufConfig),
+				evSource(new AudioStreamEventSource(*this))
 		{
 			InternalRequire<AudioCodecAddon>();
-			if(auto* p = al_load_audio_stream(filename.c_str(), bufferCount, samples)) {
+			if(auto* p = al_load_audio_stream(filename.c_str(), bufConfig.numChunks, bufConfig.fragmentsPerChunk)) {
 				setPtr(p);
 			} else {
 				throw AudioError("Cannot load audio stream from file %s", filename.c_str());
@@ -136,41 +141,31 @@ namespace al {
 			return (double)getLength() / getFrequency();
 		}
 
-		[[nodiscard]] unsigned getNumFragments() const {
+		[[nodiscard]] unsigned getNumChunks() const {
 			return al_get_audio_stream_fragments(ptr());
 		}
-		[[nodiscard]] unsigned getNumAvailableFragments() const {
+		[[nodiscard]] unsigned getNumAvailableChunks() const {
 			return al_get_available_audio_stream_fragments(ptr());
 		}
 
-		void* getFragmentData() {
+		[[nodiscard]] void* getChunkDataPtr() const {
 			return al_get_audio_stream_fragment(ptr());
 		}
-		bool setFragmentData(void* data) {
+		bool commitChunk(void* data) {
 			return al_set_audio_stream_fragment(ptr(), data);
 		}
 
-		template<ALLEGRO_CHANNEL_CONF ChanConf, ALLEGRO_AUDIO_DEPTH AudioDepth>
-		bool setFragment(void (*filler)(std::span<typename AudioFragmentType<ChanConf, AudioDepth>::Type>))
-		{
-			using SmpType = typename AudioFragmentType<ChanConf, AudioDepth>::Type;
-			void* fragData = getFragmentData();
-			if(getFragmentData()) {
-				std::span<SmpType> typedFragData {static_cast<SmpType*>(fragData), getLength()};
-				filler(typedFragData);
-				setFragmentData(fragData);
-				return true;
-			}
-
-			return false;
+#ifdef ALLEGRO_UNSTABLE
+		bool setChannelMatrixData(const float* matrix) {
+			return al_set_audio_stream_channel_matrix(ptr(), matrix);
 		}
+#endif
 
-		//TODO setChannelMatrix
-
-	private:
+	protected:
+		BufferConfig bufferConfig;
 		using Resource::Resource;
+	private:
 
-//		static std::unique_ptr<AudioStream> defaultAudioStream;
 		std::unique_ptr<EventSource> evSource;
     };
 
@@ -178,6 +173,74 @@ namespace al {
 	{
 		return al_get_audio_stream_event_source(stream.ptr());
 	}
+
+
+
+	template<ValidSampleType TSample, ALLEGRO_CHANNEL_CONF TPChanConf>
+	class AudioStream : public BaseAudioStream {
+	public:
+
+		struct Traits {
+			static constexpr ALLEGRO_AUDIO_DEPTH Depth = AudioDepthOf<TSample>;
+			static constexpr ALLEGRO_CHANNEL_CONF ChanConf = TPChanConf;
+			static constexpr int NumChannels = GetChannelCount(ChanConf);
+			using SampleType = TSample;
+			using FragmentType = AudioFragmentType<TPChanConf, Depth>::Type;
+		};
+
+		explicit AudioStream(Freq freq = Hz(44100), BufferConfig bufConfig = {})
+			: BaseAudioStream({
+				.frequency = (unsigned)freq.getFreqHz(),
+				.depth = Traits::Depth,
+				.chanConf = Traits::ChanConf}, bufConfig)
+		{
+
+		}
+
+		explicit AudioStream(const std::string& filename, BufferConfig bufConfig = {})
+			: BaseAudioStream(filename, bufConfig)
+		{
+			if(getDepth() != Traits::Depth || getChannelConf() != Traits::ChanConf) {
+				throw AudioError(
+					"Audio file %s has wrong format (expected %s, got %s)",
+					AudioFormat{getFrequency(), Traits::Depth, Traits::ChanConf}.str().c_str(),
+					getAudioFormat().str().c_str()
+				);
+			}
+		}
+
+#ifdef ALLEGRO_UNSTABLE
+		bool setChannelMatrix(const std::span<Vec<float, Traits::NumChannels>> matrix) {
+			if constexpr(decltype(matrix)::value_type::IsContiguous) {
+				return setChannelMatrixData(reinterpret_cast<float*>(matrix.data()));
+			}
+
+			static constexpr int N = Traits::NumChannels;
+			std::vector<float> data(matrix.size() * N);
+			for(unsigned i=0; i<matrix.size(); i++) {
+				for(int j=0; j<N; j++) {
+					data[i*N + j] = matrix[i][j];
+				}
+			}
+			return setChannelMatrixData(data.data());
+		}
+#endif
+
+		[[nodiscard]] GenericEventHandler createChunkEventHandler(
+				std::function<void(std::span<typename Traits::FragmentType>)> filler)
+		{
+			using FragT = typename Traits::FragmentType;
+			return [filler, this]([[maybe_unused]] const Event& event){
+				if(void* vData = getChunkDataPtr()) {
+					std::span<FragT> data((FragT*)vData, (FragT*)vData + bufferConfig.fragmentsPerChunk);
+					filler(data);
+					commitChunk(vData);
+				}
+			};
+		}
+
+	};
+
 }
 
 #endif /* INCLUDE_AXXEGRO_AUDIO_AUDIOSTREAM */

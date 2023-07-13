@@ -100,11 +100,6 @@ namespace al {
 			return getPointer();
 		}
 
-		T* constPtr() const //TODO remove this
-		{
-			return getPointer();
-		}
-
 		T* ptr() const
 		{
 			return getPointer();

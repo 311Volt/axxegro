@@ -63,7 +63,7 @@ namespace al {
 		return al_draw_prim(
 			vertices.data(), 
 			nullptr, 
-			texture ? texture->get().constPtr() : nullptr, 
+			texture ? texture->get().ptr() : nullptr,
 			start, 
 			end==-1 ? vertices.size() : end, 
 			type
@@ -81,7 +81,7 @@ namespace al {
 		return al_draw_indexed_prim(
 			vertices.data(), 
 			nullptr, 
-			texture ? texture->get().constPtr() : nullptr, 
+			texture ? texture->get().ptr() : nullptr,
 			indices.data(), 
 			indices.size(), 
 			type
@@ -102,7 +102,7 @@ namespace al {
 		al_draw_prim(
 			vertices.data(), 
 			vd.ptr(), 
-			texture ? texture->get().constPtr() : nullptr, 
+			texture ? texture->get().ptr() : nullptr,
 			start, 
 			end==-1 ? vertices.size() : end, 
 			type
@@ -122,7 +122,7 @@ namespace al {
 		al_draw_indexed_prim(
 			vertices.data(), 
 			vd.ptr(), 
-			texture ? texture->get().constPtr() : nullptr, 
+			texture ? texture->get().ptr() : nullptr,
 			indices.data(), 
 			indices.size(), 
 			type

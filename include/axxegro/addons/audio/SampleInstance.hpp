@@ -13,10 +13,10 @@ namespace al
     class SampleInstance:
 			RequiresInitializables<AudioAddon>,
 			public Resource<ALLEGRO_SAMPLE_INSTANCE>,
-			public AddPlaybackParams<SampleInstance> {
+			public AddPlaybackParamsQuery<SampleInstance> {
     public:
         explicit SampleInstance(const Sample& sample)
-				: Resource<ALLEGRO_SAMPLE_INSTANCE>(al_create_sample_instance(sample.constPtr())) {
+				: Resource<ALLEGRO_SAMPLE_INSTANCE>(al_create_sample_instance(sample.ptr())) {
 			if(!ptr()) {
 				throw ResourceLoadError("Cannot create sample instance");
 			}
