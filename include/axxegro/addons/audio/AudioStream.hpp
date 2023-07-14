@@ -180,13 +180,7 @@ namespace al {
 	class AudioStream : public BaseAudioStream {
 	public:
 
-		struct Traits {
-			static constexpr ALLEGRO_AUDIO_DEPTH Depth = AudioDepthOf<TSample>;
-			static constexpr ALLEGRO_CHANNEL_CONF ChanConf = TPChanConf;
-			static constexpr int NumChannels = GetChannelCount(ChanConf);
-			using SampleType = TSample;
-			using FragmentType = AudioFragmentType<TPChanConf, Depth>::Type;
-		};
+		using Traits = FragmentTraits<TSample, TPChanConf>;
 
 		explicit AudioStream(Freq freq = Hz(44100), BufferConfig bufConfig = {})
 			: BaseAudioStream({

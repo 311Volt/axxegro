@@ -82,13 +82,7 @@ namespace al {
 		class TypedAudioRecorder: public BaseAudioRecorder {
 		public:
 
-			struct Traits {
-				static constexpr ALLEGRO_AUDIO_DEPTH Depth = AudioDepthOf<TSample>;
-				static constexpr ALLEGRO_CHANNEL_CONF ChanConf = TPChanConf;
-				using SampleType = TSample;
-				using FragmentType = AudioFragmentType<TPChanConf, Depth>::Type;
-			};
-
+			using Traits = FragmentTraits<TSample, TPChanConf>;
 
 			explicit TypedAudioRecorder(Freq frequency = al::Hz(44100), BufferConfig bufConfig = {})
 				: BaseAudioRecorder(

@@ -12,18 +12,11 @@ namespace al {
 			RequiresInitializables<AudioAddon>,
 			public Resource<ALLEGRO_VOICE> {
 	public:
-		explicit Voice(AudioFormat audioFormat = {})
+		explicit Voice(AudioFormat audioFormat = {.depth = ALLEGRO_AUDIO_DEPTH_INT16})
 				: Resource<ALLEGRO_VOICE>(al_create_voice(audioFormat.frequency, audioFormat.depth, audioFormat.chanConf))
 		{
 			if(!ptr()) {
 				throw AudioError("Could not create voice with format: %s", audioFormat.str().c_str());
-			}
-		}
-
-		~Voice()
-		{
-			if(lastDefaultVoice) {
-				al_set_default_voice(lastDefaultVoice);
 			}
 		}
 
@@ -37,12 +30,8 @@ namespace al {
 			return al_attach_sample_instance_to_voice(sampleInstance.ptr(), ptr());
 		}
 
-		bool setAsDefault() {
-			if(lastDefaultVoice != ptr()) {
-				lastDefaultVoice = ptr();
-			}
+		void setAsDefault() {
 			al_set_default_voice(ptr());
-			return false;
 		}
 
 		[[nodiscard]] unsigned getFrequency() const {
@@ -73,7 +62,6 @@ namespace al {
 	private:
 		friend class CDefaultVoice;
 		using Resource::Resource;
-		ALLEGRO_VOICE *lastDefaultVoice = nullptr;
 	};
 
 	class CDefaultVoice: public Voice {

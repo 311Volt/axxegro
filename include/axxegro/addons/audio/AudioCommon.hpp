@@ -224,6 +224,15 @@ namespace al
 	template<ValidMultiChannelFragmentType TFrag, ValidSampleType TNewSmp>
 	using ConvertFragSampleType = Vec<TNewSmp, TFrag::NumElements>;
 
+	template<ValidSampleType TSample, ALLEGRO_CHANNEL_CONF TPChanConf>
+	struct FragmentTraits {
+		static constexpr ALLEGRO_AUDIO_DEPTH Depth = AudioDepthOf<TSample>;
+		static constexpr ALLEGRO_CHANNEL_CONF ChanConf = TPChanConf;
+		static constexpr int NumChannels = GetChannelCount(ChanConf);
+		using SampleType = TSample;
+		using FragmentType = AudioFragmentType<TPChanConf, Depth>::Type;
+	};
+
 }
 
 #endif //AXXEGRO_AUDIOCOMMON_HPP

@@ -37,7 +37,7 @@ namespace al {
 			return std::ssize(data);
 		}
 
-		bool push(const std::span<T> elements) {
+		bool pushData(const std::span<T> elements) {
 			if(freeSpace() < elements.size()) {
 				return false;
 			}
@@ -53,7 +53,7 @@ namespace al {
 			return true;
 		}
 
-		bool pop(std::span<T> output) {
+		bool popInto(std::span<T> output) {
 			if(size() < output.size()) {
 				return false;
 			}

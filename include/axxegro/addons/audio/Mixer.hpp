@@ -22,12 +22,6 @@ namespace al {
 				throw AudioError("Cannot create mixer with format: %s", audioFormat.str().c_str());
 			}
 		}
-		~Mixer()
-		{
-			if(prevDefaultMixer) {
-				al_set_default_mixer(prevDefaultMixer);
-			}
-		}
 
 		bool attachMixer(Mixer& mixer) {
 			return al_attach_mixer_to_mixer(mixer.ptr(), ptr());
@@ -40,9 +34,6 @@ namespace al {
 		}
 
 		bool setAsDefault() {
-			if(prevDefaultMixer != ptr()) {
-				prevDefaultMixer = al_get_default_mixer();
-			}
 			return al_set_default_mixer(ptr());
 		}
 
@@ -95,20 +86,8 @@ namespace al {
 			return al_set_mixer_postprocess_callback(ptr(), cb, userdata);
 		}
 
-		template<ALLEGRO_CHANNEL_CONF ChanConf, ALLEGRO_AUDIO_DEPTH AudioDepth>
-		bool setPostprocessCallback(void (*callback)(std::span<typename AudioFragmentType<ChanConf, AudioDepth>::Type>))
-		{
-			using SmpType = typename AudioFragmentType<ChanConf, AudioDepth>::Type;
-			return setPostprocessCallbackFnPtr(
-				[callback](void *buf, unsigned samples, [[maybe_unused]] void *userdata) {
-					callback({static_cast<SmpType *>(buf), samples});
-				},
-				nullptr
-			);
-		}
 	private:
 		using Resource::Resource;
-		ALLEGRO_MIXER* prevDefaultMixer = nullptr;
 	};
 
 	namespace internal {
@@ -127,9 +106,37 @@ namespace al {
 		};
 	}
 
-
-
 	inline internal::CDefaultMixer DefaultMixer {nullptr, al::ResourceModel::NonOwning};
+
+	template<ValidSampleType TSample, ALLEGRO_CHANNEL_CONF TPChanConf>
+	class UserMixer: public Mixer {
+	public:
+
+		using Traits = FragmentTraits<TSample, TPChanConf>;
+
+		using CallbackT = std::function<void(std::span<typename Traits::FragmentType>)>;
+
+		explicit UserMixer(Freq freq = Hz(44100))
+			: Mixer({.frequency = unsigned(freq.getFreqHz()), .depth = Traits::Depth, .chanConf = TPChanConf})
+		{
+
+		}
+
+		bool setPostprocessCallback(std::function<void(std::span<typename Traits::FragmentType>)> callback) {
+			postprocessCallback = std::move(callback);
+
+			return setPostprocessCallbackFnPtr([](void* buf, unsigned samples, void* userdata) {
+
+				using FragT = typename Traits::FragmentType;
+				CallbackT& ppcb = *static_cast<CallbackT*>(userdata);
+				ppcb(std::span<FragT>((FragT*)buf, (FragT*)buf + samples));
+
+			}, &postprocessCallback);
+		}
+
+	private:
+		CallbackT postprocessCallback;
+	};
 
 }
 

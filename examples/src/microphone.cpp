@@ -80,7 +80,7 @@ struct RingModulator {
 			output[i] = input[i] * carrier;
 		}
 
-		buffer.push(output);
+		buffer.pushData(output);
 	}
 
 	/*
@@ -88,7 +88,7 @@ struct RingModulator {
 	 */
 	bool request(std::span<al::Vec2f> outputBuffer) {
 		if(buffer.size() >= outputBuffer.size()) {
-			buffer.pop(outputBuffer);
+			buffer.popInto(outputBuffer);
 			return true;
 		}
 		return false;
@@ -108,6 +108,7 @@ int main()
 {
 	al::Display disp(640, 480);
 	std::set_terminate(al::Terminate);
+	double playbackGain = 1.0;
 
 	al::Font font("data/roboto.ttf", 16);
 
@@ -127,7 +128,15 @@ int main()
 	 * The stream. Will be used to play back the user's voice to them.
 	 */
 	al::AudioStream<float, al::Stereo> stream(al::Hz(44100), {.fragmentsPerChunk = AudioBufferSize});
-	al::DefaultMixer.attachAudioStream(stream);
+
+
+	//Set up a custom audio configuration
+	al::Voice voice;
+	al::UserMixer<float, al::Stereo> mixer;
+	voice.attachMixer(mixer);
+	mixer.attachAudioStream(stream);
+
+
 
 	AudioMeter meter;
 	RingModulator modulator(440);
@@ -171,6 +180,25 @@ int main()
 		})
 	);
 
+	loop.eventDispatcher
+		.onKeyCharKeycode(ALLEGRO_KEY_PAD_PLUS, [&](){playbackGain *= 1.1;})
+		.onKeyCharKeycode(ALLEGRO_KEY_PAD_MINUS, [&](){playbackGain /= 1.1;});
+
+	mixer.setPostprocessCallback([&](std::span<al::Vec2f> samples) {
+		for(auto& smp: samples) {
+			smp *= playbackGain;
+		}
+	});
+
+	/*
+	 * Note: The above event handlers will run in the main thread, which is also responsible
+	 * for input handling and rendering. This is a bad idea: consider what happens if rendering
+	 * is slow enough to not keep up with audio events.
+	 *
+	 * In your own programs, run a separate audio thread and keep separate event queues for audio
+	 * so that you can respond to audio events immediately.
+	 */
+
 	al::RectI meterRectL = al::RectI::XYWH(20, 100, 400, 32);
 	al::RectI meterRectR = meterRectL + al::Vec2i(0, 40);
 
@@ -182,6 +210,7 @@ int main()
 		 */
 		auto msg = al::Format("peaks: L %02.1f dB | R %02.1f dB", dB(meter.leftPeak), dB(meter.rightPeak));
 		font.drawText(msg, al::White, {50, 50});
+		font.drawText(al::Format("playback gain: %02.1f dB", dB(playbackGain)), al::White, {50, 75});
 
 		al::DrawFilledRectangle(meterRectL, al::RGB(20, 20, 20));
 		al::DrawFilledRectangle(meterRectR, al::RGB(20, 20, 20));
@@ -192,7 +221,7 @@ int main()
 		al::CurrentDisplay.flip();
 	};
 
-	loop.enableFramerateLimit(al::Hz(60));
+	loop.enableFramerateLimit(al::Hz(120));
 	loop.run();
 
 }
