@@ -70,7 +70,7 @@ namespace al {
 		///@brief Pops the event at the front of the queue and returns it.
 		EventOwner pop() {
 			if(empty()) {
-				throw EventQueueError("popInto() called on an empty event queue. always check the queue with empty()");
+				throw EventQueueError("pop() called on an empty event queue. always check the queue with empty()");
 			}
 			ALLEGRO_EVENT ret;
 			al_get_next_event(ptr(), &ret);
@@ -96,7 +96,7 @@ namespace al {
 		
 		/**
 		 * @brief Pops the event. 
-		 * Use this instead of popInto() if you want to be explicit about ignoring an event.
+		 * Use this instead of pop() if you want to be explicit about ignoring an event.
 		 * @return true on success
 		 * @return false on failure (queue was already empty)
 		 */
