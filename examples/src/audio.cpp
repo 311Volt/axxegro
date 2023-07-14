@@ -8,11 +8,8 @@ int main()
 	using namespace al::FreqLiterals;
 	std::set_terminate(al::Terminate);
 	al::Display disp(640, 480);
-	al::EventLoop evLoop = al::EventLoop::Basic();
-	evLoop.enableEscToQuit();
+	al::EventLoop evLoop(al::DemoEventLoopConfig);
 	al::Font font("data/roboto.ttf", 36);
-
-
 
 	al::SampleInstance::ReserveSamples(16);
 
@@ -23,16 +20,14 @@ int main()
 
 	al::Sample uuhhh("data/audio/uuhhh.ogg"); //sue me bitches
 
-	evLoop.loopBody = [&](){
-		al::TargetBitmap.clearToColor(al::Blue);
-		font.drawText("press F to oof", al::White, {100, 100});
-		al::CurrentDisplay.flip();
-	};
-
 	evLoop.eventDispatcher.onKeyDown(ALLEGRO_KEY_F, [&](){
 		uuhhh.play();
 	});
 
-	evLoop.enableFramerateLimit(30_Hz);
-	evLoop.run();
+	evLoop.setFramerateLimit(30_Hz);
+	evLoop.run([&](){
+		al::TargetBitmap.clearToColor(al::Blue);
+		font.drawText("press F to oof", al::White, {100, 100});
+		al::CurrentDisplay.flip();
+	});
 }

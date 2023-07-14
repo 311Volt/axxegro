@@ -27,15 +27,14 @@ int main()
 	/* create a basic event loop, which comes pre-configured
 	 * with i/o event sources and a proper handler for the
 	 * window close event */
-	al::EventLoop evLoop = al::EventLoop::Basic();
-	evLoop.enableEscToQuit();
+	al::EventLoop evLoop(al::DemoEventLoopConfig);
 
-	/* create the loop body */
-	evLoop.loopBody = [&](){
+
+	evLoop.run([&](){
 		al::TargetBitmap.clearToColor(al::RGB(150,180,240));
 
 		dvdLogo.drawScaled(dvdLogo.rect(), logoRect);
-		
+
 		logoRect += speed * evLoop.getLastTickTime();
 
 		//bouncing
@@ -49,10 +48,5 @@ int main()
 		logoRect = scrRect.clamp(logoRect);
 
 		al::CurrentDisplay.flip();
-	};
-
-	//enable the frame limiter
-	evLoop.enableFramerateLimit();
-
-	evLoop.run();
+	});
 }

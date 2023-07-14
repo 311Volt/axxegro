@@ -35,7 +35,10 @@ namespace al {
 
 		explicit BaseAudioRecorder(
 				AudioFormat fmt = {.depth = ALLEGRO_AUDIO_DEPTH_INT16},
-				BufferConfig bufferConfig = {}
+				BufferConfig bufferConfig = {
+					.numChunks = 12,
+					.fragmentsPerChunk = 1024
+				}
 		)
 		: Resource(nullptr), evSource(std::make_unique<AudioRecorderEventSource>(*this))
 		{
@@ -84,7 +87,12 @@ namespace al {
 
 			using Traits = FragmentTraits<TSample, TPChanConf>;
 
-			explicit TypedAudioRecorder(Freq frequency = al::Hz(44100), BufferConfig bufConfig = {})
+			explicit TypedAudioRecorder(
+				Freq frequency = al::Hz(44100),
+				BufferConfig bufConfig = {
+					.numChunks = 12,
+					.fragmentsPerChunk = 1024
+				})
 				: BaseAudioRecorder(
 					{
 						.frequency = (unsigned)frequency.getFreqHz(),
@@ -104,8 +112,9 @@ namespace al {
 					"Use BaseAudioRecorder and do buffer type management manually."
 			);
 
-			EventHandler<RawAudioRecorderEvent> createHandler(
-					std::function<void(const std::span<typename Traits::FragmentType>)> fn)
+			EventHandler<RawAudioRecorderEvent> createChunkEventHandler(
+				std::function<void(const std::span<typename Traits::FragmentType>)> fn
+			)
 			{
 				using FragT = typename Traits::FragmentType;
 
@@ -144,7 +153,9 @@ namespace al {
 		using ImplTraits = typename Super::Traits;
 		using Traits = ::al::internal::TypedAudioRecorder<float, TPChanConf>::Traits;
 
-		EventHandler<RawAudioRecorderEvent> createHandler(std::function<void(const std::span<typename Traits::FragmentType>)> fn) {
+		EventHandler<RawAudioRecorderEvent> createChunkEventHandler(
+			std::function<void(const std::span<typename Traits::FragmentType>)> fn
+		) {
 			return [fn, this](const RawAudioRecorderEvent& ev, [[maybe_unused]] const al::AnyEvent& meta) {
 				using ImplFragT = typename ImplTraits::FragmentType;
 

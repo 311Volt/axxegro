@@ -23,7 +23,13 @@ namespace al {
 			public AddAudioFormatQuery<BaseAudioStream> {
     public:
 
-		explicit BaseAudioStream(AudioFormat format = {}, BufferConfig bufConfig = {})
+		explicit BaseAudioStream(
+			AudioFormat format = {},
+			BufferConfig bufConfig = {
+				.numChunks = 2,
+				.fragmentsPerChunk = 2048
+			}
+		)
 				: Resource<ALLEGRO_AUDIO_STREAM>(nullptr),
 				  bufferConfig(bufConfig),
 				  evSource(new AudioStreamEventSource(*this))
@@ -38,7 +44,10 @@ namespace al {
 			}
 		}
 
-		explicit BaseAudioStream(const std::string& filename, BufferConfig bufConfig = {})
+		explicit BaseAudioStream(const std::string& filename, BufferConfig bufConfig = {
+			.numChunks = 2,
+			.fragmentsPerChunk = 2048
+		})
 			: 	Resource<ALLEGRO_AUDIO_STREAM>(nullptr),
 				bufferConfig(bufConfig),
 				evSource(new AudioStreamEventSource(*this))

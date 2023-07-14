@@ -22,8 +22,7 @@ int main()
 
 	al::Bitmap blueNoise("data/bluenoise.png");
 
-	auto evLoop = al::EventLoop::Basic();
-	evLoop.enableEscToQuit();
+	al::EventLoop evLoop(al::DemoEventLoopConfig);
 
 	al::Shader sh;
 	sh.attachDefaultVertexShader();
@@ -61,17 +60,14 @@ int main()
 	al::Shader::SetSampler("blue_noise", blueNoise, 1);
 	al::Shader::SetVector("scr_size", al::CurrentDisplay.size());
 
-	evLoop.loopBody = [&](){
+	evLoop.run([&](){
 		al::Shader::SetVector("mouse_pos", al::GetMousePos());
 		al::Shader::SetVector("dither_offset", al::Vec2f(randf64(), randf64()));
 
 		al::DrawFilledRectangle(al::CurrentDisplay.rect());
 
 		al::CurrentDisplay.flip();
-	};
-
-	evLoop.enableFramerateLimit();
-	evLoop.run();
+	});
 
 	return 0;
 }

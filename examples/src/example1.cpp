@@ -22,12 +22,30 @@ int main()
 	al::Bitmap bg("data/bg.jpg");
 	al::Font font("data/roboto.ttf", 24);
 
-	al::EventLoop loop = al::EventLoop::Basic();
-	loop.enableEscToQuit();
+	al::EventLoop loop(al::DemoEventLoopConfig);
 
 	al::Vec2f txtPos {320, 240};
 	std::string txtTest = al::Format("kb %dB, m %dB", (int)sizeof(ALLEGRO_KEYBOARD_STATE), (int)sizeof(ALLEGRO_MOUSE_STATE));
-	loop.loopBody = [&](){
+
+	loop.eventDispatcher.onMouseDown(al::LMB, [&](const al::MouseEvent& ev) {
+		txtPos = {ev.x, ev.y};
+	});
+
+
+	loop.eventDispatcher.onKeyDown(ALLEGRO_KEY_UP, [&](){
+		txtTest = "UP was pressed";
+	});
+	loop.eventDispatcher.onKeyDown(ALLEGRO_KEY_DOWN, [&](){
+		txtTest = "DOWN was pressed";
+	});
+	loop.eventDispatcher.onKeyDown(ALLEGRO_KEY_LEFT, [&](){
+		txtTest = "LEFT was pressed";
+	});
+	loop.eventDispatcher.onKeyDown(ALLEGRO_KEY_RIGHT, [&](){
+		txtTest = "RIGHT was pressed";
+	});
+
+	loop.run([&](){
 		al::TargetBitmap.clearToColor(al::RGB(0,0,0));
 
 		float txtMaxWidth = 10.0 + (0.5+0.5*std::sin(al::GetTime())) * 300.0;
@@ -51,45 +69,24 @@ int main()
 			al::ScopedTransform st(t);
 			al::DrawLine({}, {txtMaxWidth,0.0f}, al::Red, 4.0);
 			font.drawText(
-					txtTestCut,
-					al::RGB(255, 255, 255),
-					{0, 0}
+				txtTestCut,
+				al::RGB(255, 255, 255),
+				{0, 0}
 			);
 		}
-		
+
 		auto r2 = al::Rect<int>::XYWH(70, 30, 80, 80);
 		auto r1 = al::Rect<int>::XYWH(95, 160, 70, 70);
 		auto r3 = r1.makeUnion(r2);
 		al::DrawRectangle(r1, al::Blue);
 		al::DrawRectangle(r2, al::Blue);
 		al::DrawRectangle(r3, al::Magenta);
-		
+
 
 		for(int i=0; i<16; i++) {
 			al::DrawFilledRectangle(al::RectI::XYWH(16*i, 0, 16, 16), al::CGA(i));
 		}
 
 		al::CurrentDisplay.flip();
-	};
-
-	loop.eventDispatcher.onMouseDown(al::LMB, [&](const al::MouseEvent& ev) {
-		txtPos = {ev.x, ev.y};
 	});
-
-
-	loop.eventDispatcher.onKeyDown(ALLEGRO_KEY_UP, [&](){
-		txtTest = "UP was pressed";
-	});
-	loop.eventDispatcher.onKeyDown(ALLEGRO_KEY_DOWN, [&](){
-		txtTest = "DOWN was pressed";
-	});
-	loop.eventDispatcher.onKeyDown(ALLEGRO_KEY_LEFT, [&](){
-		txtTest = "LEFT was pressed";
-	});
-	loop.eventDispatcher.onKeyDown(ALLEGRO_KEY_RIGHT, [&](){
-		txtTest = "RIGHT was pressed";
-	});
-
-	loop.enableFramerateLimit();
-	loop.run();
 }

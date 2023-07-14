@@ -9,6 +9,8 @@
 #include "../display/Display.hpp"
 #include "../time.hpp"
 #include "../io.hpp"
+#include "../time/FramerateLimiter.hpp"
+#include "../time/FPSCounter.hpp"
 
 #include <unordered_map>
 #include <optional>
@@ -17,105 +19,128 @@
 
 
 namespace al {
-	class EventLoop: RequiresInitializables<CoreAllegro> {
-		
-		//copy elision for Basic()
-		class BasicInit{};
 
-		explicit EventLoop(BasicInit)
-				: EventLoop()
-		{
-			initDefaultEventQueue();
-			initDefaultDispatcher();
-		}
+	struct EventLoopConfig {
+		bool registerKeyboardEventSource = true;
+		bool registerMouseEventSource = true;
+		bool registerCurrentDisplayEventSource = true;
+		bool quitOnDisplayClosed = true;
+		bool quitOnEscPressed = false;
+		bool autoAcknowledgeResize = true;
+		FramerateLimit framerateLimit = FramerateLimiterMode::None{};
+	};
+
+	inline constexpr EventLoopConfig EmptyEventLoopConfig = {
+		.registerKeyboardEventSource = false,
+		.registerMouseEventSource = false,
+		.registerCurrentDisplayEventSource = false,
+		.quitOnDisplayClosed = false,
+		.quitOnEscPressed = false,
+		.autoAcknowledgeResize = false
+	};
+
+	inline constexpr EventLoopConfig BasicEventLoopConfig = {
+		.registerKeyboardEventSource = true,
+		.registerMouseEventSource = true,
+		.registerCurrentDisplayEventSource = true,
+		.quitOnDisplayClosed = true,
+		.quitOnEscPressed = false,
+		.autoAcknowledgeResize = true
+	};
+
+	inline constexpr EventLoopConfig DemoEventLoopConfig = {
+		.registerKeyboardEventSource = true,
+		.registerMouseEventSource = true,
+		.registerCurrentDisplayEventSource = true,
+		.quitOnDisplayClosed = true,
+		.quitOnEscPressed = true,
+		.autoAcknowledgeResize = true,
+		.framerateLimit = FramerateLimiterMode::Auto{}
+	};
+
+
+
+	class EventLoop: RequiresInitializables<CoreAllegro> {
 
 	public:
-
-		EventLoop() = default;
 		~EventLoop() = default;
 
-		void enableFramerateLimit(Freq freq = al::CurrentDisplay.findGoodFramerateLimit()) {
-			clockTimer = std::make_unique<Timer>(freq);
-			clockEventQueue.registerSource(clockTimer->getEventSource());
-			clockTimer->start();
-		}
-		void disableFramerateLimit() {
-			clockTimer.reset();
-		}
+		explicit EventLoop(EventLoopConfig config = BasicEventLoopConfig) {
 
-		void initDefaultEventQueue() {
-			eventQueue.registerSource(GetMouseEventSource());
-			eventQueue.registerSource(GetKeyboardEventSource());
-			eventQueue.registerSource(al::CurrentDisplay.eventSource());
-		}
-
-		void initDefaultDispatcher() {
-			eventDispatcher.setEventHandler<DisplayEvent>(ALLEGRO_EVENT_DISPLAY_CLOSE, [this](){
-				exitFlag = true;
-			});
-			eventDispatcher.setEventHandler<DisplayEvent>(ALLEGRO_EVENT_DISPLAY_RESIZE, [](){
-				CurrentDisplay.acknowledgeResize();
-			});
-		}
-		void enableEscToQuit() {
-			eventDispatcher.onKeyDown(ALLEGRO_KEY_ESCAPE, [this](){
-				exitFlag = true;
-			});
-
-		}
-		void run() {
-			while(!exitFlag) {
-				double t0 = GetTime();
-				while(!eventQueue.empty()) {
-					auto event = eventQueue.pop();
-					eventDispatcher.dispatch(event.get());
-				}
-				if(clockTimer) {
-					clockEventQueue.wait();
-					clockEventQueue.flush();
-				}
-				loopBody();
-				double endTickTime = GetTime();
-				lastTickTime = endTickTime - t0;
-				fpsCounter++;
-				if(endTickTime - lastFpsUpdateTime > 1.0) {
-					fps = fpsCounter;
-					fpsCounter = 0;
-					lastFpsUpdateTime = endTickTime;
-				}
-				tick++;
+			if(config.registerKeyboardEventSource) {
+				eventQueue.registerSource(GetKeyboardEventSource());
 			}
-			exitFlag = false;
+			if(config.registerMouseEventSource) {
+				eventQueue.registerSource(GetMouseEventSource());
+			}
+			if(config.registerCurrentDisplayEventSource) {
+				eventQueue.registerSource(al::CurrentDisplay.eventSource());
+			}
+
+			if(config.quitOnDisplayClosed) {
+				eventDispatcher.setEventHandler<DisplayEvent>(ALLEGRO_EVENT_DISPLAY_CLOSE, [this](){
+					setExitFlag();
+				});
+			}
+			if(config.quitOnEscPressed) {
+				eventDispatcher.onKeyDown(ALLEGRO_KEY_ESCAPE, [this](){
+					setExitFlag();
+				});
+			}
+			if(config.autoAcknowledgeResize) {
+				eventDispatcher.setEventHandler<DisplayEvent>(ALLEGRO_EVENT_DISPLAY_RESIZE, [](){
+					CurrentDisplay.acknowledgeResize();
+				});
+			}
+
+			setFramerateLimit(config.framerateLimit);
+
+		}
+
+		void setFramerateLimit(FramerateLimit limit) {
+			framerateLimiter.setLimit(limit);
 		}
 
 		void setExitFlag() {
 			exitFlag = true;
 		}
 
-		static EventLoop Basic() {
-			return EventLoop(BasicInit());
+		void run(const std::function<void(void)>& loopBody) {
+			while(!exitFlag) {
+				framerateLimiter.wait();
+				while(!eventQueue.empty()) {
+					auto event = eventQueue.pop();
+					eventDispatcher.dispatch(event.get());
+				}
+				loopBody();
+				double endTickTime = GetTime();
+				if(lastTimeOfTick > 0.0) {
+					lastTickTime = endTickTime - lastTimeOfTick;
+				}
+				lastTimeOfTick = endTickTime;
+				fpsCounter.acknowledgeFrame();
+				tick++;
+			}
+			exitFlag = false;
 		}
 
-		int64_t getTick() const {
+		[[nodiscard]] int64_t getTick() const {
 			return tick;
 		}
-		int64_t getFPS() const {
-			return fps;
+		[[nodiscard]] int64_t getFPS() const {
+			return fpsCounter.getFPS();
 		}
-		double getLastTickTime() const {
+		[[nodiscard]] double getLastTickTime() const {
 			return lastTickTime;
 		}
 
 		EventQueue eventQueue;
 		EventDispatcher eventDispatcher;
-		std::function<void(void)> loopBody = [](){};
 	private:
-		std::unique_ptr<Timer> clockTimer;
-		EventQueue clockEventQueue;
+		FramerateLimiter framerateLimiter;
+		FPSCounter fpsCounter;
 		int64_t tick = 0;
-		int64_t fps = 0;
-		int64_t fpsCounter = 0;
-		double lastFpsUpdateTime = -1.0;
+		double lastTimeOfTick = -1.0;
 		double lastTickTime = 0.01;
 		bool exitFlag = false;
 	};

@@ -126,7 +126,6 @@ namespace al {
 			postprocessCallback = std::move(callback);
 
 			return setPostprocessCallbackFnPtr([](void* buf, unsigned samples, void* userdata) {
-
 				using FragT = typename Traits::FragmentType;
 				CallbackT& ppcb = *static_cast<CallbackT*>(userdata);
 				ppcb(std::span<FragT>((FragT*)buf, (FragT*)buf + samples));

@@ -60,8 +60,7 @@ int main()
 	std::deque<std::string> messages;
 
 	//create the event loop
-	auto evLoop = al::EventLoop::Basic();
-	evLoop.enableEscToQuit();
+	al::EventLoop evLoop(al::DemoEventLoopConfig);
 
 
 	MyEventSource mySource;
@@ -94,8 +93,7 @@ int main()
 		.onKeyCharKeycode(ALLEGRO_KEY_A, [&](){mySource.customEmitEvent();})
 		.onKeyCharKeycode(ALLEGRO_KEY_Z, [&](){mySource.emitEvent(SimpleEvent{.a = 1, .b = 2});});
 
-
-	evLoop.loopBody = [&](){
+	evLoop.run([&](){
 		al::TargetBitmap.clearToColor(al::RGB(0,0,60));
 
 		font.drawText("Press A or Z to emit events", al::White, {al::CurrentDisplay.width() / 2.f, 10.f},
@@ -114,8 +112,5 @@ int main()
 
 
 		al::CurrentDisplay.flip();
-	};
-
-	evLoop.enableFramerateLimit();
-	evLoop.run();
+	});
 }

@@ -14,8 +14,10 @@
 #include <queue>
 #include <ranges>
 #include <numbers>
+#include <thread>
+#include <atomic>
 
-static constexpr int AudioBufferSize = 1024;
+using namespace al::Literals;
 
 /*
  * Utility
@@ -39,7 +41,7 @@ float dB(float val)
  */
 struct AudioMeter {
 
-	void onBuffer(const std::span<al::Vec2f> buffer) {
+	void consume(const std::span<al::Vec2f> buffer) {
 		leftCh.resize(buffer.size());
 		rightCh.resize(buffer.size());
 
@@ -49,7 +51,7 @@ struct AudioMeter {
 		}
 	}
 
-	float leftPeak=0.0f, rightPeak=0.0f;
+	std::atomic<float> leftPeak=0.0f, rightPeak=0.0f;
 
 private:
 	std::vector<float> leftCh, rightCh;
@@ -64,53 +66,74 @@ private:
  */
 struct RingModulator {
 
-	explicit RingModulator(double carrierFreq): buffer(10 * AudioBufferSize), carrierFrequency(carrierFreq) {}
+	explicit RingModulator(al::Freq carrierFreq): buffer(32768), carrierFrequency(carrierFreq) {}
 
 	/*
 	 * Take the input, process it and save it in the ring buffer.
 	 */
-	void consume(const std::span<al::Vec2f> input)
+	bool consume(const std::span<al::Vec2f> input)
 	{
 		static std::vector<al::Vec2f> output;
 		output.resize(input.size());
 
 		for(unsigned i=0; i<input.size(); i++) {
 			double tSecs = double(samplesProcessed++) / sampleRate;
-			double carrier = std::sin(2.0 * std::numbers::pi * (tSecs * carrierFrequency));
+			double carrier = std::sin(2.0 * std::numbers::pi * (tSecs * carrierFrequency.getFreqHz()));
 			output[i] = input[i] * carrier;
+			//output[i] = al::Vec2f(0.2, 0.2) * carrier;
 		}
 
-		buffer.pushData(output);
+		return buffer.pushData(output);
 	}
 
 	/*
 	 * If able to, fill outputBuffer with processed samples.
 	 */
 	bool request(std::span<al::Vec2f> outputBuffer) {
-		if(buffer.size() >= outputBuffer.size()) {
-			buffer.popInto(outputBuffer);
-			return true;
+		if(buffer.size() < cooldown) {
+			return false;
 		}
-		return false;
+
+		cooldown = 0;
+		if(buffer.popInto(outputBuffer)) {
+			return true;
+		} else {
+			// Delay the stream a bit to ensure smooth playback
+			cooldown = 2 * outputBuffer.size();
+			return false;
+		}
 	}
 
+	int bufsize() {return buffer.size();}
 private:
 	al::RingBuffer<al::Vec2f> buffer;
 
 	int64_t samplesProcessed = 0;
-	double carrierFrequency = 440.0f;
+	int64_t cooldown = 0;
+	al::Freq carrierFrequency;
 	double sampleRate = 44100.0;
 
 };
 
+/*
+ * This class contains our audio code.
+ *
+ * While axxegro's audio streams are technically usable without creating
+ * a separate thread, every serious application should have its own
+ * audio thread. This way, we can handle audio chunk events as soon
+ * as they happen.
+ */
+class AudioThreadRunnable {
+public:
 
-int main()
-{
-	al::Display disp(640, 480);
-	std::set_terminate(al::Terminate);
-	double playbackGain = 1.0;
+	al::Voice voice;
+	al::UserMixer<float, al::Stereo> mixer;
 
-	al::Font font("data/roboto.ttf", 16);
+
+	/*
+	 * The stream. Will be used to play back the user's voice to them.
+	 */
+	al::AudioStream<float, al::Stereo> stream;
 
 	/*
 	 * The recorder. Defaults to 44100 Hz and 16 buffers 1024 fragments each.
@@ -121,107 +144,126 @@ int main()
 	 * depth is currently broken.
 	 * This behavior is opt-out with AXXEGRO_USE_NATIVE_FLOAT32_AUDIO_RECORDER.
 	 */
-	al::AudioRecorder<float, al::Stereo> recorder(al::Hz(44100), {.fragmentsPerChunk = AudioBufferSize});
+	al::AudioRecorder<float, al::Stereo> recorder;
 
-
-	/*
-	 * The stream. Will be used to play back the user's voice to them.
-	 */
-	al::AudioStream<float, al::Stereo> stream(al::Hz(44100), {.fragmentsPerChunk = AudioBufferSize});
-
-
-	//Set up a custom audio configuration
-	al::Voice voice;
-	al::UserMixer<float, al::Stereo> mixer;
-	voice.attachMixer(mixer);
-	mixer.attachAudioStream(stream);
-
-
+	al::EventDispatcher dispatcher;
 
 	AudioMeter meter;
-	RingModulator modulator(440);
+	RingModulator modulator;
 
-	al::EventLoop loop = al::EventLoop::Basic();
-	loop.enableEscToQuit();
+	std::atomic<double> playbackGain = 1.0;
 
-	loop.eventQueue.registerSource(recorder.getEventSource());
-	loop.eventQueue.registerSource(stream.getEventSource());
+	AudioThreadRunnable(unsigned streamBufSize, unsigned recBufSize)
+		: mixer(44100_Hz),
+		  stream(44100_Hz, {.numChunks = 2, .fragmentsPerChunk = streamBufSize}),
+		  recorder(44100_Hz, {.numChunks = 12, .fragmentsPerChunk = recBufSize}),
+		  modulator(440_Hz)
+	{
 
-	/*
-	 * The recorder will NOT generate any events unless started. You can query its status
-	 * with the isRecording() method.
-	 */
-	recorder.start();
+		voice.attachMixer(mixer);
+		mixer.attachAudioStream(stream);
 
-	/*
-	 * The stream will also not generate any events unless it's set as "playing".
-	 */
-	stream.setPlaying(true);
+		dispatcher.setEventHandler(
+			ALLEGRO_EVENT_AUDIO_RECORDER_FRAGMENT,
+			recorder.createChunkEventHandler(
+				[&](const std::span<al::Vec2f> buffer) {
 
-	loop.eventDispatcher.setEventHandler(
-		ALLEGRO_EVENT_AUDIO_RECORDER_FRAGMENT,
-		recorder.createHandler([&](const std::span<al::Vec2f> buffer) {
+					// We just got audio data from the microphone, let's handle it
+					modulator.consume(buffer);
+					meter.consume(buffer);
+				}
+			)
+		);
 
-			// We just got audio data from the microphone, let's handle it
+		dispatcher.setEventHandler(
+			ALLEGRO_EVENT_AUDIO_STREAM_FRAGMENT,
+			stream.createChunkEventHandler([&](std::span<al::Vec2f> streamData) {
 
-			modulator.consume(buffer);
-			meter.onBuffer(buffer);
-		})
-	);
+				/* The audio stream is ready for a new buffer. Let's ask our signal
+				 * processor for audio data. */
+				modulator.request(streamData);
+			})
+		);
 
-	loop.eventDispatcher.setEventHandler(
-		ALLEGRO_EVENT_AUDIO_STREAM_FRAGMENT,
-		stream.createChunkEventHandler([&](std::span<al::Vec2f> streamData) {
+		mixer.setPostprocessCallback([&](std::span<al::Vec2f> buf) {
+			auto gain = float(playbackGain);
+			for(auto& frag: buf) {
+				frag *= gain;
+			}
+		});
 
-			/* The audio stream is ready for a new buffer. Let's ask our signal
-			 * processor for audio data. */
 
-			modulator.request(streamData);
-		})
-	);
+	}
+
+
+	void run(const std::stop_token& token) {
+		al::EventQueue queue;
+		queue.registerSource(stream.getEventSource());
+		queue.registerSource(recorder.getEventSource());
+
+		stream.setPlaying(true);
+		recorder.start();
+
+		while(!token.stop_requested()) {
+			if(auto event = queue.waitFor(0.5)) {
+				dispatcher.dispatch(event->get());
+			}
+		}
+
+		stream.setPlaying(false);
+		recorder.stop();
+
+	}
+
+	void mulGain(double factor) {
+		playbackGain = playbackGain * factor;
+	}
+
+
+};
+
+
+int main()
+{
+	al::Display disp(640, 480);
+	std::set_terminate(al::Terminate);
+
+	al::Font font("data/roboto.ttf", 16);
+
+	AudioThreadRunnable audio(2048, 2048);
+	std::jthread audioThread([&](std::stop_token tok){audio.run(tok);});
+
+	al::EventLoop loop(al::DemoEventLoopConfig);
+
 
 	loop.eventDispatcher
-		.onKeyCharKeycode(ALLEGRO_KEY_PAD_PLUS, [&](){playbackGain *= 1.1;})
-		.onKeyCharKeycode(ALLEGRO_KEY_PAD_MINUS, [&](){playbackGain /= 1.1;});
+		.onKeyCharKeycode(ALLEGRO_KEY_PAD_PLUS, [&](){audio.mulGain(1.1);})
+		.onKeyCharKeycode(ALLEGRO_KEY_PAD_MINUS, [&](){audio.mulGain(1.0 / 1.1);});
 
-	mixer.setPostprocessCallback([&](std::span<al::Vec2f> samples) {
-		for(auto& smp: samples) {
-			smp *= playbackGain;
-		}
-	});
-
-	/*
-	 * Note: The above event handlers will run in the main thread, which is also responsible
-	 * for input handling and rendering. This is a bad idea: consider what happens if rendering
-	 * is slow enough to not keep up with audio events.
-	 *
-	 * In your own programs, run a separate audio thread and keep separate event queues for audio
-	 * so that you can respond to audio events immediately.
-	 */
 
 	al::RectI meterRectL = al::RectI::XYWH(20, 100, 400, 32);
 	al::RectI meterRectR = meterRectL + al::Vec2i(0, 40);
 
-	loop.loopBody = [&](){
+	loop.run([&](){
 		al::TargetBitmap.clear();
+
+		float peakL = audio.meter.leftPeak;
+		float peakR = audio.meter.rightPeak;
 
 		/*
 		 * Draw info text and peak meters
 		 */
-		auto msg = al::Format("peaks: L %02.1f dB | R %02.1f dB", dB(meter.leftPeak), dB(meter.rightPeak));
+		auto msg = al::Format("peaks: L %02.1f dB | R %02.1f dB", dB(peakL), dB(peakR));
 		font.drawText(msg, al::White, {50, 50});
-		font.drawText(al::Format("playback gain: %02.1f dB", dB(playbackGain)), al::White, {50, 75});
+		font.drawText(al::Format("playback gain: %02.1f dB", dB(audio.playbackGain)), al::White, {50, 75});
 
-		al::DrawFilledRectangle(meterRectL, al::RGB(20, 20, 20));
-		al::DrawFilledRectangle(meterRectR, al::RGB(20, 20, 20));
+		al::DrawFilledRectangle(meterRectL, 0x141414_RGB);
+		al::DrawFilledRectangle(meterRectR, 0x141414_RGB);
 
-		al::DrawFilledRectangle(meterRectL.scale({meter.leftPeak, 1}, {meterRectL.a.x, 0}), al::Green);
-		al::DrawFilledRectangle(meterRectR.scale({meter.rightPeak, 1}, {meterRectR.a.x, 0}), al::Green);
+		al::DrawFilledRectangle(meterRectL.scale({peakL, 1}, {meterRectL.a.x, 0}), al::Green);
+		al::DrawFilledRectangle(meterRectR.scale({peakR, 1}, {meterRectR.a.x, 0}), al::Green);
 
 		al::CurrentDisplay.flip();
-	};
-
-	loop.enableFramerateLimit(al::Hz(120));
-	loop.run();
+	});
 
 }

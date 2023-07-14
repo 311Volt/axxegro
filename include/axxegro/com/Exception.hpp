@@ -51,6 +51,7 @@ namespace al
 		AXXEGRO_DEF_EXCEPTION(ShaderError, ShaderBuildError);
     AXXEGRO_DEF_EXCEPTION(Exception, AudioError);
 	AXXEGRO_DEF_EXCEPTION(Exception, AddonError);
+	AXXEGRO_DEF_EXCEPTION(Exception, DisplayError);
 	AXXEGRO_DEF_EXCEPTION(Exception, DisplayCreationError);
 	AXXEGRO_DEF_EXCEPTION(Exception, BitmapLockError);
 	AXXEGRO_DEF_EXCEPTION(Exception, ResourceLoadError);

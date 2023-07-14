@@ -217,7 +217,7 @@ int main()
 	camera.pos = {30, 30, 100};
 
 	al::Transform proj = al::Transform::PerspectiveFOV(78, 0.01, 10000, al::CurrentDisplay.aspectRatio());
-	al::EventLoop loop = al::EventLoop::Basic();
+	al::EventLoop loop(al::DemoEventLoopConfig);
 	
 	const auto& builtinFont = al::Font::BuiltinFont();
 
@@ -227,9 +227,17 @@ int main()
 	Skybox skybox(al::Bitmap("data/nightsky.jpg"));
 
 	al::CurrentDisplay.hideCursor();
-	loop.enableEscToQuit();
-	loop.loopBody = [&](){
-		
+
+
+
+	//rotate the camera when we move the mouse
+	loop.eventDispatcher.onMouseMove([&](const al::MouseEvent& ev){
+		al::Vec2f delta = {ev.dx, ev.dy};
+		camera.rotate((delta * 0.002).transposed());
+	});
+
+	loop.run([&](){
+
 		//reset mouse to screen center
 		if((al::GetMousePos() - (display.size()/2.0)).length() > 15) {
 			al::SetMousePos(display.size()/2.0);
@@ -259,7 +267,7 @@ int main()
 
 		//al::DrawIndexedPrim(terrain.vertices, terrain.indices);
 		al::DrawIndexedBuffer(terrainVB, terrainIB, rockTexture);
-		
+
 		//render the HUD
 		al::TargetBitmap.setDepthTest(false);
 		al::TargetBitmap.resetTransform();
@@ -267,13 +275,5 @@ int main()
 		builtinFont.drawText(al::Format("%d fps", (int) loop.getFPS()), al::White, {15, 15});
 
 		al::CurrentDisplay.flip();
-	};
-
-	//rotate the camera when we move the mouse
-	loop.eventDispatcher.onMouseMove([&](const al::MouseEvent& ev){
-		al::Vec2f delta = {ev.dx, ev.dy};
-		camera.rotate((delta * 0.002).transposed());
 	});
-
-	loop.run();
 }

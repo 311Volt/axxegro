@@ -353,6 +353,11 @@ namespace al {
 		}
 	private:
 		[[nodiscard]] ALLEGRO_DISPLAY* getPointer() const override {
+#ifndef NDEBUG
+			if(al_get_current_display() == nullptr) {
+				throw DisplayError("No current display exists");
+			}
+#endif
 			return al_get_current_display();
 		}
 	};

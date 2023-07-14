@@ -23,8 +23,8 @@ namespace al
 	}
 
 	struct BufferConfig {
-		unsigned numChunks = 16;
-		unsigned fragmentsPerChunk = 1024;
+		unsigned numChunks;
+		unsigned fragmentsPerChunk;
 	};
 
 	struct PlaybackParams {

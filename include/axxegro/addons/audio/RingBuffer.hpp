@@ -8,6 +8,8 @@
 #include <span>
 #include <vector>
 
+#include "../../com/util/General.hpp"
+
 namespace al {
 
 	template<typename T>
@@ -74,13 +76,11 @@ namespace al {
 	private:
 
 		std::pair<std::span<T>, std::span<T>> makeRanges(DiffT begin, DiffT size) {
-			std::span<T> dspan(data);
-			DiffT surplus = (begin + size) - internalBufSize();
-			if(surplus > 0) {
-				return {dspan.subspan(begin), dspan.subspan(0, surplus)};
-			} else {
-				return {dspan.subspan(begin, size), dspan.subspan(0, 0)};
-			}
+			std::span bufspan(data);
+			return {
+				Subspan(bufspan, begin, size),
+				Subspan(bufspan, begin - internalBufSize(), size)
+			};
 		}
 
 		std::pair<std::span<T>, std::span<T>> partition(std::span<T> original, DiffT size) const {

@@ -34,10 +34,9 @@ int main()
 	//position and forward-facing vector
 	al::Vec3f pos{0,0,-5}, fwd{0,0,1};
 
-	auto evLoop = al::EventLoop::Basic();
-	evLoop.enableEscToQuit();
+	al::EventLoop evLoop(al::DemoEventLoopConfig);
 
-	evLoop.loopBody = [&](){
+	evLoop.run([&](){
 		al::TargetBitmap.clearToColor(skyColor);
 		double dt = evLoop.getLastTickTime();
 
@@ -49,7 +48,7 @@ int main()
 			pos += fwd * dt * 5.0f;
 		if(al::IsKeyDown(ALLEGRO_KEY_DOWN))
 			pos -= fwd * dt * 5.0f;
-		
+
 		//calculate forward direction based on orientation
 		fwd = {std::sin(rx * float(al::DEG2RAD)), 0.0f, std::cos(rx * float(al::DEG2RAD))};
 
@@ -57,20 +56,17 @@ int main()
 		al::TargetBitmap.resetTransform();
 		al::TargetBitmap.resetProjection();
 		font.drawText(
-				al::Format(
-						"player pos = (%.2f, %.2f, %.2f), facing %.2f deg",
-						pos.x, pos.y, pos.z, rx
-				),
-				al::White, {10, 10}
+			al::Format(
+				"player pos = (%.2f, %.2f, %.2f), facing %.2f deg",
+				pos.x, pos.y, pos.z, rx
+			),
+			al::White, {10, 10}
 		);
-		
+
 		//render 3D scene (in this case, one triangle)
 		al::Transform::Camera(pos, pos+fwd, {0,1,0}).use();
 		proj.useProjection();
 		al::DrawPrim(DemoTriangle, tex);
 		al::CurrentDisplay.flip();
-	};
-	
-	evLoop.enableFramerateLimit();
-	evLoop.run();
+	});
 }

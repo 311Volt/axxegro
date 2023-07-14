@@ -10,15 +10,25 @@
 namespace al {
 	
 	namespace ColorCoord {
-		
-		struct CMYK: public Vec4<float> {
-			CMYK(Color c){al_color_rgb_to_cmyk(c.r, c.g, c.b, &x, &y, &z, &w);}
-			Color asRGB(){return al_color_cmyk(x, y, z, w);}
+
+		struct RGB: public Vec3f {
+			RGB(Color c) : Vec3f(c.r, c.g, c.b) {}
+			Color toColor() {return {x, y, z, 1.0};};
 		};
 
-#define AXXEGRO_COLOR_SPACE(clsname, fnfrom, fnto) struct clsname: public Vec3<float> { \
+		struct RGBA: public Vec4f {
+			RGBA(Color c) : Vec4f(c.r, c.g, c.b, c.a) {}
+			Color toColor() {return {x, y, z, w};};
+		};
+		
+		struct CMYK: public Vec4f {
+			CMYK(Color c){al_color_rgb_to_cmyk(c.r, c.g, c.b, &x, &y, &z, &w);}
+			Color toColor(){return al_color_cmyk(x, y, z, w);}
+		};
+
+#define AXXEGRO_COLOR_SPACE(clsname, fnfrom, fnto) struct clsname: public Vec3f { \
 			clsname(Color c){fnfrom(c.r, c.g, c.b, &x, &y, &z);} \
-			Color asRGB() {return fnto(x, y, z);} \
+			Color toColor() {return fnto(x, y, z);} \
 		}
 		
 		AXXEGRO_COLOR_SPACE(HSL, al_color_rgb_to_hsl, al_color_hsl);
