@@ -16,8 +16,8 @@ namespace al {
 	class RingBuffer {
 	public:
 
-		using SizeT = std::span<T>::size_type;
-		using DiffT = std::span<T>::difference_type;
+		using SizeT = typename std::span<T>::size_type;
+		using DiffT = typename std::span<T>::difference_type;
 
 		explicit RingBuffer(SizeT capacity) {
 			data.resize(capacity+1);

@@ -5,7 +5,6 @@
 #include "event/EventSource.hpp"
 #include "event/EventQueue.hpp"
 #include "event/EventLoop.hpp"
-#include "event/LegacyEventDispatcher.hpp"
 #include "event/UserEvent.hpp"
 
 #endif //AXXEGRO_EVENT_HPP

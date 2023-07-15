@@ -22,7 +22,7 @@ namespace al {
 
 
 	template<typename T>
-	std::string ToStr(T val) {
+	std::string ToStr([[maybe_unused]] T val) {
 		AXXEGRO_STATIC_ASSERT_FALSE(T, "Cannot use this type as a config value");
 		return {};
 	}
@@ -44,7 +44,7 @@ namespace al {
 
 
 	template<typename T>
-	std::optional<T> FromStr(const std::string_view str) {
+	std::optional<T> FromStr([[maybe_unused]] const std::string_view str) {
 		AXXEGRO_STATIC_ASSERT_FALSE(T, "This type is not convertible from a config value string");
 	}
 

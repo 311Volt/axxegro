@@ -86,7 +86,7 @@ namespace al
 
 		[[nodiscard]] std::string str() const
 		{
-			return Format("%d Hz, %s", frequency, AudioFragmentFormat(depth, chanConf).str().c_str());
+			return Format("%d Hz, %s", frequency, AudioFragmentFormat{.depth=depth, .chanConf=chanConf}.str().c_str());
 		}
 	};
 
@@ -230,7 +230,7 @@ namespace al
 		static constexpr ALLEGRO_CHANNEL_CONF ChanConf = TPChanConf;
 		static constexpr int NumChannels = GetChannelCount(ChanConf);
 		using SampleType = TSample;
-		using FragmentType = AudioFragmentType<TPChanConf, Depth>::Type;
+		using FragmentType = typename AudioFragmentType<TPChanConf, Depth>::Type;
 	};
 
 }

@@ -16,10 +16,12 @@ on any scale at any time.
 
 # main features so far
 
-- Wrappers for most of Allegro's API
+- Full RAII for everything
+- Wrappers for most of Allegro
 - Built-in homebrew `Vec*` and `Rect` classes for screen coordinate manipulation
 - An `EventLoop` class that handles boilerplate for basic programs
 - Template-powered user event support
+- Type-safe audio processing
 - `constexpr` colors and helper functions
 - exceptions for common failure points (no more mysterious segfaults 
     when you forget to `al_init()` or misspell a filename)
@@ -37,22 +39,20 @@ lena.draw({0, 0});
 ```
 
 ```c++
-al::EventLoop loop = al::EventLoop::Basic(); //with pre-registered event sources
-loop.enableEscToQuit();
-loop.loopBody = [](){
-    al::TargetBitmap.clearToColor(al::Black);
-    handleInput();
-    render();
-    al::CurrentDisplay.flip();
-};
-loop.enableFramerateLimit(60); //limit to 60 fps
-loop.run(); //will run until window is closed
+al::EventLoop loop(al::DemoEventLoopConfig);
+// DemoEventLoopConfig includes default event sources,
+// exit on Esc/display close & a framerate limiter
+
+loop.run([&](){
+     al::TargetBitmap.clearToColor(al::Black);
+     handleInput();
+     render();
+     al::CurrentDisplay.flip();
+});
 ```
 # Compiler support
 
- - GCC: >= 12
-
-Should work down to GCC 10. Other compilers have not yet been tested.
+Tested on GCC 13.1 and Clang 16.
 
 # Building
 

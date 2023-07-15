@@ -430,7 +430,7 @@ namespace al {
 			}
 			
 			constexpr bool operator==(const BaseVec& rhs) const {
-				return [this, rhs]<std::size_t... Idxs>(std::integer_sequence<size_t, Idxs...> seq) {
+				return [this, rhs]<std::size_t... Idxs>([[maybe_unused]] std::integer_sequence<size_t, Idxs...> seq) {
 					return ((getElem<Idxs>() == rhs.getElem<Idxs>()) && ...);
 				}(std::make_index_sequence<NumElements>{});
 			}

@@ -2,7 +2,6 @@
 #define INCLUDE_AXXEGRO_CORE_EVENT_EVENTLOOP
 
 #include "EventQueue.hpp"
-#include "LegacyEventDispatcher.hpp"
 #include "EventDispatcher.hpp"
 
 #include "../../common.hpp"

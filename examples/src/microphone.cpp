@@ -109,7 +109,7 @@ private:
 	al::RingBuffer<al::Vec2f> buffer;
 
 	int64_t samplesProcessed = 0;
-	int64_t cooldown = 0;
+	size_t cooldown = 0;
 	al::Freq carrierFrequency;
 	double sampleRate = 44100.0;
 
@@ -155,7 +155,7 @@ public:
 
 	AudioThreadRunnable(unsigned streamBufSize, unsigned recBufSize)
 		: mixer(44100_Hz),
-		  stream(44100_Hz, {.numChunks = 2, .fragmentsPerChunk = streamBufSize}),
+		  stream(44100_Hz, {.numChunks = 3, .fragmentsPerChunk = streamBufSize}),
 		  recorder(44100_Hz, {.numChunks = 12, .fragmentsPerChunk = recBufSize}),
 		  modulator(440_Hz)
 	{
@@ -230,7 +230,7 @@ int main()
 
 	al::Font font("data/roboto.ttf", 16);
 
-	AudioThreadRunnable audio(2048, 2048);
+	AudioThreadRunnable audio(1024, 1024);
 	std::jthread audioThread([&](std::stop_token tok){audio.run(tok);});
 
 	al::EventLoop loop(al::DemoEventLoopConfig);

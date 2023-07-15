@@ -140,7 +140,7 @@ namespace al {
 	class AudioRecorder: public internal::TypedAudioRecorder<TSample, TPChanConf> {
 		using internal::TypedAudioRecorder<TSample, TPChanConf>::TypedAudioRecorder;
 
-		using Traits = internal::TypedAudioRecorder<TSample, TPChanConf>::Traits;
+		using Traits = typename internal::TypedAudioRecorder<TSample, TPChanConf>::Traits;
 	};
 
 #ifndef AXXEGRO_USE_NATIVE_FLOAT32_AUDIO_RECORDER
@@ -151,7 +151,7 @@ namespace al {
 		using Super = internal::TypedAudioRecorder<int16_t, TPChanConf>;
 		using internal::TypedAudioRecorder<int16_t, TPChanConf>::TypedAudioRecorder;
 		using ImplTraits = typename Super::Traits;
-		using Traits = ::al::internal::TypedAudioRecorder<float, TPChanConf>::Traits;
+		using Traits = typename ::al::internal::TypedAudioRecorder<float, TPChanConf>::Traits;
 
 		EventHandler<RawAudioRecorderEvent> createChunkEventHandler(
 			std::function<void(const std::span<typename Traits::FragmentType>)> fn
