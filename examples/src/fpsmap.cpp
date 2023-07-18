@@ -94,7 +94,7 @@ struct Camera {
 	
 	void rotate(al::Vec2f delta) 
 	{
-		rot += delta;
+		rot += delta.f64();
 		rot.x = std::clamp(rot.x, -1.5706, 1.5706);
 		rot.y = std::fmod(rot.y, ALLEGRO_PI * 2.0);
 	}

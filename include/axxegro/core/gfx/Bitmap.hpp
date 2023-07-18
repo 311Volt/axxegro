@@ -41,8 +41,13 @@ namespace al {
 		{
 			al_set_target_bitmap(oldTarget);
 		}
+		
+		ScopedTargetBitmap(const ScopedTargetBitmap&) = delete;
+		ScopedTargetBitmap& operator=(const ScopedTargetBitmap&) = delete;
+		ScopedTargetBitmap(ScopedTargetBitmap&&) = delete;
+		ScopedTargetBitmap& operator=(ScopedTargetBitmap&&) = delete;
+		
 	};
-
 	/**
 	 * @brief Wraps around ALLEGRO_BITMAP.
 	 */

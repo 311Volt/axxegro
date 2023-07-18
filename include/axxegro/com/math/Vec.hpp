@@ -570,15 +570,14 @@ namespace al {
 			}
 			
 			/*
-			 * implicit conversion, implicit only between floating point vectors
+			 * between-types conversion, implicit when non-narrowing
 			 */
-			template<typename OtherVecT> explicit (!(
-				std::floating_point<ValueType> &&
-				std::floating_point<typename OtherVecT::ValueType> &&
-				std::convertible_to<ValueType, typename OtherVecT::ValueType> &&
+			template<typename OtherVecT>
+			requires ((
 				!std::same_as<ValueType, typename OtherVecT::ValueType> &&
 				NumElements == OtherVecT::NumElements
 			))
+			explicit (IsNarrowingConversion<ValueType, typename OtherVecT::ValueType>)
 			constexpr BaseVec(const OtherVecT& other)
 				: BaseVec(other.template as<ValueType, TImpl>())
 			{

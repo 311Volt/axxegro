@@ -23,7 +23,19 @@ namespace al {
 	concept IndirectlyConvertibleTo = requires(From x) {
 		{To{x}};
 	};
+	
+	template<typename T>
+	concept Arithmetic = std::is_arithmetic_v<T>;
 
+	template<Arithmetic From, Arithmetic To>
+	constexpr bool IsNarrowingConversion = not requires(From x) {
+		{To{x}};
+	};
+
+	static_assert(IsNarrowingConversion<double, float>);
+	static_assert(not IsNarrowingConversion<float, double>);
+	static_assert(IsNarrowingConversion<unsigned, int>);
+	static_assert(not IsNarrowingConversion<unsigned, long long>);
 	
 }
 
