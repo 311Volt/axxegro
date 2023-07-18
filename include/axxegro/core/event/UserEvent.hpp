@@ -111,17 +111,21 @@ namespace al {
 		}
 
 		template<UserEventTypeRef EventRefT>
-		void emitEvent(EventRefT&& event) {
+		bool emitEvent(EventRefT&& event) {
 			using EventT = std::remove_cvref_t<EventRefT>;
 			Event ev = CreateUserEvent(std::forward<EventRefT>(event));
-			emitAllegroEvent<EventT>(ev);
+			return emitAllegroEvent<EventT>(ev);
 		}
 
 	private:
 		template<UserEventType EventT>
-		void emitAllegroEvent(Event& ev)
+		bool emitAllegroEvent(Event& ev)
 		{
-			al_emit_user_event(&evs, &ev, UserEventDtor<EventT>);
+			void (*dtor)(ALLEGRO_USER_EVENT*) = nullptr;
+			if constexpr (not CanStoreInDataFields<EventT>) {
+				dtor = UserEventDtor<EventT>;
+			}
+			return al_emit_user_event(&evs, &ev, dtor);
 		}
 
 	};

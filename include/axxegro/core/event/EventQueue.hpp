@@ -13,6 +13,7 @@ namespace al {
 
 	struct EventOwner {
 		explicit EventOwner(Event event): event(event) {}
+		
 		~EventOwner() {
 			if(ALLEGRO_EVENT_TYPE_IS_USER(event.type)) {
 				al_unref_user_event(&event.user);
@@ -28,8 +29,9 @@ namespace al {
 			other.event.type = 0;
 			return *this;
 		}
+		
 		EventOwner(EventOwner&& other) {
-			(*this) = std::move(other);
+			this->operator=(std::move(other));
 		}
 		
 		EventOwner(const EventOwner&) = delete;

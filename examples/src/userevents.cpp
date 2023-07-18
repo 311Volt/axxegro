@@ -88,7 +88,7 @@ int main()
 		messages.push_back(al::Format("simple event received: %d, %d", ev.a, ev.b));
 	});
 
-
+	
 	evLoop.eventDispatcher
 		.onKeyCharKeycode(ALLEGRO_KEY_A, [&](){mySource.customEmitEvent();})
 		.onKeyCharKeycode(ALLEGRO_KEY_Z, [&](){mySource.emitEvent(SimpleEvent{.a = 1, .b = 2});});

@@ -63,12 +63,12 @@ namespace al {
 
 
 		template<std::convertible_to<HandlerType> THandler>
-		explicit(false) GenericEventHandler(THandler&& handler) : handler_(std::forward<THandler>(handler))
+		explicit(false) GenericEventHandler(THandler handler) : handler_(std::forward<THandler>(handler))
 		{}
 
 		template<std::convertible_to<NoReturnHandlerType> THandler>
 			requires (!std::convertible_to<THandler, HandlerType>)
-		explicit(false) GenericEventHandler(THandler&& handler) {
+		explicit(false) GenericEventHandler(THandler handler) {
 			handler_ = [handler](const Event& ev) {
 				handler(ev);
 				return EventHandled;
@@ -76,7 +76,7 @@ namespace al {
 		}
 
 		template<std::convertible_to<MinimalHandlerType> THandler>
-		explicit(false) GenericEventHandler(THandler&& handler) {
+		explicit(false) GenericEventHandler(THandler handler) {
 			handler_ = [handler]([[maybe_unused]] const Event& ev) {
 				handler();
 				return EventHandled;
@@ -108,15 +108,15 @@ namespace al {
 		{}
 
 		template<std::convertible_to<SimplifiedHandlerType> THandler>
-		EventHandler(THandler&& handler) {
+		EventHandler(THandler handler) {
 			handler_ = [handler](const EventType& ev, [[maybe_unused]] const AnyEvent&) {
-				handler(ev);
+				return handler(ev);
 			};
 		}
 
 		template<std::convertible_to<NoReturnHandlerType> THandler>
 			requires (!std::convertible_to<THandler, HandlerType>)
-		EventHandler(THandler&& handler) {
+		EventHandler(THandler handler) {
 			handler_ = [handler](const EventType& ev, const AnyEvent& meta) {
 				handler(ev, meta);
 				return EventHandled;
@@ -125,7 +125,7 @@ namespace al {
 
 		template<std::convertible_to<NoReturnSimplifiedHandlerType> THandler>
 			requires (!std::convertible_to<THandler, SimplifiedHandlerType>)
-		EventHandler(THandler&& handler) {
+		EventHandler(THandler handler) {
 			handler_ = [handler](const EventType& ev, [[maybe_unused]] const AnyEvent&) {
 				handler(ev);
 				return EventHandled;
@@ -133,7 +133,7 @@ namespace al {
 		}
 
 		template<std::convertible_to<MinimalHandlerType> THandler>
-		EventHandler(THandler&& handler) {
+		EventHandler(THandler handler) {
 			handler_ = [handler]([[maybe_unused]] const EventType& ev, [[maybe_unused]] const AnyEvent&) {
 				handler();
 				return EventHandled;
@@ -209,7 +209,7 @@ namespace al {
 
 		template<UserEventType EventT>
 		EventDispatcher& setUserEventHandler(EventHandler<EventT> handler) {
-			return setEventHandler(EventT::EventTypeID, std::move(handler));
+			return setEventHandler<EventT>(EventT::EventTypeID, std::move(handler));
 		}
 
 		EventDispatcher& setCatchallHandler(GenericEventHandler handler) {
