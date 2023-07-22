@@ -56,8 +56,16 @@ int main()
 			int y = loop.getTick() % (bg.height()-10);
 			int x = loop.getTick() % (bg.width()-10);
 			al::Vec2i p{x, y}, bb{2, 2};
-			al::BitmapLockedRegion lr(bg, {p, p+bb}, ALLEGRO_PIXEL_FORMAT_ABGR_8888, ALLEGRO_LOCK_READWRITE);
-			lr.rowData<uint32_t>(1)[1] = 0xFF00FF;
+
+			auto region = bg.lock<al::PixelRGB888>(al::RectI::PosSize(p, bb));
+
+			for(int i=0; i<region.height(); i++) {
+				auto row = region.row(i);
+				for(auto& pixel: row) {
+					pixel.g = 255;
+				}
+			}
+
 		}
 
 		bg.drawScaled(bg.rect(), al::CurrentDisplay.rect());

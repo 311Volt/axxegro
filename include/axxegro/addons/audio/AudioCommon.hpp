@@ -210,13 +210,13 @@ namespace al
 	concept ValidFragmentType = ValidSampleType<T> || ValidMultiChannelFragmentType<T>;
 
 	template<ValidSampleType T>
-	constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf = ALLEGRO_AUDIO_DEPTH_INT8;
+	inline constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf = ALLEGRO_AUDIO_DEPTH_INT8;
 
-	template<> constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<int8_t> = ALLEGRO_AUDIO_DEPTH_INT8;
-	template<> constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<uint8_t> = ALLEGRO_AUDIO_DEPTH_UINT8;
-	template<> constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<int16_t> = ALLEGRO_AUDIO_DEPTH_INT16;
-	template<> constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<uint16_t> = ALLEGRO_AUDIO_DEPTH_UINT16;
-	template<> constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<float> = ALLEGRO_AUDIO_DEPTH_FLOAT32;
+	template<> inline constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<int8_t> = ALLEGRO_AUDIO_DEPTH_INT8;
+	template<> inline constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<uint8_t> = ALLEGRO_AUDIO_DEPTH_UINT8;
+	template<> inline constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<int16_t> = ALLEGRO_AUDIO_DEPTH_INT16;
+	template<> inline constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<uint16_t> = ALLEGRO_AUDIO_DEPTH_UINT16;
+	template<> inline constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<float> = ALLEGRO_AUDIO_DEPTH_FLOAT32;
 
 	inline constexpr ALLEGRO_CHANNEL_CONF Mono = ALLEGRO_CHANNEL_CONF_1;
 	inline constexpr ALLEGRO_CHANNEL_CONF Stereo = ALLEGRO_CHANNEL_CONF_2;

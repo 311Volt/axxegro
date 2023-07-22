@@ -39,7 +39,7 @@ namespace al {
 			return std::ssize(data);
 		}
 
-		bool pushData(const std::span<T> elements) {
+		bool pushData(const std::span<const T> elements) {
 			if(freeSpace() < elements.size()) {
 				return false;
 			}
@@ -84,6 +84,9 @@ namespace al {
 		}
 
 		std::pair<std::span<T>, std::span<T>> partition(std::span<T> original, DiffT size) const {
+			return {original.subspan(0, size), original.subspan(size)};
+		}
+		std::pair<std::span<const T>, std::span<const T>> partition(const std::span<const T> original, DiffT size) const {
 			return {original.subspan(0, size), original.subspan(size)};
 		}
 

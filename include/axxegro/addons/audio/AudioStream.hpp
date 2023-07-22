@@ -213,7 +213,7 @@ namespace al {
 		}
 
 #ifdef ALLEGRO_UNSTABLE
-		bool setChannelMatrix(const std::span<Vec<float, Traits::NumChannels>> matrix) {
+		bool setChannelMatrix(const std::span<const Vec<float, Traits::NumChannels>> matrix) {
 			if constexpr(decltype(matrix)::value_type::IsContiguous) {
 				return setChannelMatrixData(reinterpret_cast<float*>(matrix.data()));
 			}

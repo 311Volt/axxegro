@@ -113,7 +113,7 @@ namespace al {
 			);
 
 			EventHandler<RawAudioRecorderEvent> createChunkEventHandler(
-				std::function<void(const std::span<typename Traits::FragmentType>)> fn
+				std::function<void(const std::span<const typename Traits::FragmentType>)> fn
 			)
 			{
 				using FragT = typename Traits::FragmentType;
@@ -154,7 +154,7 @@ namespace al {
 		using Traits = typename ::al::internal::TypedAudioRecorder<float, TPChanConf>::Traits;
 
 		EventHandler<RawAudioRecorderEvent> createChunkEventHandler(
-			std::function<void(const std::span<typename Traits::FragmentType>)> fn
+			std::function<void(const std::span<const typename Traits::FragmentType>)> fn
 		) {
 			return [fn, this](const RawAudioRecorderEvent& ev, [[maybe_unused]] const al::AnyEvent& meta) {
 				using ImplFragT = typename ImplTraits::FragmentType;
@@ -164,7 +164,7 @@ namespace al {
 				}
 
 				floatFragBuffer.resize(ev.samples);
-				std::span<ImplFragT> inputBuffer((ImplFragT*)ev.buffer, (ImplFragT*)ev.buffer + ev.samples);
+				const std::span<const ImplFragT> inputBuffer((ImplFragT*)ev.buffer, (ImplFragT*)ev.buffer + ev.samples);
 				if(!ConvertFragmentsToFloat(inputBuffer, floatFragBuffer)) {
 					throw AudioError("internal error");
 				}

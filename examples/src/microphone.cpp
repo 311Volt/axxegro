@@ -41,7 +41,7 @@ float dB(float val)
  */
 struct AudioMeter {
 
-	void consume(const std::span<al::Vec2f> buffer) {
+	void consume(const std::span<const al::Vec2f> buffer) {
 		leftCh.resize(buffer.size());
 		rightCh.resize(buffer.size());
 
@@ -71,7 +71,7 @@ struct RingModulator {
 	/*
 	 * Take the input, process it and save it in the ring buffer.
 	 */
-	bool consume(const std::span<al::Vec2f> input)
+	bool consume(const std::span<const al::Vec2f> input)
 	{
 		static std::vector<al::Vec2f> output;
 		output.resize(input.size());
@@ -166,7 +166,7 @@ public:
 		dispatcher.setEventHandler(
 			ALLEGRO_EVENT_AUDIO_RECORDER_FRAGMENT,
 			recorder.createChunkEventHandler(
-				[&](const std::span<al::Vec2f> buffer) {
+				[&](const std::span<const al::Vec2f> buffer) {
 
 					// We just got audio data from the microphone, let's handle it
 					modulator.consume(buffer);
