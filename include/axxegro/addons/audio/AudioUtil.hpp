@@ -39,7 +39,6 @@ namespace al {
 		return true;
 	}
 
-
 	template<std::signed_integral T>
 	inline float AsFloatSample(T val)
 	{

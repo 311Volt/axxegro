@@ -1,6 +1,5 @@
 #include <axxegro/axxegro.hpp>
 
-#include <algorithm>
 
 /**
  * @file

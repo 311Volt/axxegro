@@ -36,6 +36,26 @@ target_link_libraries(${PROJECT_NAME} INTERFACE ${Allegro_LIBRARIES})
 target_include_directories(${PROJECT_NAME} INTERFACE ${Allegro_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} INTERFACE "include")
 
+
+function(axxegro_add_copy_resources_command TARGET_NAME SRC_DIR DST_DIR)
+
+	if(${CMAKE_VERSION} VERSION_LESS "3.26.0")
+		add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+				COMMAND ${CMAKE_COMMAND} -E copy_directory
+				${CMAKE_SOURCE_DIR}/${SRC_DIR} ${CMAKE_CURRENT_BINARY_DIR}/${DST_DIR}
+				)
+	else ()
+		add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+				COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+				${CMAKE_SOURCE_DIR}/${SRC_DIR} ${CMAKE_CURRENT_BINARY_DIR}/${DST_DIR}
+				)
+	endif()
+
+endfunction()
+
+
+
+
 option(AXXEGRO_BUILD_EXAMPLES "Build example programs" ${AXXEGRO_MASTER_PROJECT})
 if(AXXEGRO_BUILD_EXAMPLES)
 	add_subdirectory("examples")
@@ -62,5 +82,6 @@ if(DOXYGEN_FOUND)
 else(DOXYGEN_FOUND)
 	message("Doxygen not found, won't generate docs")
 endif(DOXYGEN_FOUND)
+
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)

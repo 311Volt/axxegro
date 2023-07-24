@@ -1,18 +1,6 @@
 
 add_custom_target(axxegro_examples ALL)
-
-if(${CMAKE_VERSION} VERSION_LESS "3.26.0")
-    add_custom_command(TARGET axxegro_examples POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CMAKE_SOURCE_DIR}/examples/data/ ${CMAKE_CURRENT_BINARY_DIR}/data
-            )
-else ()
-    add_custom_command(TARGET axxegro_examples POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
-            ${CMAKE_SOURCE_DIR}/examples/data/ ${CMAKE_CURRENT_BINARY_DIR}/data
-            )
-endif()
-
+axxegro_add_copy_resources_command(axxegro_examples "examples/data" "data")
 
 # if(WIN32)
 #     add_custom_command(TARGET axxegro_examples POST_BUILD
