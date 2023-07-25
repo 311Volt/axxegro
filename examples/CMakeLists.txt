@@ -1,14 +1,7 @@
 
 add_custom_target(axxegro_examples ALL)
 axxegro_add_copy_resources_command(axxegro_examples "examples/data" "data")
-
-# if(WIN32)
-#     add_custom_command(TARGET axxegro_examples POST_BUILD
-#         COMMAND ${CMAKE_COMMAND} -E copy_directory
-#         ${CMAKE_SOURCE_DIR}/examples/dll/ ${CMAKE_CURRENT_BINARY_DIR}
-#     )
-# endif()
-
+axxegro_add_copy_dlls_command(axxegro_examples "dll" "")
 
 function(axxegro_add_example name)
     add_executable("axx_ex_${name}" "src/${name}.cpp")

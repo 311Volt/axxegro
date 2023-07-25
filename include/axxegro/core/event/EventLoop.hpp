@@ -19,40 +19,39 @@
 
 namespace al {
 
+	enum BuiltinEventSourceMask {
+		KeyboardEventSourceBit = 1,
+		MouseEventSourceBit = 2,
+		CurrentDisplayEventSourceBit = 4
+	};
+
+	enum BuiltinQuitTriggersMask {
+		QuitOnDisplayClosedBit = 1,
+		QuitOnEscPressedBit = 2,
+	};
+
 	struct EventLoopConfig {
-		bool registerKeyboardEventSource = true;
-		bool registerMouseEventSource = true;
-		bool registerCurrentDisplayEventSource = true;
-		bool quitOnDisplayClosed = true;
-		bool quitOnEscPressed = false;
+		uint32_t autoRegisterEvents = KeyboardEventSourceBit | MouseEventSourceBit | CurrentDisplayEventSourceBit;
+		uint32_t enableQuitTriggers = QuitOnDisplayClosedBit | QuitOnEscPressedBit;
 		bool autoAcknowledgeResize = true;
 		FramerateLimit framerateLimit = FramerateLimiterMode::None{};
 	};
 
 	inline constexpr EventLoopConfig EmptyEventLoopConfig = {
-		.registerKeyboardEventSource = false,
-		.registerMouseEventSource = false,
-		.registerCurrentDisplayEventSource = false,
-		.quitOnDisplayClosed = false,
-		.quitOnEscPressed = false,
+		.autoRegisterEvents = 0,
+		.enableQuitTriggers = 0,
 		.autoAcknowledgeResize = false
 	};
 
 	inline constexpr EventLoopConfig BasicEventLoopConfig = {
-		.registerKeyboardEventSource = true,
-		.registerMouseEventSource = true,
-		.registerCurrentDisplayEventSource = true,
-		.quitOnDisplayClosed = true,
-		.quitOnEscPressed = false,
+		.autoRegisterEvents = KeyboardEventSourceBit | MouseEventSourceBit | CurrentDisplayEventSourceBit,
+		.enableQuitTriggers = QuitOnDisplayClosedBit,
 		.autoAcknowledgeResize = true
 	};
 
 	inline constexpr EventLoopConfig DemoEventLoopConfig = {
-		.registerKeyboardEventSource = true,
-		.registerMouseEventSource = true,
-		.registerCurrentDisplayEventSource = true,
-		.quitOnDisplayClosed = true,
-		.quitOnEscPressed = true,
+		.autoRegisterEvents = KeyboardEventSourceBit | MouseEventSourceBit | CurrentDisplayEventSourceBit,
+		.enableQuitTriggers = QuitOnDisplayClosedBit | QuitOnEscPressedBit,
 		.autoAcknowledgeResize = true,
 		.framerateLimit = FramerateLimiterMode::Auto{}
 	};
@@ -66,22 +65,22 @@ namespace al {
 
 		explicit EventLoop(EventLoopConfig config = BasicEventLoopConfig) {
 
-			if(config.registerKeyboardEventSource) {
+			if(config.autoRegisterEvents & KeyboardEventSourceBit) {
 				eventQueue.registerSource(GetKeyboardEventSource());
 			}
-			if(config.registerMouseEventSource) {
+			if(config.autoRegisterEvents & MouseEventSourceBit) {
 				eventQueue.registerSource(GetMouseEventSource());
 			}
-			if(config.registerCurrentDisplayEventSource) {
+			if(config.autoRegisterEvents & CurrentDisplayEventSourceBit) {
 				eventQueue.registerSource(al::CurrentDisplay.eventSource());
 			}
 
-			if(config.quitOnDisplayClosed) {
+			if(config.enableQuitTriggers & QuitOnDisplayClosedBit) {
 				eventDispatcher.setEventHandler<DisplayEvent>(ALLEGRO_EVENT_DISPLAY_CLOSE, [this](){
 					setExitFlag();
 				});
 			}
-			if(config.quitOnEscPressed) {
+			if(config.enableQuitTriggers & QuitOnEscPressedBit) {
 				eventDispatcher.onKeyDown(ALLEGRO_KEY_ESCAPE, [this](){
 					setExitFlag();
 				});
