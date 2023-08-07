@@ -45,6 +45,7 @@ namespace al {
 
 			if(std::holds_alternative<Freq>(limitValue)) {
 				timer.setFreq(std::get<Freq>(limitValue));
+				timer.stop();
 				timer.start();
 			} else {
 				timer.stop();

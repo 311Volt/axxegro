@@ -218,6 +218,7 @@ int main()
 
 	al::Transform proj = al::Transform::PerspectiveFOV(78, 0.01, 10000, al::CurrentDisplay.aspectRatio());
 	al::EventLoop loop(al::DemoEventLoopConfig);
+	loop.setFramerateLimit(al::Hz(300));
 	
 	const auto& builtinFont = al::Font::BuiltinFont();
 

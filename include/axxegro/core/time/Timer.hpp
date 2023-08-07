@@ -2,6 +2,7 @@
 #define INCLUDE_AXXEGRO_TIME_TIMER
 
 #include "../../common.hpp"
+#include "../event/EventSource.hpp"
 #include "FreqPeriod.hpp"
 
 namespace al {
