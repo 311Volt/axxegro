@@ -2,6 +2,7 @@
 #define INCLUDE_AXXEGRO_PRIM_BUFFERS
 
 #include "PrimitivesAddon.hpp"
+#include "lldr.hpp"
 #include "common.hpp"
 
 #include <span>
@@ -11,6 +12,9 @@ namespace al {
 	
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_VERTEX_BUFFER, al_destroy_vertex_buffer);
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_INDEX_BUFFER, al_destroy_index_buffer);
+
+	class VertexBufferLockedData;
+	class IndexBufferLockedData;
 
 	class VertexBuffer:
 			RequiresInitializables<PrimitivesAddon>,
@@ -30,8 +34,52 @@ namespace al {
 			return al_get_vertex_buffer_size(ptr());
 		}
 		//TODO template ctor for different vertex types
+
+		VertexBufferLockedData lock(int start = 0, int len = -1, int flags = ALLEGRO_LOCK_WRITEONLY);
 	};
-	//TODO locking
+
+	class VertexBufferLockedData {
+	public:
+
+		VertexBufferLockedData(const VertexBufferLockedData&) = delete;
+		VertexBufferLockedData& operator=(const VertexBufferLockedData&) = delete;
+		VertexBufferLockedData(VertexBufferLockedData&&) = delete;
+		VertexBufferLockedData& operator=(VertexBufferLockedData&&) = delete;
+
+		std::span<al::Vertex> data() {
+			return data_;
+		}
+
+		~VertexBufferLockedData() {
+			al_unlock_vertex_buffer(vb_);
+		}
+	private:
+		std::span<al::Vertex> data_;
+
+		friend class VertexBuffer;
+		ALLEGRO_VERTEX_BUFFER* vb_;
+		VertexBufferLockedData(ALLEGRO_VERTEX_BUFFER* vb, int start, int len, int flags) 
+			: vb_(vb)
+		{
+			int vbsize = al_get_vertex_buffer_size(vb);
+			
+			if(len < 0) {
+				len = vbsize - start;
+			}
+
+			void* dat = al_lock_vertex_buffer(vb, start, len, flags);
+			if(dat == nullptr) {
+				throw al::VertexBufferError("Cannot lock vertex buffer vtxs [%d-%d) out of %d", start, start+len, vbsize);
+			}
+
+			al::Vertex* vertices = static_cast<al::Vertex*>(dat);
+			data_ = std::span {vertices, vertices + len};
+		}
+	};
+
+	inline VertexBufferLockedData VertexBuffer::lock(int start, int len, int flags) {
+		return VertexBufferLockedData(ptr(), start, len, flags);
+	}
 
 	class IndexBuffer:
 			RequiresInitializables<PrimitivesAddon>,
