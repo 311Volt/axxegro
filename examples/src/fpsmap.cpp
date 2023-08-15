@@ -223,9 +223,9 @@ int main()
 	const auto& builtinFont = al::Font::BuiltinFont();
 
 	al::Bitmap::SetNewBitmapFlags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
-	al::Bitmap rockTexture("data/rock.jpg");
+	al::Bitmap rockTexture = al::LoadBitmap("data/rock.jpg");
 
-	Skybox skybox(al::Bitmap("data/nightsky.jpg"));
+	Skybox skybox(al::LoadBitmap("data/nightsky.jpg"));
 
 	al::CurrentDisplay.hideCursor();
 

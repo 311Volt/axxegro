@@ -4,6 +4,8 @@
 #include "common.hpp"
 
 #include "addons/audio.hpp"
+#include "addons/image.hpp"
+#include "addons/acodec.hpp"
 #include "addons/font.hpp"
 #include "addons/prim.hpp"
 #include "addons/dialog.hpp"

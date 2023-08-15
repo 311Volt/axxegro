@@ -7,11 +7,9 @@
 
 #include "axxegro/com/Exception.hpp"
 #include "axxegro/com/Resource.hpp"
-#include <allegro5/bitmap.h>
 #include <memory>
 #include <span>
 
-#include "../../addons/image.hpp"
 /**
  * @file
  * An ALLEGRO_BITMAP wrapper plus utilities.
@@ -81,21 +79,6 @@ namespace al {
 				: Bitmap(w,h)
 		{
 			clearToColor(color);
-		}
-
-		/** 
-		 * @brief Loads a bitmap from a file. 
-		 * @param filename Path to the file with the image.
-		 **/
-		explicit Bitmap(const std::string& filename)
-				: Resource(nullptr)
-		{
-			InternalRequire<ImageAddon>();
-			if(auto* p = al_load_bitmap(filename.c_str())) {
-				setPtr(p);
-			} else {
-				throw ResourceLoadError("Cannot load bitmap from %s - file missing, corrupted or in an unsupported format", filename.c_str());
-			}
 		}
 
 		/// @return The width of the bitmap in pixels.

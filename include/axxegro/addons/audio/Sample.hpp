@@ -25,13 +25,7 @@ namespace al
 			public Resource<ALLEGRO_SAMPLE>,
 			public AddAudioFormatQuery<Sample> {
 	public:
-		explicit Sample(const std::string& filename)
-		   : Resource<ALLEGRO_SAMPLE>(al_load_sample(filename.c_str()))
-		{
-			if(!ptr()) {
-				throw ResourceLoadError("Cannot load audio file: %s", filename.c_str());
-			}
-		}
+		using Resource::Resource;
 
         std::optional<SampleID> play(PlaybackParams options = {}) {
 			ALLEGRO_SAMPLE_ID smpId;

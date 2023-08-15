@@ -29,7 +29,7 @@ int main()
 	//player orientation (pitch) in degrees
 	float rx = 0.0;
 
-	al::Bitmap tex("data/bg.jpg");
+	al::Bitmap tex = al::LoadBitmap("data/bg.jpg");
 
 	//position and forward-facing vector
 	al::Vec3f pos{0,0,-5}, fwd{0,0,1};

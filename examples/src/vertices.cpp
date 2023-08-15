@@ -25,7 +25,7 @@ int main()
 {
 	al::Display disp(800, 600);
 	al::TargetBitmap.clearToColor(al::RGB(100,100,100));
-	al::Bitmap bg("data/bg.jpg");
+	al::Bitmap bg = al::LoadBitmap("data/bg.jpg");
 
 	std::vector<MyVertex> vtxs{
 		{1,1, 0,0},

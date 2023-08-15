@@ -13,12 +13,12 @@ int main()
 
 	al::SampleInstance::ReserveSamples(16);
 
-	al::BaseAudioStream music("data/audio/Spring_In_My_Step.ogg");
+	al::BaseAudioStream music = al::LoadAudioStream("data/audio/Spring_In_My_Step.ogg");
 	al::DefaultMixer.attachAudioStream(music);
 	music.setGain(0.6);
 	music.setPlayMode(ALLEGRO_PLAYMODE_LOOP);
 
-	al::Sample uuhhh("data/audio/uuhhh.ogg"); //sue me bitches
+	al::Sample uuhhh = al::LoadSample("data/audio/uuhhh.ogg"); //sue me bitches
 
 	evLoop.eventDispatcher.onKeyDown(ALLEGRO_KEY_F, [&](){
 		uuhhh.play();

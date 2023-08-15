@@ -7,7 +7,7 @@ int main()
 
     al::Display disp(800, 600);
     al::EventLoop loop(al::DemoEventLoopConfig);
-    al::Bitmap parent("data/terrain.png");
+    al::Bitmap parent = al::LoadBitmap("data/terrain.png");
 
     loop.run([&](){
 		al::TargetBitmap.clear();
