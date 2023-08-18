@@ -34,7 +34,7 @@ namespace al {
 	public:
 		using VertexT = CustomVertexT;
 		static_assert(
-			std::is_standard_layout_v<CustomVertexT>, 
+			std::is_standard_layout_v<CustomVertexT>,
 			"Cannot use non-standard layout types for vertices"
 		);
 
@@ -54,10 +54,10 @@ namespace al {
 	#define AXXEGRO_VERTEX_DECL(vtype) template<> struct al::VertexDeclFor<vtype>: public ::al::BasicVertexDecl<vtype>
 
 	/**
-	 * @brief Create an array of vertex elements 
-	 * 
+	 * @brief Create an array of vertex elements
+	 *
 	 * @tparam VDecl A subclass of CustomVertexDecl
-	 * @return constexpr std::array<ALLEGRO_VERTEX_ELEMENT, MAX_PRIM_ATTR> 
+	 * @return constexpr std::array<ALLEGRO_VERTEX_ELEMENT, MAX_PRIM_ATTR>
 	 */
 	template<typename VDecl>
 	constexpr std::array<ALLEGRO_VERTEX_ELEMENT, MAX_PRIM_ATTR+1> CreateCustomVertexAttrArr()
@@ -72,7 +72,7 @@ namespace al {
 			if constexpr(hu##x::Type::IsActive) {\
 				ret[k++] = hu##x::Type::Create(); \
 			}
-		
+
 		static_assert(MAX_PRIM_ATTR == 16);
 		FINNA_KMS_XD(0); FINNA_KMS_XD(1); FINNA_KMS_XD(2); FINNA_KMS_XD(3);
 		FINNA_KMS_XD(4); FINNA_KMS_XD(5); FINNA_KMS_XD(6); FINNA_KMS_XD(7);

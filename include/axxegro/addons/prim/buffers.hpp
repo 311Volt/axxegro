@@ -14,7 +14,7 @@ namespace al {
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_INDEX_BUFFER, al_destroy_index_buffer);
 
 	class VertexBufferLockedData;
-	class IndexBufferLockedData;
+	//class IndexBufferLockedData;
 
 	class VertexBuffer:
 			RequiresInitializables<PrimitivesAddon>,

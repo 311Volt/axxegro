@@ -327,44 +327,48 @@ namespace al {
 		return al_get_display_event_source(disp.ptr());
 	}
 
-
-	class TCurrentDisplay: public Display {
-	public:
-		TCurrentDisplay() : Display(nullptr) 
-		{
-			initPointers();
-		}
-		
-		void flip() { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
-			al_flip_display();
-		}
-		void flip(Rect<int> rect) { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
-			al_update_display_region(rect.a.x, rect.a.y, rect.width(), rect.height());
-		}
-		bool waitForVsync() { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
-			return al_wait_for_vsync();
-		}
-		void convertMemoryBitmaps() { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
-			al_convert_memory_bitmaps();
-		}
-
-		void setTargetBitmap(Bitmap& bmp) { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
-			al_set_target_bitmap(bmp.ptr());
-		}
-	private:
-		[[nodiscard]] ALLEGRO_DISPLAY* getPointer() const override {
-#ifndef NDEBUG
-			if(al_get_current_display() == nullptr) {
-				throw DisplayError("No current display exists");
+	namespace detail {
+		class CCurrentDisplay: public Display {
+		public:
+			CCurrentDisplay() : Display(nullptr)
+			{
+				initPointers();
 			}
+
+			void flip() { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
+				al_flip_display();
+			}
+			void flip(Rect<int> rect) { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
+				al_update_display_region(rect.a.x, rect.a.y, rect.width(), rect.height());
+			}
+			bool waitForVsync() { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
+				return al_wait_for_vsync();
+			}
+			void convertMemoryBitmaps() { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
+				al_convert_memory_bitmaps();
+			}
+
+			void setTargetBitmap(Bitmap& bmp) { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
+				al_set_target_bitmap(bmp.ptr());
+			}
+		private:
+			[[nodiscard]] ALLEGRO_DISPLAY* getPointer() const override {
+				ALLEGRO_DISPLAY* display = al_get_current_display();
+#ifndef NDEBUG
+				if(display == nullptr) {
+					throw DisplayError("No current display exists");
+				}
 #endif
-			return al_get_current_display();
-		}
-	};
+				return display;
+			}
+		};
+	}
+
+
 
 #undef AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
 
-	inline TCurrentDisplay CurrentDisplay;
+	inline detail::CCurrentDisplay CurrentDisplay;
 }
 
 #endif /* INCLUDE_AXXEGRO_CORE_DISPLAY_DISPLAY */

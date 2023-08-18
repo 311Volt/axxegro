@@ -3,6 +3,7 @@
 
 #include "SampleInstance.hpp"
 #include "AudioStream.hpp"
+#include "AudioCommon.hpp"
 
 namespace al {
 
@@ -11,7 +12,7 @@ namespace al {
 	class Mixer:
 			RequiresInitializables<AudioAddon>,
 			public Resource<ALLEGRO_MIXER>,
-			public AddAudioFormatQuery<Mixer> {
+			public al::detail::AddAudioFormatQuery<Mixer> {
 	public:
 		explicit Mixer(AudioFormat audioFormat = {})
 		    : Resource<ALLEGRO_MIXER>(nullptr)
@@ -90,7 +91,7 @@ namespace al {
 		using Resource::Resource;
 	};
 
-	namespace internal {
+	namespace detail {
 		class CDefaultMixer: public Mixer
 		{
 		public:
@@ -106,13 +107,13 @@ namespace al {
 		};
 	}
 
-	inline internal::CDefaultMixer DefaultMixer {nullptr, al::ResourceModel::NonOwning};
+	inline detail::CDefaultMixer DefaultMixer {nullptr, al::ResourceModel::NonOwning};
 
-	template<ValidSampleType TSample, ALLEGRO_CHANNEL_CONF TPChanConf>
+	template<detail::ValidSampleType TSample, ALLEGRO_CHANNEL_CONF TPChanConf>
 	class UserMixer: public Mixer {
 	public:
 
-		using Traits = FragmentTraits<TSample, TPChanConf>;
+		using Traits = detail::FragmentTraits<TSample, TPChanConf>;
 
 		using CallbackT = std::function<void(std::span<typename Traits::FragmentType>)>;
 

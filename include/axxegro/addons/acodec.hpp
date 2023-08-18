@@ -50,7 +50,7 @@ namespace al {
 		return detail::AudioStreamLoader{}.load(filename, bufConfig);
 	};
 
-	template<ValidSampleType TSample, ALLEGRO_CHANNEL_CONF TPChanConf>
+	template<detail::ValidSampleType TSample, ALLEGRO_CHANNEL_CONF TPChanConf>
 	inline AudioStream<TSample, TPChanConf> LoadTypedAudioStream(const std::string& filename, BufferConfig bufConfig = {.numChunks = 2, .fragmentsPerChunk = 2048}) {
 		return detail::AudioStreamLoader{}.loadTyped<TSample, TPChanConf>(filename, bufConfig);
 	}

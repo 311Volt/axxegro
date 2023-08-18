@@ -80,7 +80,7 @@ namespace al {
 		return al_get_audio_recorder_event_source(recorder.ptr());
 	}
 
-	namespace internal {
+	namespace detail {
 		template<ValidSampleType TSample, ALLEGRO_CHANNEL_CONF TPChanConf>
 		class TypedAudioRecorder: public BaseAudioRecorder {
 		public:
@@ -136,22 +136,22 @@ namespace al {
 
 
 
-	template<ValidSampleType TSample, ALLEGRO_CHANNEL_CONF TPChanConf>
-	class AudioRecorder: public internal::TypedAudioRecorder<TSample, TPChanConf> {
-		using internal::TypedAudioRecorder<TSample, TPChanConf>::TypedAudioRecorder;
+	template<detail::ValidSampleType TSample, ALLEGRO_CHANNEL_CONF TPChanConf>
+	class AudioRecorder: public detail::TypedAudioRecorder<TSample, TPChanConf> {
+		using detail::TypedAudioRecorder<TSample, TPChanConf>::TypedAudioRecorder;
 
-		using Traits = typename internal::TypedAudioRecorder<TSample, TPChanConf>::Traits;
+		using Traits = typename detail::TypedAudioRecorder<TSample, TPChanConf>::Traits;
 	};
 
 #ifndef AXXEGRO_USE_NATIVE_FLOAT32_AUDIO_RECORDER
 
 	template<ALLEGRO_CHANNEL_CONF TPChanConf>
-	class AudioRecorder<float, TPChanConf>: public internal::TypedAudioRecorder<int16_t, TPChanConf> {
+	class AudioRecorder<float, TPChanConf>: public detail::TypedAudioRecorder<int16_t, TPChanConf> {
 	public:
-		using Super = internal::TypedAudioRecorder<int16_t, TPChanConf>;
-		using internal::TypedAudioRecorder<int16_t, TPChanConf>::TypedAudioRecorder;
+		using Super = detail::TypedAudioRecorder<int16_t, TPChanConf>;
+		using detail::TypedAudioRecorder<int16_t, TPChanConf>::TypedAudioRecorder;
 		using ImplTraits = typename Super::Traits;
-		using Traits = typename ::al::internal::TypedAudioRecorder<float, TPChanConf>::Traits;
+		using Traits = typename ::al::detail::TypedAudioRecorder<float, TPChanConf>::Traits;
 
 		EventHandler<RawAudioRecorderEvent> createChunkEventHandler(
 			std::function<void(const std::span<const typename Traits::FragmentType>)> fn

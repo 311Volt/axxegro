@@ -12,104 +12,109 @@
 
 namespace al {
 
-	template<typename Derived>
-	struct AddRGB8Utility {
 
-		[[nodiscard]] uint32_t U32_XRGB8888() const {
-			const auto& self = *static_cast<Derived*>(this);
-			return (self.r << 16) + (self.g << 8) + (self.b << 0);
+
+	namespace detail {
+		template<typename Derived>
+		struct RGB8UtilityMixin {
+
+			[[nodiscard]] uint32_t U32_XRGB8888() const {
+				const auto& self = *static_cast<Derived*>(this);
+				return (self.r << 16) + (self.g << 8) + (self.b << 0);
+			}
+
+			[[nodiscard]] Color color() const {
+				const auto& self = *static_cast<Derived*>(this);
+				return RGB(self.r, self.g, self.b);
+			}
+
+			void set(Color color) {
+				auto& self = *static_cast<Derived*>(this);
+				const auto& [cr, cg, cb, ca] = color.rgbaU8();
+				self.r = cr;
+				self.g = cg;
+				self.b = cb;
+			}
+
+			void set(uint32_t xrgb) {
+				auto& self = *static_cast<Derived*>(this);
+				self.r = xrgb>>16;
+				self.g = xrgb>>8;
+				self.b = xrgb>>0;
+			}
+
+			[[nodiscard]] std::tuple<uint8_t,uint8_t,uint8_t> unpackToBytesRGB() const {
+				auto& self = *static_cast<Derived*>(this);
+				return {self.r, self.g, self.b};
+			}
+		};
+
+		template<typename Derived>
+		struct RGBA8UtilityMixin {
+			[[nodiscard]] uint32_t U32_ARGB8888() const {
+				const auto& self = *static_cast<Derived*>(this);
+				return (self.a << 24) + (self.r << 16) + (self.g << 8) + (self.b << 0);
+			}
+
+			[[nodiscard]] Color color() const {
+				const auto& self = *static_cast<Derived*>(this);
+				return RGBA(self.r, self.g, self.b, self.a);
+			}
+
+			void set(Color color) {
+				auto& self = *static_cast<Derived*>(this);
+				const auto& [cr, cg, cb, ca] = color.rgbaU8();
+				self.r = cr;
+				self.g = cg;
+				self.b = cb;
+				self.a = ca;
+			}
+
+			void set(uint32_t argb) {
+				auto& self = *static_cast<Derived*>(this);
+				self.a = argb>>24;
+				self.r = argb>>16;
+				self.g = argb>>8;
+				self.b = argb>>0;
+			}
+
+			[[nodiscard]] std::tuple<uint8_t,uint8_t,uint8_t,uint8_t> unpackToBytesRGBA() const {
+				auto& self = *static_cast<Derived*>(this);
+				return {self.r, self.g, self.b, self.a};
+			}
+		};
+
+		namespace px {
+			struct RGBA8888 {uint8_t r,g,b,a;};
+			struct ABGR8888 {uint8_t a,b,g,r;};
+
+			struct ARGB8888 {uint8_t a,r,g,b;};
+			struct BGRA8888 {uint8_t b,g,r,a;};
+
+			struct RGB888 {uint8_t r,g,b;};
+			struct BGR888 {uint8_t b,g,r;};
+
+			using NativeARGB8888 = std::conditional_t<
+				std::endian::native == std::endian::little, BGRA8888, ARGB8888
+			>;
+
+			using NativeRGBA8888 = std::conditional_t<
+				std::endian::native == std::endian::little, ABGR8888, RGBA8888
+			>;
+
+			using NativeRGB888 = std::conditional_t<
+				std::endian::native == std::endian::little, BGR888, RGB888
+			>;
+
+			using NativeBGR888 = std::conditional_t<
+				std::endian::native == std::endian::little, RGB888, BGR888
+			>;
 		}
-
-		[[nodiscard]] Color color() const {
-			const auto& self = *static_cast<Derived*>(this);
-			return RGB(self.r, self.g, self.b);
-		}
-
-		void set(Color color) {
-			auto& self = *static_cast<Derived*>(this);
-			const auto& [cr, cg, cb, ca] = color.rgbaU8();
-			self.r = cr;
-			self.g = cg;
-			self.b = cb;
-		}
-
-		void set(uint32_t xrgb) {
-			auto& self = *static_cast<Derived*>(this);
-			self.r = xrgb>>16;
-			self.g = xrgb>>8;
-			self.b = xrgb>>0;
-		}
-
-		[[nodiscard]] std::tuple<uint8_t,uint8_t,uint8_t> unpackToBytesRGB() const {
-			auto& self = *static_cast<Derived*>(this);
-			return {self.r, self.g, self.b};
-		}
-	};
-
-	template<typename Derived>
-	struct AddRGBA8Utility {
-		[[nodiscard]] uint32_t U32_ARGB8888() const {
-			const auto& self = *static_cast<Derived*>(this);
-			return (self.a << 24) + (self.r << 16) + (self.g << 8) + (self.b << 0);
-		}
-
-		[[nodiscard]] Color color() const {
-			const auto& self = *static_cast<Derived*>(this);
-			return RGBA(self.r, self.g, self.b, self.a);
-		}
-
-		void set(Color color) {
-			auto& self = *static_cast<Derived*>(this);
-			const auto& [cr, cg, cb, ca] = color.rgbaU8();
-			self.r = cr;
-			self.g = cg;
-			self.b = cb;
-			self.a = ca;
-		}
-
-		void set(uint32_t argb) {
-			auto& self = *static_cast<Derived*>(this);
-			self.a = argb>>24;
-			self.r = argb>>16;
-			self.g = argb>>8;
-			self.b = argb>>0;
-		}
-
-		[[nodiscard]] std::tuple<uint8_t,uint8_t,uint8_t,uint8_t> unpackToBytesRGBA() const {
-			auto& self = *static_cast<Derived*>(this);
-			return {self.r, self.g, self.b, self.a};
-		}
-	};
-
-	namespace detail::px {
-		struct RGBA8888 {uint8_t r,g,b,a;};
-		struct ABGR8888 {uint8_t a,b,g,r;};
-
-		struct ARGB8888 {uint8_t a,r,g,b;};
-		struct BGRA8888 {uint8_t b,g,r,a;};
-
-		struct RGB888 {uint8_t r,g,b;};
-		struct BGR888 {uint8_t b,g,r;};
-
-		using NativeARGB8888 = std::conditional_t<
-			std::endian::native == std::endian::little, BGRA8888, ARGB8888
-		>;
-
-		using NativeRGBA8888 = std::conditional_t<
-			std::endian::native == std::endian::little, ABGR8888, RGBA8888
-		>;
-
-		using NativeRGB888 = std::conditional_t<
-			std::endian::native == std::endian::little, BGR888, RGB888
-		>;
-
-		using NativeBGR888 = std::conditional_t<
-			std::endian::native == std::endian::little, RGB888, BGR888
-		>;
 	}
 
+
 	struct PixelARGB8888:
-		public AddRGBA8Utility<PixelARGB8888>,
+		public detail::RGBA8UtilityMixin<PixelARGB8888>,
 		public detail::px::NativeARGB8888
 	{
 		using detail::px::NativeARGB8888::NativeARGB8888;
@@ -118,7 +123,7 @@ namespace al {
 	};
 
 	struct PixelRGBA8888:
-		public AddRGBA8Utility<PixelARGB8888>,
+		public detail::RGBA8UtilityMixin<PixelARGB8888>,
 		public detail::px::NativeRGBA8888
 	{
 		using detail::px::NativeRGBA8888::NativeRGBA8888;
@@ -127,7 +132,7 @@ namespace al {
 	};
 
 	struct PixelRGB888:
-		public AddRGB8Utility<PixelRGB888>,
+		public detail::RGB8UtilityMixin<PixelRGB888>,
 		public detail::px::NativeRGB888
 	{
 		using detail::px::NativeRGB888::NativeRGB888;
@@ -136,7 +141,7 @@ namespace al {
 	};
 
 	struct PixelBGR888:
-		public AddRGB8Utility<PixelBGR888>,
+		public detail::RGB8UtilityMixin<PixelBGR888>,
 		public detail::px::NativeBGR888
 	{
 		using detail::px::NativeBGR888::NativeBGR888;

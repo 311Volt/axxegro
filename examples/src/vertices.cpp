@@ -13,8 +13,6 @@ struct MyVertex {
 	float u,v;
 };
 
-//struct MyVertexDecl: public al::BasicVertexDecl<MyVertex> 
-
 AXXEGRO_VERTEX_DECL(MyVertex) {
 	AXXEGRO_VERTEX_ATTR_BEGIN()
 	AXXEGRO_VERTEX_ATTR(x, ALLEGRO_PRIM_POSITION, ALLEGRO_PRIM_FLOAT_2)

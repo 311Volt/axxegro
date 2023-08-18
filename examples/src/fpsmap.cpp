@@ -99,6 +99,11 @@ struct Camera {
 		rot.y = std::fmod(rot.y, ALLEGRO_PI * 2.0);
 	}
 
+	void rotateDegrees(al::Vec2f delta)
+	{
+		rotate(delta * al::DEG2RAD);
+	}
+
 	al::Vec3f right() 
 	{
 		return forward().cross(Up).normalized();
@@ -234,7 +239,7 @@ int main()
 	//rotate the camera when we move the mouse
 	loop.eventDispatcher.onMouseMove([&](const al::MouseEvent& ev){
 		al::Vec2f delta = {ev.dx, ev.dy};
-		camera.rotate((delta * 0.002).transposed());
+		camera.rotateDegrees((delta * 0.022 * 4.0).transposed());
 	});
 
 	loop.run([&](){

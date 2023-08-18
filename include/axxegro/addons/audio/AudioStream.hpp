@@ -23,8 +23,8 @@ namespace al {
 	class BaseAudioStream:
 			RequiresInitializables<AudioAddon>,
 			public Resource<ALLEGRO_AUDIO_STREAM>,
-			public AddPlaybackParamsQuery<BaseAudioStream>,
-			public AddAudioFormatQuery<BaseAudioStream> {
+			public al::detail::AddPlaybackParamsQuery<BaseAudioStream>,
+			public al::detail::AddAudioFormatQuery<BaseAudioStream> {
     public:
 
 		explicit BaseAudioStream(
@@ -188,11 +188,11 @@ namespace al {
 
 
 
-	template<ValidSampleType TSample, ALLEGRO_CHANNEL_CONF TPChanConf>
+	template<detail::ValidSampleType TSample, ALLEGRO_CHANNEL_CONF TPChanConf>
 	class AudioStream : public BaseAudioStream {
 	public:
 
-		using Traits = FragmentTraits<TSample, TPChanConf>;
+		using Traits = detail::FragmentTraits<TSample, TPChanConf>;
 
 		explicit AudioStream(Freq freq = Hz(44100), BufferConfig bufConfig = {})
 			: BaseAudioStream({

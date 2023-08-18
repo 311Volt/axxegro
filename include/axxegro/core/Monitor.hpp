@@ -4,12 +4,16 @@
 #include "../common.hpp"
 
 namespace al {
-	
+
+	namespace detail {
+		class CAdapters;
+	}
+
 	class AdapterInfo {
 		int idx;
 		explicit AdapterInfo(int idx)
 			: idx(idx) {}
-		friend class CAdapters;
+		friend class detail::CAdapters;
 	public:
 
 		[[nodiscard]] Rect<int> rect() const {
@@ -22,33 +26,36 @@ namespace al {
 		}
 	};
 
-	class CAdapters {
-	public:
-		[[nodiscard]] int size() const {
-			return al_get_num_video_adapters();
-		}
-
-		[[nodiscard]] int getDefaultIndex() const {
-			return al_get_new_display_adapter();
-		}
-
-		void setDefault(int adapter) {
-			return al_set_new_display_adapter(adapter);
-		}
-
-		AdapterInfo operator[](int idx) const {
-			if(idx < 0 || idx > size()) {
-				throw OutOfRangeError("Invalid video adapter index: " + std::to_string(idx));
+	namespace detail {
+		class CAdapters {
+		public:
+			[[nodiscard]] int size() const {
+				return al_get_num_video_adapters();
 			}
-			return AdapterInfo(idx);
-		}
 
-		[[nodiscard]] AdapterInfo getDefault() const {
-			return operator[](getDefaultIndex());
-		}
-	};
+			[[nodiscard]] int getDefaultIndex() const {
+				return al_get_new_display_adapter();
+			}
 
-	inline CAdapters Adapters;
+			void setDefault(int adapter) {
+				return al_set_new_display_adapter(adapter);
+			}
+
+			AdapterInfo operator[](int idx) const {
+				if(idx < 0 || idx > size()) {
+					throw OutOfRangeError("Invalid video adapter index: " + std::to_string(idx));
+				}
+				return AdapterInfo(idx);
+			}
+
+			[[nodiscard]] AdapterInfo getDefault() const {
+				return operator[](getDefaultIndex());
+			}
+		};
+	}
+
+
+	inline detail::CAdapters Adapters;
 }
 
 #endif /* INCLUDE_AXXEGRO_DISPLAY_MONITOR */

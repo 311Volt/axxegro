@@ -23,7 +23,7 @@ namespace al
 	class Sample:
 			RequiresInitializables<AudioAddon>,
 			public Resource<ALLEGRO_SAMPLE>,
-			public AddAudioFormatQuery<Sample> {
+			public al::detail::AddAudioFormatQuery<Sample> {
 	public:
 		using Resource::Resource;
 
