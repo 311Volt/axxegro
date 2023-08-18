@@ -3,6 +3,7 @@
 
 #include "PrimitivesAddon.hpp"
 #include "lldr.hpp"
+#include "Vertex.hpp"
 #include "common.hpp"
 
 #include <span>
@@ -13,16 +14,22 @@ namespace al {
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_VERTEX_BUFFER, al_destroy_vertex_buffer);
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_INDEX_BUFFER, al_destroy_index_buffer);
 
+	template<VertexType VertexT>
 	class VertexBufferLockedData;
+
 	//class IndexBufferLockedData;
 
+	template<VertexType VertexT>
 	class VertexBuffer:
 			RequiresInitializables<PrimitivesAddon>,
 			public Resource<ALLEGRO_VERTEX_BUFFER> {
 	public:
-		explicit VertexBuffer(const std::span<Vertex> vertices, int flags = ALLEGRO_PRIM_BUFFER_STATIC)
+		explicit VertexBuffer(const std::span<VertexT> vertices, int flags = ALLEGRO_PRIM_BUFFER_STATIC)
 				: Resource<ALLEGRO_VERTEX_BUFFER>(
-				al_create_vertex_buffer(nullptr, vertices.data(), (int)vertices.size(), flags)
+				al_create_vertex_buffer(
+					detail::VertexDeclGetter<VertexT>::GetVertexDeclPtr(),
+					vertices.data(), (int)vertices.size(), flags
+				)
 		)
 		{
 			if(ptr() == nullptr) {
@@ -35,9 +42,10 @@ namespace al {
 		}
 		//TODO template ctor for different vertex types
 
-		VertexBufferLockedData lock(int start = 0, int len = -1, int flags = ALLEGRO_LOCK_WRITEONLY);
+		VertexBufferLockedData<VertexT> lock(int start = 0, int len = -1, int flags = ALLEGRO_LOCK_WRITEONLY);
 	};
 
+	template<VertexType VertexT>
 	class VertexBufferLockedData {
 	public:
 
@@ -46,7 +54,7 @@ namespace al {
 		VertexBufferLockedData(VertexBufferLockedData&&) = delete;
 		VertexBufferLockedData& operator=(VertexBufferLockedData&&) = delete;
 
-		std::span<al::Vertex> data() {
+		std::span<VertexT> data() {
 			return data_;
 		}
 
@@ -54,9 +62,9 @@ namespace al {
 			al_unlock_vertex_buffer(vb_);
 		}
 	private:
-		std::span<al::Vertex> data_;
+		std::span<VertexT> data_;
 
-		friend class VertexBuffer;
+		friend class VertexBuffer<VertexT>;
 		ALLEGRO_VERTEX_BUFFER* vb_;
 		VertexBufferLockedData(ALLEGRO_VERTEX_BUFFER* vb, int start, int len, int flags) 
 			: vb_(vb)
@@ -72,12 +80,13 @@ namespace al {
 				throw al::VertexBufferError("Cannot lock vertex buffer vtxs [%d-%d) out of %d", start, start+len, vbsize);
 			}
 
-			al::Vertex* vertices = static_cast<al::Vertex*>(dat);
+			VertexT* vertices = static_cast<VertexT*>(dat);
 			data_ = std::span {vertices, vertices + len};
 		}
 	};
 
-	inline VertexBufferLockedData VertexBuffer::lock(int start, int len, int flags) {
+	template<VertexType VertexT>
+	inline VertexBufferLockedData<VertexT> VertexBuffer<VertexT>::lock(int start, int len, int flags) {
 		return VertexBufferLockedData(ptr(), start, len, flags);
 	}
 
@@ -100,9 +109,10 @@ namespace al {
 		}
 		//TODO template ctor for different index sizes
 	};
-	
+
+	template<VertexType VertexT>
 	inline int DrawVertexBuffer(
-		const VertexBuffer& vBuf, 
+		const VertexBuffer<VertexT>& vBuf,
 		OptionalRef<Bitmap> texture = std::nullopt,
 		int start=0, int end=-1, 
 		int type=ALLEGRO_PRIM_TRIANGLE_LIST
@@ -118,8 +128,9 @@ namespace al {
 		); 
 	}
 
+	template<VertexType VertexT>
 	inline int DrawIndexedBuffer(
-		const VertexBuffer& vBuf, 
+		const VertexBuffer<VertexT>& vBuf,
 		const IndexBuffer& iBuf,
 		OptionalRef<Bitmap> texture = std::nullopt,
 		int start=0, int end=-1, 

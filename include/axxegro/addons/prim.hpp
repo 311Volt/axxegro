@@ -4,6 +4,6 @@
 #include "prim/hldr.hpp"
 #include "prim/lldr.hpp"
 #include "prim/buffers.hpp"
-#include "prim/CustomVertex.hpp"
+#include "prim/Vertex.hpp"
 
 #endif /* INCLUDE_AXXEGRO_PRIM_PRIM */

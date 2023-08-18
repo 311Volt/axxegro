@@ -11,23 +11,28 @@
 
 namespace al {
 
-	/*
-	 * std::span::subspan but it trims the returned span if out of bounds
+	/**
+	 * @brief std::span::subspan but it trims the returned span if out of bounds
 	 * instead of returning garbage.
-	 *
-	 * Frustratingly, this was the original behavior of std::span::subspan
-	 * during its design phase, before it got nuked instead of being moved
-	 * to a renamed version, and in practice I've needed this bound-checked
-	 * behavior literally every single time I've ever used this thing.
-	 *
-	 * committee pls fix
 	 */
-
 	template<typename T>
 	std::span<T> Subspan(std::span<T>& span, ptrdiff_t pos, size_t count) {
 		ptrdiff_t begin = std::clamp<ptrdiff_t>(pos, 0, span.size());
 		ptrdiff_t end = std::clamp<ptrdiff_t>(pos+count, 0, span.size());
 		return span.subspan(begin, end-begin);
+	}
+
+	/**
+	 * @brief Checks if needle is contained in haystack.
+	 */
+	template<typename ValT, typename ArrT>
+	constexpr bool IsOneOf(ValT&& needle, const ArrT& haystack) {
+		for(auto& v: haystack) {
+			if(needle == v) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

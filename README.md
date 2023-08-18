@@ -47,13 +47,13 @@ int main() {
 	al::Display display(800, 600);
 	
 	std::vector<al::Vertex> vertices = {
-		{{400, 100, 0}, {0, 0}, al::Red},
-		{{250, 400, 0}, {0, 0}, al::Green},
-		{{550, 400, 0}, {0, 0}, al::Blue}
+		{.pos = {400, 100, 0}, .uvPx = {0, 0}, .color = al::Red},
+		{.pos = {250, 400, 0}, .uvPx = {0, 0}, .color = al::Green},
+		{.pos = {550, 400, 0}, .uvPx = {0, 0}, .color = al::Blue}
 	};
 	
 	al::TargetBitmap.clearToColor(al::RGB(0,0,0));
-	al::DrawPrim(vertices);
+	al::DrawPrim<al::Vertex>(vertices);
 	al::CurrentDisplay.flip();
 	
 	al::Sleep(1.0);

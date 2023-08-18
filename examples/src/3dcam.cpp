@@ -8,10 +8,10 @@
  */
 
 
-std::array<al::Vertex, 3> DemoTriangle = {
-	al::Vertex({0, 0, 0}, {0, 0}),
-	al::Vertex({0, 1.5, 0}, {0, 1000}),
-	al::Vertex({1.5, 0, 1.5}, {1000, 0})
+std::array<al::BasicVertex, 3> DemoTriangle = {
+	al::CreateBasicVertex({0, 0, 0}, {0, 0}),
+	al::CreateBasicVertex({0, 1.5, 0}, {0, 1000}),
+	al::CreateBasicVertex({1.5, 0, 1.5}, {1000, 0})
 };
 
 int main()
@@ -66,7 +66,7 @@ int main()
 		//render 3D scene (in this case, one triangle)
 		al::Transform::Camera(pos, pos+fwd, {0,1,0}).use();
 		proj.useProjection();
-		al::DrawPrim(DemoTriangle, tex);
+		al::DrawPrim<al::BasicVertex>(DemoTriangle, tex);
 		al::CurrentDisplay.flip();
 	});
 }

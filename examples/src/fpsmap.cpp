@@ -154,9 +154,9 @@ struct Skybox {
 		std::array<al::Vertex, std::size(floorCeilingUV)> floorCeilingVertices;
 
 		for(unsigned i=0; i<wallVertices.size(); i++)
-			wallVertices[i] = {positions[(i%5)%4 + 4*(i/5)], wallUV[i]};
+			wallVertices[i] = {.pos = positions[(i%5)%4 + 4*(i/5)], .uvPx = wallUV[i], .color = al::White};
 		for(unsigned i=0; i<floorCeilingVertices.size(); i++)
-			floorCeilingVertices[i] = {positions[i], floorCeilingUV[i]};
+			floorCeilingVertices[i] = {.pos = positions[i], .uvPx = floorCeilingUV[i], .color = al::White};
 		
 		Mesh result;
 		for(auto v: wallVertices) result.vertices.push_back(v);
@@ -170,13 +170,13 @@ struct Skybox {
 	void scaleUV()
 	{
 		for(auto& vtx: skyboxMesh.vertices) {
-			vtx.setUV(vtx.getUV().hadamard({1.0/4.0,1.0/3.0}).hadamard(texture.size().f32()));
+			vtx.uvPx = vtx.uvPx.hadamard({1.0/4.0,1.0/3.0}).hadamard(texture.size().f32());
 		}
 	}
 
 	void render() 
 	{
-		al::DrawIndexedPrim(skyboxMesh.vertices, skyboxMesh.indices, texture);
+		al::DrawIndexedPrim<al::Vertex>(skyboxMesh.vertices, skyboxMesh.indices, texture);
 	}
 };
 
@@ -190,7 +190,7 @@ Mesh CreateTerrain(int sx, int sy, float height)
 		for(int x=0; x<sx; x++) {
 			al::Vec2f pos(x, y);
 			float vh = height*perlin(pos*0.01, 8);
-			al::Vertex vtx({pos.x, pos.y, vh}, pos*15.0, al::Gray(vh/height));
+			al::Vertex vtx({pos, vh}, pos * 15.0, al::Gray(vh / height));
 			result.vertices.push_back(vtx);
 			if(x < sx-1 && y < sy-1) {
 				for(auto offset: {0, 1, sx, 1, sx+1, sx}) {
@@ -215,7 +215,7 @@ int main()
 	});
 
 	Mesh terrain = CreateTerrain(128, 128, 96);
-	al::VertexBuffer terrainVB(terrain.vertices);
+	al::VertexBuffer<al::Vertex> terrainVB(terrain.vertices);
 	al::IndexBuffer terrainIB(terrain.indices);
 
 	Camera camera;
@@ -223,7 +223,6 @@ int main()
 
 	al::Transform proj = al::Transform::PerspectiveFOV(78, 0.01, 10000, al::CurrentDisplay.aspectRatio());
 	al::EventLoop loop(al::DemoEventLoopConfig);
-	loop.setFramerateLimit(al::Hz(300));
 	
 	const auto& builtinFont = al::Font::BuiltinFont();
 

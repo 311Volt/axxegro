@@ -300,8 +300,8 @@ namespace al {
 			static_assert(N == TImpl::NumDimensions, "Invalid implementation type for BaseVec");
 			
 			
-			using ValueType = T;
-			using ElementType = T;
+			using ValueType = std::remove_cvref_t<T>;
+			using ElementType = std::remove_cvref_t<T>;
 			using ImplType = TImpl;
 			static constexpr int NumElements = N;
 			static constexpr int IsContiguous = (sizeof(BaseVec) == sizeof(T)*NumElements);
@@ -622,7 +622,7 @@ namespace al {
 	concept VectorType = requires{
 		typename T::ValueType;
 		typename T::ImplType;
-		{T::NumElements} -> std::integral;
+		{T::NumElements} -> std::convertible_to<int>;
 	};
 	
 	template<typename T>
@@ -651,7 +651,28 @@ namespace al {
 	using Vec4i = Vec4<int>;
 	using Vec4u = Vec4<unsigned>;
 	using Vec4b = Vec4<uint8_t>;
-	
+
+	using Vec2i8 = Vec2<int8_t>;
+	using Vec2u8 = Vec2<uint8_t>;
+	using Vec2i16 = Vec2<int16_t>;
+	using Vec2u16 = Vec2<uint16_t>;
+	using Vec2i32 = Vec2<int32_t>;
+	using Vec2u32 = Vec2<uint32_t>;
+
+	using Vec3i8 = Vec3<int8_t>;
+	using Vec3u8 = Vec3<uint8_t>;
+	using Vec3i16 = Vec3<int16_t>;
+	using Vec3u16 = Vec3<uint16_t>;
+	using Vec3i32 = Vec3<int32_t>;
+	using Vec3u32 = Vec3<uint32_t>;
+
+	using Vec4i8 = Vec4<int8_t>;
+	using Vec4u8 = Vec4<uint8_t>;
+	using Vec4i16 = Vec4<int16_t>;
+	using Vec4u16 = Vec4<uint16_t>;
+	using Vec4i32 = Vec4<int32_t>;
+	using Vec4u32 = Vec4<uint32_t>;
+
 }
 
 #endif //AXXEGRO_VEC_HPP
