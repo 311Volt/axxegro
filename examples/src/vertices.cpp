@@ -20,12 +20,13 @@ struct MyVertex {
 	al::Vec2f pos;
 	al::Vec2f uvPx;
 	al::Color color = al::White;
+	al::NormalizedVec<al::Vec4i16> normal;
 };
 /*
  * This vertex format can now be used like this:
  *     al::DrawPrim<MyVertex>(vtxs, bg);
  *
- * The struct is checked for correctness at compile time, as far as it can.
+ * The struct is checked for correctness at compile time, to the extent possible.
  * If you get compiler errors, you'll be interested in the ConstevalFail() line for information
  * on your error.
  */
@@ -33,24 +34,23 @@ struct MyVertex {
 
 
 /*
- * The above is not sufficient if you want custom names or additional data.
+ * The above is not sufficient if you want custom names, additional data or non-axxegro member types.
  * In this case, you can specialize al::VertexAttrArrGetter to provide your own ALLEGRO_VERTEX_ELEMENT array.
  */
 struct MyAdvancedVertex {
 	al::Vec3f pos = {};
 	al::Vec4f customdata = {};
 };
-namespace al {
-	template<>
-	struct VertexAttrArrGetter<MyAdvancedVertex> {
-		static consteval auto GetElements() {
-			return al::CreateVertexAttrArr({
-				{ALLEGRO_PRIM_POSITION, ALLEGRO_PRIM_FLOAT_3, offsetof(MyAdvancedVertex, pos)},
-				{ALLEGRO_PRIM_USER_ATTR + 0, ALLEGRO_PRIM_FLOAT_4, offsetof(MyAdvancedVertex, customdata)}
-			});
-		}
-	};
-}
+
+template<> struct al::VertexAttrArrGetter<MyAdvancedVertex> {
+	static consteval auto GetElements() {
+		return al::CreateVertexAttrArr({
+			{ALLEGRO_PRIM_POSITION, ALLEGRO_PRIM_FLOAT_3, offsetof(MyAdvancedVertex, pos)},
+			{ALLEGRO_PRIM_USER_ATTR + 0, ALLEGRO_PRIM_FLOAT_4, offsetof(MyAdvancedVertex, customdata)}
+		});
+	}
+};
+
 
 int main()
 {
