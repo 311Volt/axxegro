@@ -40,8 +40,8 @@ int main()
 	auto grid = GenerateGrid(64, 64);
 	auto idxs = GenerateIndices(grid);
 
-	al::VertexBuffer<Vertex2D> vertexBuffer(grid.mData);
-	al::IndexBuffer<int> indexBuffer(idxs);
+	al::VertexBuffer vertexBuffer(grid.mData);
+	al::IndexBuffer indexBuffer(idxs);
 
 	al::EventLoop loop(al::DemoEventLoopConfig);
 	loop.framerateLimiter.setLimit(al::FramerateLimiterMode::None{});

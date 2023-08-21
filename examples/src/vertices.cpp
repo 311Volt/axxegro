@@ -71,7 +71,7 @@ int main()
 	al::Transform().scale({100, 100}).use();
 
 	al::EventLoop loop(al::DemoEventLoopConfig);
-	loop.setFramerateLimit(al::Hz(30));
+	loop.framerateLimiter.setLimit(al::Hz(30));
 	loop.run([&](){
 		al::TargetBitmap.clear();
 

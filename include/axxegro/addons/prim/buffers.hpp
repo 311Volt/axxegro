@@ -26,10 +26,10 @@ namespace al {
 
 		template<typename TPAPI>
 		concept HardwareBufferAPI = requires(typename TPAPI::AllegBufType* bufPtr) {
-			typename TPAPI::ElementType;
 			typename TPAPI::AllegBufType;
 			typename TPAPI::ExceptionT;
-			{TPAPI::CreateFn(std::span<typename TPAPI::ElementType>{}, 0)} -> std::same_as<typename TPAPI::AllegBufType*>;
+			{TPAPI::template CreateFn<typename TPAPI::ExampleElementT>({}, 0)}
+				-> std::same_as<typename TPAPI::AllegBufType*>;
 			{TPAPI::DeleteFn(bufPtr)};
 			{TPAPI::LockFn(bufPtr, 0, 0, 0)};
 			{TPAPI::UnlockFn(bufPtr)};
@@ -43,31 +43,31 @@ namespace al {
 			}
 		};
 
-		template<HardwareBufferAPI TPAPI>
+		template<HardwareBufferAPI TPAPI, typename ElementT>
 		class HardwareBufferLockedData;
 
-		template<HardwareBufferAPI TPAPI>
+		template<HardwareBufferAPI TPAPI, typename ElementT>
 		class HardwareBuffer:
 			RequiresInitializables<PrimitivesAddon>,
 			public Resource<typename TPAPI::AllegBufType, HardwareBufferDeleter<TPAPI>>
 		{
 		public:
-			using ElementT = typename TPAPI::ElementType;
 			using AllegBufT = typename TPAPI::AllegBufType;
 
-			static constexpr int ExpectResourceExhaustionThreshold = 8'000'000;
+			static constexpr int SuspectResourceExhaustionThreshold = 8'000'000;
 
 			explicit HardwareBuffer(const std::span<ElementT> elements, int flags = ALLEGRO_PRIM_BUFFER_STATIC)
 				: Resource<AllegBufT, HardwareBufferDeleter<TPAPI>>(nullptr)
+
 			{
-				if(auto* p = TPAPI::CreateFn(elements, flags)) {
+				if(auto* p = TPAPI::template CreateFn<ElementT>(elements, flags)) {
 					this->setPtr(p);
 				} else {
 					throw typename TPAPI::ExceptionT(
 						"Cannot create %s buffer of size %u.%s",
 						TPAPI::BufferTypeStr,
 						elements.size(),
-						elements.size() >= ExpectResourceExhaustionThreshold
+						elements.size() >= SuspectResourceExhaustionThreshold
 						? ""
 						: " Hardware buffers may not be supported on this platform."
 					);
@@ -78,15 +78,15 @@ namespace al {
 				return TPAPI::SizeQueryFn(this->ptr());
 			}
 
-			HardwareBufferLockedData<TPAPI> lock(int start = 0, int len = -1, int flags = ALLEGRO_LOCK_WRITEONLY);
+			HardwareBufferLockedData<TPAPI, ElementT> lock(int start = 0, int len = -1, int flags = ALLEGRO_LOCK_WRITEONLY);
 
 		};
 
-		template<HardwareBufferAPI TPAPI>
+
+		template<HardwareBufferAPI TPAPI, typename ElementT>
 		class HardwareBufferLockedData {
 		public:
 
-			using ElementT = typename TPAPI::ElementType;
 			using AllegBufT = typename TPAPI::AllegBufType;
 
 			HardwareBufferLockedData(const HardwareBufferLockedData&) = delete;
@@ -105,7 +105,7 @@ namespace al {
 		private:
 			std::span<ElementT> data_;
 
-			friend class HardwareBuffer<TPAPI>;
+			friend class HardwareBuffer<TPAPI, ElementT>;
 			AllegBufT* buf_;
 
 			using ExceptionT = typename TPAPI::ExceptionT;
@@ -142,9 +142,9 @@ namespace al {
 			}
 		};
 
-		template<HardwareBufferAPI TPAPI>
-		inline HardwareBufferLockedData<TPAPI> HardwareBuffer<TPAPI>::lock(int start, int len, int flags) {
-			return HardwareBufferLockedData<TPAPI>(this->ptr(), start, len, flags);
+		template<HardwareBufferAPI TPAPI, typename ElementT>
+		inline HardwareBufferLockedData<TPAPI, ElementT> HardwareBuffer<TPAPI, ElementT>::lock(int start, int len, int flags) {
+			return HardwareBufferLockedData<TPAPI, ElementT>(this->ptr(), start, len, flags);
 		}
 
 
@@ -152,54 +152,72 @@ namespace al {
 
 
 
-		template<IndexType IndexT>
 		struct IndexBufferAPI {
-
-			using ElementType = IndexT;
 			using AllegBufType = ALLEGRO_INDEX_BUFFER;
 			using ExceptionT = IndexBufferError;
+			using ExampleElementT = int;
 			static inline auto&& DeleteFn = al_destroy_index_buffer;
 			static inline auto&& LockFn = al_lock_index_buffer;
 			static inline auto&& UnlockFn = al_unlock_index_buffer;
 			static inline auto&& SizeQueryFn = al_get_index_buffer_size;
 			static constexpr char BufferTypeStr[] = "index buffer";
 
-			static inline AllegBufType* CreateFn(std::span<ElementType> elements, int flags) {
-				return al_create_index_buffer(sizeof(ElementType), elements.data(), elements.size(), flags);
+			template<IndexType ElementT>
+			static inline AllegBufType* CreateFn(std::span<ElementT> elements, int flags) {
+				return al_create_index_buffer(sizeof(ElementT), elements.data(), elements.size(), flags);
 			}
 		};
-		static_assert(HardwareBufferAPI<IndexBufferAPI<int>>);
+		static_assert(HardwareBufferAPI<IndexBufferAPI>);
 
-		template<VertexType VertexT>
+		template<std::ranges::contiguous_range R>
+			requires IndexType<std::ranges::range_value_t<R>>
+		HardwareBuffer(R&& range, int flags) -> HardwareBuffer<IndexBufferAPI, std::ranges::range_value_t<R>>;
+
+
 		struct VertexBufferAPI {
 
-			using ElementType = VertexT;
 			using AllegBufType = ALLEGRO_VERTEX_BUFFER;
 			using ExceptionT = VertexBufferError;
+			using ExampleElementT = Vertex;
 			static inline auto&& DeleteFn = al_destroy_vertex_buffer;
 			static inline auto&& LockFn = al_lock_vertex_buffer;
 			static inline auto&& UnlockFn = al_unlock_vertex_buffer;
 			static inline auto&& SizeQueryFn = al_get_vertex_buffer_size;
 			static constexpr char BufferTypeStr[] = "vertex buffer";
 
-			static inline AllegBufType* CreateFn(std::span<ElementType> elements, int flags) {
+			template<VertexType ElementT>
+			static inline AllegBufType* CreateFn(std::span<ElementT> elements, int flags) {
 				return al_create_vertex_buffer(
-					detail::VertexDeclGetter<VertexT>::GetVertexDeclPtr(),
-					elements.data(), static_cast<int>(elements.size()), flags
+					detail::VertexDeclGetter<ElementT>::GetVertexDeclPtr(),
+					elements.data(), elements.size(), flags
 				);
 			}
 		};
-		static_assert(HardwareBufferAPI<VertexBufferAPI<Vertex>>);
-
-
+		static_assert(HardwareBufferAPI<VertexBufferAPI>);
 	};
 
 
 	template<VertexType VertexT>
-	using VertexBuffer = detail::HardwareBuffer<detail::VertexBufferAPI<VertexT>>;
+	class VertexBuffer: public detail::HardwareBuffer<detail::VertexBufferAPI, VertexT> {
+		using detail::HardwareBuffer<detail::VertexBufferAPI, VertexT>::HardwareBuffer;
+	};
+
+	template<std::ranges::contiguous_range R> requires VertexType<std::ranges::range_value_t<R>>
+	VertexBuffer(R&& range, int flags) -> VertexBuffer<std::ranges::range_value_t<R>>;
+	template<std::ranges::contiguous_range R> requires VertexType<std::ranges::range_value_t<R>>
+	VertexBuffer(R&& range) -> VertexBuffer<std::ranges::range_value_t<R>>;
+
+
 
 	template<IndexType IndexT>
-	using IndexBuffer = detail::HardwareBuffer<detail::IndexBufferAPI<IndexT>>;
+	class IndexBuffer: public detail::HardwareBuffer<detail::IndexBufferAPI, IndexT> {
+		using detail::HardwareBuffer<detail::IndexBufferAPI, IndexT>::HardwareBuffer;
+	};
+
+	template<std::ranges::contiguous_range R> requires IndexType<std::ranges::range_value_t<R>>
+	IndexBuffer(R&& range, int flags) -> IndexBuffer<std::ranges::range_value_t<R>>;
+	template<std::ranges::contiguous_range R> requires IndexType<std::ranges::range_value_t<R>>
+	IndexBuffer(R&& range) -> IndexBuffer<std::ranges::range_value_t<R>>;
 
 
 	template<VertexType VertexT>

@@ -24,7 +24,7 @@ int main()
 		uuhhh.play();
 	});
 
-	evLoop.setFramerateLimit(30_Hz);
+	evLoop.framerateLimiter.setLimit(30_Hz);
 	evLoop.run([&](){
 		al::TargetBitmap.clearToColor(al::Blue);
 		font.drawText("press F to oof", al::White, {100, 100});

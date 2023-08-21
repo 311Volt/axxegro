@@ -21,7 +21,7 @@ namespace al {
 	template<std::ranges::contiguous_range RangeT>
 		requires VertexType<std::ranges::range_value_t<RangeT>>
 	inline int DrawPrim(
-		const RangeT vertices,
+		RangeT&& vertices,
 		const OptionalRef<Bitmap> texture = std::nullopt, 
 		ALLEGRO_PRIM_TYPE type = ALLEGRO_PRIM_TRIANGLE_LIST,
 		int start = 0,
@@ -44,8 +44,8 @@ namespace al {
 		requires VertexType<std::ranges::range_value_t<VtxRangeT>>
 		      && std::same_as<std::ranges::range_value_t<IdxRangeT>, int>
 	inline int DrawIndexedPrim(
-		const VtxRangeT vertices,
-		const IdxRangeT indices,
+		VtxRangeT&& vertices,
+		IdxRangeT&& indices,
 		const OptionalRef<Bitmap> texture = std::nullopt, 
 		ALLEGRO_PRIM_TYPE type = ALLEGRO_PRIM_TRIANGLE_LIST
 	)

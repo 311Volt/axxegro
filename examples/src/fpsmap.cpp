@@ -215,7 +215,7 @@ int main()
 	});
 
 	Mesh terrain = CreateTerrain(128, 128, 96);
-	al::VertexBuffer<al::Vertex> terrainVB(terrain.vertices);
+	al::VertexBuffer terrainVB(terrain.vertices);
 	al::IndexBuffer terrainIB(terrain.indices);
 
 	Camera camera;
