@@ -85,7 +85,7 @@ al::EventLoop loop(EventLoopConfig {
 
 //config can be modified, for example:
 using namespace al::Literals;
-loop.setFramerateLimit(60_Hz);
+loop.framerateLimiter.setLimit(60_Hz);
 
 //do something when we press enter
 loop.eventDispatcher.onKeyDown(ALLEGRO_KEY_ENTER, [&](){
@@ -123,7 +123,7 @@ al::Bitmap fractal(512, 512);
 auto region = fractal.lock<al::PixelARGB8888>();
 for(int y=0; y<region.height(); y++) {
 	auto row = region.row(y);
-	for(int x=0; x<row.size(); x++) {
+	for(int x=0; x<row.mSize(); x++) {
 		row[x].set(0x000000);
 		row[x].g = mandelbrot(x, y);
 	}

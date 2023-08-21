@@ -91,12 +91,8 @@ namespace al {
 				});
 			}
 
-			setFramerateLimit(config.framerateLimit);
+			framerateLimiter.setLimit(config.framerateLimit);
 
-		}
-
-		void setFramerateLimit(FramerateLimit limit) {
-			framerateLimiter.setLimit(limit);
 		}
 
 		void setExitFlag() {
@@ -125,7 +121,7 @@ namespace al {
 		[[nodiscard]] int64_t getTick() const {
 			return tick;
 		}
-		[[nodiscard]] int64_t getFPS() const {
+		[[nodiscard]] double getFPS() const {
 			return fpsCounter.getFPS();
 		}
 		[[nodiscard]] double getLastTickTime() const {
@@ -134,9 +130,9 @@ namespace al {
 
 		EventQueue eventQueue;
 		EventDispatcher eventDispatcher;
-	private:
 		FramerateLimiter framerateLimiter;
 		FPSCounter fpsCounter;
+	private:
 		int64_t tick = 0;
 		double lastTimeOfTick = -1.0;
 		double lastTickTime = 0.01;
