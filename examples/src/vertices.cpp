@@ -17,18 +17,16 @@
  * in that order (it matters when accesing the user attrs "normal" and "rgba" in shaders).
  */
 struct MyVertex {
-	al::Vec2f pos;
-	al::Vec2f uvPx;
+	al::Vec2f pos {};
+	al::Vec2f uvPx {};
 	al::Color color = al::White;
-	al::NormalizedVec<al::Vec4i16> normal;
+	al::NormalizedVec<al::Vec4i16> normal {};
 };
 /*
  * This vertex format can now be used like this:
- *     al::DrawPrim<MyVertex>(vtxs, bg);
+ *     al::DrawPrim(vtxs);
  *
  * The struct is checked for correctness at compile time, to the extent possible.
- * If you get compiler errors, you'll be interested in the ConstevalFail() line for information
- * on your error.
  */
 
 
@@ -77,8 +75,8 @@ int main()
 	loop.run([&](){
 		al::TargetBitmap.clear();
 
-		al::DrawPrim<MyVertex>(vtxs, bg);
-		al::DrawPrim<MyAdvancedVertex>(vtxs2, bg);
+		al::DrawPrim(vtxs, bg);
+		al::DrawPrim(vtxs2, bg);
 
 		al::CurrentDisplay.flip();
 	});

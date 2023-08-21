@@ -158,7 +158,7 @@ namespace al {
 			{ VtxElemStorageType<ElemT>{}() } -> std::convertible_to<ALLEGRO_PRIM_STORAGE>;
 		};
 
-		void ConstevalFail(const char *);
+		void CustomVertexErrorMessage(const char *);
 
 		template<RangeOf<ALLEGRO_VERTEX_ELEMENT> TRange>
 		inline consteval bool HasDuplicateAttrs(TRange &&range)
@@ -180,16 +180,16 @@ namespace al {
 		inline consteval VertexAttrArr VertexElemVecToArr(const std::vector<ALLEGRO_VERTEX_ELEMENT> &elements)
 		{
 			if (elements.size() > MaxCustomVertexElements) {
-				ConstevalFail("Too many vertex elements");
+				CustomVertexErrorMessage("Too many vertex elements");
 			}
 			if (HasDuplicateAttrs(elements)) {
-				ConstevalFail("Duplicate attributes");
+				CustomVertexErrorMessage("Duplicate attributes");
 			}
 			VertexAttrArr result;
 			result.fill({0, 0, 0});
 			std::copy(elements.begin(), elements.end(), result.begin());
 			if (!IsVtxElemTerminator(result.back())) {
-				ConstevalFail("sanity check failed: no terminator at end (this should never happen)");
+				CustomVertexErrorMessage("sanity check failed: no terminator at end (this should never happen)");
 			}
 			return result;
 		}
@@ -240,21 +240,21 @@ ALLEGRO_VERTEX_ELEMENT { \
 			if constexpr (AXX_HAS_COMPATIBLE_ELEMENT_MEMBER(pos)) {
 				auto elem = AXX_CREATE_SIMPLE_VTX_ELEM(ALLEGRO_PRIM_POSITION, pos);
 				if (not isValidPositionStorage(elem.storage)) {
-					ConstevalFail("Unsupported storage for position member");
+					CustomVertexErrorMessage("Unsupported storage for position member");
 				}
 				elements.push_back(elem);
 			}
 			if constexpr (AXX_HAS_COMPATIBLE_ELEMENT_MEMBER(uvPx)) {
 				auto elem = AXX_CREATE_SIMPLE_VTX_ELEM(ALLEGRO_PRIM_TEX_COORD_PIXEL, uvPx);
 				if (not isValidUVStorage(elem.storage)) {
-					ConstevalFail("Unsupported storage for texture coordinate member");
+					CustomVertexErrorMessage("Unsupported storage for texture coordinate member");
 				}
 				elements.push_back(elem);
 			}
 			if constexpr (AXX_HAS_COMPATIBLE_ELEMENT_MEMBER(uvNorm)) {
 				auto elem = AXX_CREATE_SIMPLE_VTX_ELEM(ALLEGRO_PRIM_TEX_COORD_PIXEL, uvNorm);
 				if (not isValidUVStorage(elem.storage)) {
-					ConstevalFail("Unsupported storage for texture coordinate member");
+					CustomVertexErrorMessage("Unsupported storage for texture coordinate member");
 				}
 				elements.push_back(elem);
 			}
@@ -265,7 +265,7 @@ ALLEGRO_VERTEX_ELEMENT { \
 			if constexpr (AXX_HAS_COMPATIBLE_ELEMENT_MEMBER(rgba)) {
 				auto elem = AXX_CREATE_SIMPLE_VTX_ELEM(ALLEGRO_PRIM_USER_ATTR + (userAttrCounter++), rgba);
 				if (not isValidRGBAStorage(elem.storage)) {
-					ConstevalFail("Unsupported storage for RGBA member");
+					CustomVertexErrorMessage("Unsupported storage for RGBA member");
 				}
 				elements.push_back(elem);
 			}
@@ -280,12 +280,12 @@ ALLEGRO_VERTEX_ELEMENT { \
 					};
 					elements.push_back(elem);
 				} else {
-					ConstevalFail("Incompatible type for COLOR_ATTR storage");
+					CustomVertexErrorMessage("Incompatible type for COLOR_ATTR storage");
 				}
 			}
 
 			if (elements.size() == 0) {
-				ConstevalFail("Vertex has no attributes");
+				CustomVertexErrorMessage("Vertex has no attributes");
 			}
 
 			return elements;

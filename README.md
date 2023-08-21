@@ -53,7 +53,7 @@ int main() {
 	};
 	
 	al::TargetBitmap.clearToColor(al::RGB(0,0,0));
-	al::DrawPrim<al::Vertex>(vertices);
+	al::DrawPrim(vertices);
 	al::CurrentDisplay.flip();
 	
 	al::Sleep(1.0);
@@ -65,7 +65,7 @@ int main() {
 ## Loading and drawing a bitmap
 
 ```c++
-al::Bitmap lena("lena.jpg");
+al::Bitmap lena = al::LoadBitmap("lena.jpg");
 /* ... */
 lena.draw({0, 0});
 ```

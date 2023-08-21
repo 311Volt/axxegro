@@ -7,6 +7,7 @@
 #include <cstddef>
 #include <memory>
 #include <optional>
+#include <ranges>
 #include <span>
 
 
@@ -17,41 +18,46 @@ namespace al {
 	template<typename T>
 	using OptionalRef = std::optional<std::reference_wrapper<T>>;
 
-	template<VertexType VertexT>
+	template<std::ranges::contiguous_range RangeT>
+		requires VertexType<std::ranges::range_value_t<RangeT>>
 	inline int DrawPrim(
-		const std::span<VertexT> vertices,
+		const RangeT vertices,
 		const OptionalRef<Bitmap> texture = std::nullopt, 
 		ALLEGRO_PRIM_TYPE type = ALLEGRO_PRIM_TRIANGLE_LIST,
 		int start = 0,
 		int end = -1
 	)
 	{
+		using VertexT = std::ranges::range_value_t<RangeT>;
 		InternalRequire<PrimitivesAddon>();
 		return al_draw_prim(
-			vertices.data(), 
+			std::ranges::data(vertices),
 			detail::VertexDeclGetter<VertexT>::GetVertexDeclPtr(),
 			texture ? texture->get().ptr() : nullptr,
 			start, 
-			end==-1 ? vertices.size() : end, 
+			end==-1 ? std::ranges::size(vertices) : end,
 			type
 		);
 	}
 
-	template<VertexType VertexT>
+	template<std::ranges::contiguous_range VtxRangeT, std::ranges::contiguous_range IdxRangeT>
+		requires VertexType<std::ranges::range_value_t<VtxRangeT>>
+		      && std::same_as<std::ranges::range_value_t<IdxRangeT>, int>
 	inline int DrawIndexedPrim(
-		const std::span<VertexT> vertices,
-		const std::span<int> indices, 
+		const VtxRangeT vertices,
+		const IdxRangeT indices,
 		const OptionalRef<Bitmap> texture = std::nullopt, 
 		ALLEGRO_PRIM_TYPE type = ALLEGRO_PRIM_TRIANGLE_LIST
 	)
 	{
+		using VertexT = std::ranges::range_value_t<VtxRangeT>;
 		InternalRequire<PrimitivesAddon>();
 		return al_draw_indexed_prim(
-			vertices.data(),
+			std::ranges::data(vertices),
 			detail::VertexDeclGetter<VertexT>::GetVertexDeclPtr(),
 			texture ? texture->get().ptr() : nullptr,
-			indices.data(), 
-			indices.size(), 
+			std::ranges::data(indices),
+			std::ranges::size(indices),
 			type
 		);
 	}

@@ -66,7 +66,7 @@ int main()
 		//render 3D scene (in this case, one triangle)
 		al::Transform::Camera(pos, pos+fwd, {0,1,0}).use();
 		proj.useProjection();
-		al::DrawPrim<al::BasicVertex>(DemoTriangle, tex);
+		al::DrawPrim(DemoTriangle, tex);
 		al::CurrentDisplay.flip();
 	});
 }

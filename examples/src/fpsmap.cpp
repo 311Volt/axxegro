@@ -176,7 +176,7 @@ struct Skybox {
 
 	void render() 
 	{
-		al::DrawIndexedPrim<al::Vertex>(skyboxMesh.vertices, skyboxMesh.indices, texture);
+		al::DrawIndexedPrim(skyboxMesh.vertices, skyboxMesh.indices, texture);
 	}
 };
 
