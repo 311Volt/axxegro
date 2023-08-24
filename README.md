@@ -80,7 +80,7 @@ al::EventLoop loop(EventLoopConfig {
     .autoRegisterEvents = al::KeyboardEventSourceBit | al::MouseEventSourceBit | al::CurrentDisplayEventSourceBit,
     .enableQuitTriggers = al::QuitOnDisplayClosedBit | al::QuitOnEscPressedBit,
     .autoAcknowledgeResize = true,
-    .framerateLimit = al::FramerateLimiterMode::Auto{}
+    .framerateLimit = al::FPSLimit::Auto
 });
 
 //config can be modified, for example:

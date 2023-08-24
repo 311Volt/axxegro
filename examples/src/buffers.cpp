@@ -44,7 +44,7 @@ int main()
 	al::IndexBuffer indexBuffer(idxs);
 
 	al::EventLoop loop(al::DemoEventLoopConfig);
-	loop.framerateLimiter.setLimit(al::FramerateLimiterMode::None{});
+	loop.framerateLimiter.setLimit(al::FPSLimit::None);
 	loop.fpsCounter.setInterval(0.25);
 
 	auto font = al::Font::CreateBuiltinFont();

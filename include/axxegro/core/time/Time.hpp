@@ -3,7 +3,6 @@
 
 #include <allegro5/allegro.h>
 #include <memory>
-#include <chrono>
 
 namespace al {
 

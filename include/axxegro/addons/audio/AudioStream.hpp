@@ -194,9 +194,9 @@ namespace al {
 
 		using Traits = detail::FragmentTraits<TSample, TPChanConf>;
 
-		explicit AudioStream(Freq freq = Hz(44100), BufferConfig bufConfig = {})
+		explicit AudioStream(Hz freq = Hz(44100), BufferConfig bufConfig = {})
 			: BaseAudioStream({
-				.frequency = (unsigned)freq.getFreqHz(),
+				.frequency = (unsigned)freq.getHz(),
 				.depth = Traits::Depth,
 				.chanConf = Traits::ChanConf}, bufConfig)
 		{

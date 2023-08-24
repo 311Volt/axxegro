@@ -34,7 +34,7 @@ namespace al {
 		uint32_t autoRegisterEvents = KeyboardEventSourceBit | MouseEventSourceBit | CurrentDisplayEventSourceBit;
 		uint32_t enableQuitTriggers = QuitOnDisplayClosedBit | QuitOnEscPressedBit;
 		bool autoAcknowledgeResize = true;
-		FramerateLimit framerateLimit = FramerateLimiterMode::None{};
+		FramerateLimit framerateLimit = FPSLimit::None;
 	};
 
 	inline constexpr EventLoopConfig EmptyEventLoopConfig = {
@@ -53,7 +53,7 @@ namespace al {
 		.autoRegisterEvents = KeyboardEventSourceBit | MouseEventSourceBit | CurrentDisplayEventSourceBit,
 		.enableQuitTriggers = QuitOnDisplayClosedBit | QuitOnEscPressedBit,
 		.autoAcknowledgeResize = true,
-		.framerateLimit = FramerateLimiterMode::Auto{}
+		.framerateLimit = FPSLimit::Auto
 	};
 
 

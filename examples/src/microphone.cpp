@@ -66,7 +66,7 @@ private:
  */
 struct RingModulator {
 
-	explicit RingModulator(al::Freq carrierFreq): buffer(32768), carrierFrequency(carrierFreq) {}
+	explicit RingModulator(al::Hz carrierFreq): buffer(32768), carrierFrequency(carrierFreq) {}
 
 	/*
 	 * Take the input, process it and save it in the ring buffer.
@@ -78,7 +78,7 @@ struct RingModulator {
 
 		for(unsigned i=0; i<input.size(); i++) {
 			double tSecs = double(samplesProcessed++) / sampleRate;
-			double carrier = std::sin(2.0 * std::numbers::pi * (tSecs * carrierFrequency.getFreqHz()));
+			double carrier = std::sin(2.0 * std::numbers::pi * (tSecs * carrierFrequency.getHz()));
 			output[i] = input[i] * carrier;
 			//output[i] = al::Vec2f(0.2, 0.2) * carrier;
 		}
@@ -110,7 +110,7 @@ private:
 
 	int64_t samplesProcessed = 0;
 	size_t cooldown = 0;
-	al::Freq carrierFrequency;
+	al::Hz carrierFrequency;
 	double sampleRate = 44100.0;
 
 };

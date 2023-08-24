@@ -117,8 +117,8 @@ namespace al {
 
 		using CallbackT = std::function<void(std::span<typename Traits::FragmentType>)>;
 
-		explicit UserMixer(Freq freq = Hz(44100))
-			: Mixer({.frequency = unsigned(freq.getFreqHz()), .depth = Traits::Depth, .chanConf = TPChanConf})
+		explicit UserMixer(Hz freq = Hz(44100))
+			: Mixer({.frequency = unsigned(freq.getHz()), .depth = Traits::Depth, .chanConf = TPChanConf})
 		{
 
 		}

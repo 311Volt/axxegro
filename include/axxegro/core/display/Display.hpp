@@ -291,7 +291,7 @@ namespace al {
 		 * If that fails, it returns 300.
 		 * The return value is clamped between 60 and 300.
 		 */
-		[[nodiscard]] Freq findGoodFramerateLimit() const {
+		[[nodiscard]] Hz findGoodFramerateLimit() const {
 			int ret = getRefreshRate().value_or(0);
 			if(ret == 0) {
 				auto modes = GetDisplayModes();

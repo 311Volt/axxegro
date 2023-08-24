@@ -88,14 +88,14 @@ namespace al {
 			using Traits = FragmentTraits<TSample, TPChanConf>;
 
 			explicit TypedAudioRecorder(
-				Freq frequency = al::Hz(44100),
+				Hz frequency = al::Hz(44100),
 				BufferConfig bufConfig = {
 					.numChunks = 12,
 					.fragmentsPerChunk = 1024
 				})
 				: BaseAudioRecorder(
 					{
-						.frequency = (unsigned)frequency.getFreqHz(),
+						.frequency = (unsigned)frequency.getHz(),
 						.depth = Traits::Depth,
 						.chanConf = Traits::ChanConf
 					},
