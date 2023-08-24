@@ -22,11 +22,17 @@ namespace al
 		return (depth & 0x07) + 1;
 	}
 
+	/**
+	 * @brief Describes the buffer configuration of an audio stream.
+	 */
 	struct BufferConfig {
 		unsigned numChunks;
 		unsigned fragmentsPerChunk;
 	};
 
+	/**
+	 * @brief Describes playback parameters of samples and audio streams.
+	 */
 	struct PlaybackParams {
 		float gain = 1.0;
 		float pan = 0.0;
@@ -47,6 +53,9 @@ namespace al
 		}
 	};
 
+	/**
+	 * @brief A runtime description of an audio sample type.
+	 */
 	struct AudioFragmentFormat {
 		ALLEGRO_AUDIO_DEPTH depth = ALLEGRO_AUDIO_DEPTH_FLOAT32;
 		ALLEGRO_CHANNEL_CONF chanConf = ALLEGRO_CHANNEL_CONF_2;
@@ -78,7 +87,9 @@ namespace al
 		}
 	};
 
-
+	/**
+	 * @brief A description of an audio format.
+	 */
 	struct AudioFormat {
 		unsigned frequency = 44100;
 		ALLEGRO_AUDIO_DEPTH depth = ALLEGRO_AUDIO_DEPTH_FLOAT32;
@@ -227,8 +238,6 @@ namespace al
 		template<detail::ValidMultiChannelFragmentType TFrag, al::detail::ValidSampleType TNewSmp>
 		using ConvertFragSampleType = Vec<TNewSmp, TFrag::NumElements>;
 	}
-
-
 
 	inline constexpr ALLEGRO_CHANNEL_CONF Mono = ALLEGRO_CHANNEL_CONF_1;
 	inline constexpr ALLEGRO_CHANNEL_CONF Stereo = ALLEGRO_CHANNEL_CONF_2;

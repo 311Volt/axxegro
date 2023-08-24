@@ -11,7 +11,7 @@ int main()
 	al::EventLoop evLoop(al::DemoEventLoopConfig);
 	al::Font font("data/roboto.ttf", 36);
 
-	al::SampleInstance::ReserveSamples(16);
+	al::ReserveSamples(16);
 
 	al::BaseAudioStream music = al::LoadAudioStream("data/audio/Spring_In_My_Step.ogg");
 	al::DefaultMixer.attachAudioStream(music);

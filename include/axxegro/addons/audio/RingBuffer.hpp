@@ -12,6 +12,10 @@
 
 namespace al {
 
+	/**
+	 * @brief A simple FIFO ring buffer. Provides utility for audio code.
+	 * @tparam T The buffer's value type. Must be copyable.
+	 */
 	template<typename T>
 	class RingBuffer {
 	public:
@@ -19,26 +23,39 @@ namespace al {
 		using SizeT = typename std::span<T>::size_type;
 		using DiffT = typename std::span<T>::difference_type;
 
+		/**
+		 * Creates a ring buffer with the given capacity
+		 * @param capacity Maximum number of elements that can be held by the buffer.
+		 */
 		explicit RingBuffer(SizeT capacity) {
 			data.resize(capacity+1);
 		}
 
+		/// @brief Returns the maximum number of elements that can be held by the buffer.
 		[[nodiscard]] SizeT capacity() const {
 			return data.size() - 1;
 		}
 
-		[[nodiscard]] SizeT freeSpace() {
+		/// @brief Returns the maximum number of elements that can be pushed into the buffer currently.
+		[[nodiscard]] SizeT freeSpace() const {
 			return capacity() - size();
 		}
 
+		/// @brief Returns the number of elements currently held by the buffer.
 		[[nodiscard]] SizeT size() const {
 			return (internalBufSize() + (head-tail)) % internalBufSize();
 		}
 
+		/// @brief Returns the size of the internal buffer.
 		[[nodiscard]] DiffT internalBufSize() const {
 			return std::ssize(data);
 		}
 
+		/**
+		 * @brief Inserts the specified range of elements into the buffer in a FIFO manner.
+		 * @param elements Elements to be inserted into the buffer.
+		 * @return Whether there was enough space to perform the operation.
+		 */
 		bool pushData(const std::span<const T> elements) {
 			if(freeSpace() < elements.size()) {
 				return false;
@@ -55,6 +72,11 @@ namespace al {
 			return true;
 		}
 
+		/**
+		 * @brief Copies the buffer's oldest elements into the specified range.
+		 * @param output Output data. Specifies both the destination and the requested amount of data.
+		 * @return Whether there was enough data in the buffer to perform the operation.
+		 */
 		bool popInto(std::span<T> output) {
 			if(size() < output.size()) {
 				return false;

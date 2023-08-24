@@ -9,7 +9,7 @@ int main()
 	al::Video vid("data/cssd.ogv");
 	al::Font builtinFont = al::Font::CreateBuiltinFont();
 
-	al::SampleInstance::ReserveSamples(16);
+	al::ReserveSamples(16);
 	vid.start();
 
 	al::EventQueue queue;
