@@ -212,7 +212,7 @@ namespace al {
 
 		template<UserEventType EventT>
 		EventDispatcher& setUserEventHandler(EventHandler<EventT> handler) {
-			return setEventHandler<EventT>(EventT::EventTypeID, std::move(handler));
+			return setEventHandler<EventT>(UserEventTypeIDGetter<EventT>{}(), std::move(handler));
 		}
 
 		EventDispatcher& setCatchallHandler(GenericEventHandler handler) {

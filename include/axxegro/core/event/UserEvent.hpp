@@ -6,17 +6,53 @@
 #include "EventDataGetter.hpp"
 #include "BuiltinEvents.hpp"
 
+#include <atomic>
+
 namespace al {
+
+	namespace detail {
+		constexpr EventType AutoEventTypeIDBegin = 0x40000000;
+		inline std::atomic<EventType> AutoEventTypeIDCounter = AutoEventTypeIDBegin;
+
+		inline EventType GetNextAutoEventTypeID() {
+			if(AutoEventTypeIDCounter == std::numeric_limits<EventType>::max()) {
+				throw Exception("Cannot reserve this many event types (how on earth did you trigger this?)");
+			}
+			return AutoEventTypeIDCounter++;
+		}
+	}
 
 	template<EventType ID>
 	constexpr bool IsIDNonReserved = ID >= 1024;
 
+	template<EventType ID>
+	constexpr bool IsIDConstantAllowed = ID < detail::AutoEventTypeIDBegin;
 
 	template<typename T>
 	concept UserEventType = requires {
 		requires std::copy_constructible<T> || std::move_constructible<T>;
+	};
+
+	template<typename T>
+	concept UserEventTypeWithConstID = UserEventType<T> && requires {
 		{ T::EventTypeID } -> std::convertible_to<EventType>;
-		requires IsIDNonReserved<T::EventTypeID>;
+		requires IsIDNonReserved<T::EventTypeID>; //low IDs (< 1024) are reserved for addons
+		requires IsIDConstantAllowed<T::EventTypeID>; //high IDs (>= 2^30) are reserved for axxegro auto generation
+	};
+
+	template<UserEventType EventT>
+	struct UserEventTypeIDGetter {
+		static inline const EventType EventTypeID = detail::GetNextAutoEventTypeID();
+		EventType operator()() const {
+			return EventTypeID;
+		}
+	};
+
+	template<UserEventTypeWithConstID EventT>
+	struct UserEventTypeIDGetter<EventT> {
+		EventType operator()() const {
+			return EventT::EventTypeID;
+		}
 	};
 
 	template<typename T>
@@ -31,7 +67,7 @@ namespace al {
 	{
 		Event ev;
 		memset(&ev, 0, sizeof(ev));
-		ev.any.type = EventT::EventTypeID;
+		ev.any.type = UserEventTypeIDGetter<EventT>{}();
 		return ev;
 	}
 
@@ -74,15 +110,16 @@ namespace al {
 	template<UserEventType EventT>
 	const EventT& GetUserEventData(const Event& ev)
 	{
-		if(ev.type != EventT::EventTypeID) {
-			throw EventQueueError("User event ID mismatch: expected %d, got %d", EventT::EventTypeID, ev.type);
+		auto evTypeID = UserEventTypeIDGetter<EventT>{}();
+		if(ev.type != evTypeID) {
+			throw EventQueueError("User event ID mismatch: expected %d, got %d", evTypeID, ev.type);
 		}
 		return *GetUserEventDataPtr<EventT>(&ev.user);
 	}
 
 	template<UserEventType EventT>
 	std::optional<std::reference_wrapper<const EventT>> TryGetUserEventData(const Event& ev) {
-		if(ev.type != EventT::EventTypeID) {
+		if(ev.type != UserEventTypeIDGetter<EventT>{}()) {
 			return std::nullopt;
 		}
 		return *GetUserEventDataPtr<EventT>(&ev.user);

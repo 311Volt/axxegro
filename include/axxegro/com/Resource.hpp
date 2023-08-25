@@ -53,7 +53,6 @@ namespace al {
 			inline void operator()(type* p){delfn(p);} \
 		}
 
-
 	template<typename T, typename Deleter = ::al::Deleter<T>>
 	class Resource {
 	private:
