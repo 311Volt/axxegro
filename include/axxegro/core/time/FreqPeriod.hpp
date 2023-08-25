@@ -54,7 +54,7 @@ namespace al {
 		using RatioType = RatioT::type;
 
 
-		constexpr double getHz() const {
+		[[nodiscard]] constexpr double getHz() const {
 			return value * detail::RatioAsDouble<RatioType>();
 		}
 
@@ -78,7 +78,7 @@ namespace al {
 		using ValueWrapper::ValueWrapper;
 		using RatioType = RatioT::type;
 
-		constexpr double getSeconds() const {
+		[[nodiscard]] constexpr double getSeconds() const {
 			return value * detail::RatioAsDouble<RatioType>();
 		}
 

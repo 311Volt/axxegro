@@ -5,10 +5,21 @@
 #include "TTFAddon.hpp"
 #include "../../core.hpp"
 
+#include <cstring>
 #include <allegro5/allegro_font.h>
 
 namespace al {
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_FONT, al_destroy_font);
+
+#ifdef ALLEGRO_UNSTABLE
+	struct Glyph {
+		ALLEGRO_BITMAP* bitmap;
+		RectI glyphRect;
+		Vec2i offset;
+		int kerningPx;
+		int advancePx;
+	};
+#endif
 
 	class Font:
 			RequiresInitializables<FontAddon>,
@@ -82,10 +93,26 @@ namespace al {
 			return {pos, pos+size};
 		}
 
-		int getGlyphAdvance(char32_t codepoint1, char32_t codepoint2) {
+		[[nodiscard]] int getGlyphAdvance(char32_t codepoint1, char32_t codepoint2) const {
 			return al_get_glyph_advance(ptr(), (int)codepoint1, (int)codepoint2);
 		}
-		size_t calcCutoffPoint(std::u32string_view str, int maxWidth) {
+
+#ifdef ALLEGRO_UNSTABLE
+		[[nodiscard]] Glyph getGlyph(char32_t prevCodepoint, char32_t curCodepoint) const {
+			ALLEGRO_GLYPH glyph;
+			std::memset(&glyph, 0, sizeof(glyph));
+			al_get_glyph(ptr(), prevCodepoint, curCodepoint, &glyph);
+			return Glyph {
+				.bitmap = glyph.bitmap,
+				.glyphRect = al::RectI::XYWH(glyph.x, glyph.y, glyph.w, glyph.h),
+				.offset = {glyph.offset_x, glyph.offset_y},
+				.kerningPx = glyph.kerning,
+				.advancePx = glyph.advance
+			};
+		}
+#endif
+
+		[[nodiscard]] size_t calcCutoffPoint(std::u32string_view str, int maxWidth) const {
 			int pos = 0;
 			size_t ret = 0;
 
@@ -105,7 +132,8 @@ namespace al {
 			}
 			return ret;
 		}
-		size_t calcCutoffPoint(std::string_view str, int maxWidth) {
+
+		[[nodiscard]] size_t calcCutoffPoint(std::string_view str, int maxWidth) const {
 			UStr ustr(str);
 			auto cpOff = calcCutoffPoint(ToUTF32(str), maxWidth);
 			return al_ustr_offset(ustr.ptr(), (int)cpOff);

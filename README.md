@@ -185,7 +185,7 @@ the following missing things:
 
 ### high priority
  - a subset of gfx routines (blending modes)
- - platform-specific and functions
+ - platform-specific functions
  - native dialog menus
 
 ### medium priority

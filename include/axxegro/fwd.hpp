@@ -47,6 +47,7 @@ namespace al {
 	struct FPSCounter;
 	struct FramerateLimiter;
 	class GenericEventHandler;
+	struct Glyph;
 	struct IEventHandler;
 	struct ImageAddon;
 	struct KeyboardDriver;

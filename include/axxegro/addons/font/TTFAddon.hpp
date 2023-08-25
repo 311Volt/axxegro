@@ -17,6 +17,9 @@ namespace al {
 		[[nodiscard]] static bool init() {return al_init_ttf_addon();}
 		using DependsOn = InitDependencies<FontAddon>;
 	};
+
+
+
 }
 
 #endif //AXXEGRO_TTFADDON_HPP
