@@ -18,11 +18,6 @@ namespace al {
 
 	template<typename T>
 	concept Integer = std::is_integral_v<T> && !std::is_same_v<T, bool>;
-
-	template<typename From, typename To>
-	concept IndirectlyConvertibleTo = requires(From x) {
-		{To{x}};
-	};
 	
 	template<typename T>
 	concept Arithmetic = std::is_arithmetic_v<T>;

@@ -43,7 +43,7 @@ public:
 		float n[4];
 		for(int i=0; i<4; i++) {
 			al::Vec2f ipos = floorPos + al::Vec2f(!!(i&1), !!(i&2));
-			n[i] = randomGradient(ipos.i()).dot(pos-ipos);
+			n[i] = randomGradient(ipos.asInt()).dot(pos-ipos);
 		}
 
 		float ix0 = interpolate(n[0], n[1], interp.x);
@@ -94,7 +94,7 @@ struct Camera {
 	
 	void rotate(al::Vec2f delta) 
 	{
-		rot += delta.f64();
+		rot += delta.asDouble();
 		rot.x = std::clamp(rot.x, -1.5706, 1.5706);
 		rot.y = std::fmod(rot.y, ALLEGRO_PI * 2.0);
 	}
@@ -165,7 +165,7 @@ struct Skybox {
 	void scaleUV()
 	{
 		for(auto& vtx: skyboxMesh.vertices) {
-			vtx.setUV(vtx.getUV().hadamard({1.0/4.0,1.0/3.0}).hadamard(texture.size().f32()));
+			vtx.setUV(vtx.getUV().hadamard({1.0/4.0,1.0/3.0}).hadamard(texture.size().asFloat()));
 		}
 	}
 
