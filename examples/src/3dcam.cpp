@@ -8,10 +8,10 @@
  */
 
 
-std::array<al::Vertex, 3> DemoTriangle = {
-	al::Vertex({0, 0, 0}, {0, 0}),
-	al::Vertex({0, 1.5, 0}, {0, 1000}),
-	al::Vertex({1.5, 0, 1.5}, {1000, 0})
+std::array<al::BasicVertex, 3> DemoTriangle = {
+	al::CreateBasicVertex({0, 0, 0}, {0, 0}),
+	al::CreateBasicVertex({0, 1.5, 0}, {0, 1000}),
+	al::CreateBasicVertex({1.5, 0, 1.5}, {1000, 0})
 };
 
 int main()
@@ -29,7 +29,7 @@ int main()
 	//player orientation (pitch) in degrees
 	float rx = 0.0;
 
-	al::Bitmap tex("data/bg.jpg");
+	al::Bitmap tex = al::LoadBitmap("data/bg.jpg");
 
 	//position and forward-facing vector
 	al::Vec3f pos{0,0,-5}, fwd{0,0,1};

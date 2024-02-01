@@ -99,6 +99,11 @@ struct Camera {
 		rot.y = std::fmod(rot.y, ALLEGRO_PI * 2.0);
 	}
 
+	void rotateDegrees(al::Vec2f delta)
+	{
+		rotate(delta * al::DEG2RAD);
+	}
+
 	al::Vec3f right() 
 	{
 		return forward().cross(Up).normalized();
@@ -149,9 +154,9 @@ struct Skybox {
 		std::array<al::Vertex, std::size(floorCeilingUV)> floorCeilingVertices;
 
 		for(unsigned i=0; i<wallVertices.size(); i++)
-			wallVertices[i] = {positions[(i%5)%4 + 4*(i/5)], wallUV[i]};
+			wallVertices[i] = {.pos = positions[(i%5)%4 + 4*(i/5)], .uvPx = wallUV[i], .color = al::White};
 		for(unsigned i=0; i<floorCeilingVertices.size(); i++)
-			floorCeilingVertices[i] = {positions[i], floorCeilingUV[i]};
+			floorCeilingVertices[i] = {.pos = positions[i], .uvPx = floorCeilingUV[i], .color = al::White};
 		
 		Mesh result;
 		for(auto v: wallVertices) result.vertices.push_back(v);
@@ -165,7 +170,7 @@ struct Skybox {
 	void scaleUV()
 	{
 		for(auto& vtx: skyboxMesh.vertices) {
-			vtx.setUV(vtx.getUV().hadamard({1.0/4.0,1.0/3.0}).hadamard(texture.size().asFloat()));
+			vtx.uvPx = (vtx.uvPx.hadamard({1.0/4.0,1.0/3.0}).hadamard(texture.size().asFloat()));
 		}
 	}
 
@@ -185,7 +190,7 @@ Mesh CreateTerrain(int sx, int sy, float height)
 		for(int x=0; x<sx; x++) {
 			al::Vec2f pos(x, y);
 			float vh = height*perlin(pos*0.01, 8);
-			al::Vertex vtx({pos.x, pos.y, vh}, pos*15.0, al::Gray(vh/height));
+			al::Vertex vtx({pos, vh}, pos * 15.0, al::Gray(vh / height));
 			result.vertices.push_back(vtx);
 			if(x < sx-1 && y < sy-1) {
 				for(auto offset: {0, 1, sx, 1, sx+1, sx}) {
@@ -222,9 +227,9 @@ int main()
 	const auto& builtinFont = al::Font::BuiltinFont();
 
 	al::Bitmap::SetNewBitmapFlags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
-	al::Bitmap rockTexture("data/rock.jpg");
+	al::Bitmap rockTexture = al::LoadBitmap("data/rock.jpg");
 
-	Skybox skybox(al::Bitmap("data/nightsky.jpg"));
+	Skybox skybox(al::LoadBitmap("data/nightsky.jpg"));
 
 	al::CurrentDisplay.hideCursor();
 
@@ -233,7 +238,7 @@ int main()
 	//rotate the camera when we move the mouse
 	loop.eventDispatcher.onMouseMove([&](const al::MouseEvent& ev){
 		al::Vec2f delta = {ev.dx, ev.dy};
-		camera.rotate((delta * 0.002).transposed());
+		camera.rotateDegrees((delta * 0.022 * 4.0).transposed());
 	});
 
 	loop.run([&](){

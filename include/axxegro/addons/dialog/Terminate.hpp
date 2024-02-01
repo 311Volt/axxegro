@@ -21,7 +21,7 @@
 
 namespace al {
 
-	namespace internal {
+	namespace detail {
 		inline std::string DemangleTypeName(const char* name)
 		{
 #ifdef AXXEGRO_DEMANGLE_EXCEPTION_NAME
@@ -54,7 +54,7 @@ namespace al {
 		} catch(const std::string& msg) {
 			exMsg = "Unhandled exception: " + std::string(msg);
 		} catch(std::exception& e) {
-			errMsg = "The program exited unexpectedly after throwing an instance of " + internal::DemangleTypeName(typeid(e).name()) + ":";
+			errMsg = "The program exited unexpectedly after throwing an instance of " + detail::DemangleTypeName(typeid(e).name()) + ":";
 			exMsg = e.what();
 		}
 

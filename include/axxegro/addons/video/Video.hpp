@@ -100,7 +100,7 @@ namespace al {
 	};
 	
 	
-	ALLEGRO_EVENT_SOURCE *VideoEventSource::ptr() const
+	inline ALLEGRO_EVENT_SOURCE *VideoEventSource::ptr() const
 	{
 		return al_get_video_event_source(vid.ptr());
 	}

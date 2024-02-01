@@ -19,7 +19,7 @@ int main()
 	std::set_terminate(al::Terminate);
 	al::Display disp(1024, 768, ALLEGRO_WINDOWED | ALLEGRO_RESIZABLE);
 	al::Bitmap::SetNewBitmapFlags(ALLEGRO_MIPMAP | ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
-	al::Bitmap bg("data/bg.jpg");
+	al::Bitmap bg = al::LoadBitmap("data/bg.jpg");
 	al::Font font("data/roboto.ttf", 24);
 
 	al::EventLoop loop(al::DemoEventLoopConfig);
@@ -56,8 +56,16 @@ int main()
 			int y = loop.getTick() % (bg.height()-10);
 			int x = loop.getTick() % (bg.width()-10);
 			al::Vec2i p{x, y}, bb{2, 2};
-			al::BitmapLockedRegion lr(bg, {p, p+bb}, ALLEGRO_PIXEL_FORMAT_ABGR_8888, ALLEGRO_LOCK_READWRITE);
-			lr.rowData<uint32_t>(1)[1] = 0xFF00FF;
+
+			auto region = bg.lock<al::PixelRGB888>(al::RectI::PosSize(p, bb));
+
+			for(int i=0; i<region.height(); i++) {
+				auto row = region.row(i);
+				for(auto& pixel: row) {
+					pixel.g = 255;
+				}
+			}
+
 		}
 
 		bg.drawScaled(bg.rect(), al::CurrentDisplay.rect());

@@ -1,91 +1,127 @@
-//
-// Created by volt on 2023-06-17.
-//
+/**
+ * @file
+ * basically a stupid hand-rolled version of std::chrono::duration
+ * because chrono does not have the concept of frequency
+ * and takes too long to compile
+ */
 
 #ifndef AXXEGRO_FREQPERIOD_HPP
 #define AXXEGRO_FREQPERIOD_HPP
 
-#include <chrono>
+#include <ratio>
 
 namespace al {
 
-	struct Freq {
-		Freq() = default;
-		Freq(const Freq&) = default;
-		Freq& operator=(const Freq&) = default;
-		Freq(Freq&&) = default;
-		Freq& operator=(Freq&&) = default;
+	namespace detail {
+		template<typename T>
+		struct ValueWrapper {
+			constexpr explicit ValueWrapper(T value): value(value) {}
+			T value;
+		};
 
-		static Freq Hz(double val) { return Freq {val}; }
-		static Freq kHz(double val) { return Freq {val * 1000.0}; }
+		template<typename T>
+		concept RatioType = requires {
+			{T::num} -> std::convertible_to<std::intmax_t>;
+			{T::den} -> std::convertible_to<std::intmax_t>;
+			{std::ratio_equal_v<T, T>} -> std::convertible_to<bool>;
+		};
 
-		[[nodiscard]] double getFreqHz() const {
-			return valueHz;
+		template<RatioType T>
+		using InverseRatio = std::ratio<T::den, T::num>;
+
+		template<RatioType T>
+		constexpr double RatioAsDouble() {
+			return double(T::num) / double(T::den);
 		}
-		[[nodiscard]] double getPeriodSecs() const {
-			return 1.0 / valueHz;
-		}
-	private:
-		explicit Freq(double valueHz) : valueHz(valueHz) {}
-		double valueHz;
+	}
+
+
+	template<typename T>
+	concept FreqType = requires(T freq) {
+		{freq.getHz()} -> std::convertible_to<double>;
 	};
-
-	inline Freq Hz(double val) {
-		return Freq::Hz(val);
-	}
-
-	inline Freq kHz(double val) {
-		return Freq::kHz(val);
-	}
-
-	inline namespace Literals {
-		inline namespace FreqLiterals {
-
-			Freq operator""_Hz(long double val) {
-				return Freq::Hz(static_cast<double>(val));
-			}
-			Freq operator""_Hz(unsigned long long val) {
-				return Freq::Hz(static_cast<double>(val));
-			}
-
-			Freq operator""_kHz(long double val) {
-				return Freq::kHz(static_cast<double>(val) * 1000.0);
-			}
-			Freq operator""_kHz(unsigned long long val) {
-				return Freq::Hz(static_cast<double>(val) * 1000.0);
-			}
-		}
-	}
-
-
-
-	struct Period {
-		Period() = default;
-		Period(const Period&) = default;
-		Period& operator=(const Period&) = default;
-		Period(Period&&) = default;
-		Period& operator=(Period&&) = default;
-
-		template<typename DurT>
-		Period(DurT duration) {
-			valueSecs = std::chrono::duration_cast<std::chrono::duration<double>>(duration).count();
-		}
-
-		[[nodiscard]] double getFreqHz() const {
-			return 1.0 / valueSecs;
-		}
-		[[nodiscard]] double getPeriodSecs() const {
-			return valueSecs;
-		}
-	private:
-		double valueSecs;
+	template<typename T>
+	concept PeriodType = requires(T period) {
+		{period.getSeconds()} -> std::convertible_to<double>;
 	};
 
 	template<typename T>
-	concept FreqOrPeriod = requires(T fp) {
-		{fp.getPeriodSecs()} -> std::convertible_to<double>;
-		{fp.getFreqHz()} -> std::convertible_to<double>;
+	concept FreqOrPeriod = FreqType<T> || PeriodType<T>;
+
+	template<detail::RatioType RatioT>
+	struct Freq: public detail::ValueWrapper<double> {
+		using ValueWrapper::ValueWrapper;
+		using RatioType = RatioT::type;
+
+
+		[[nodiscard]] constexpr double getHz() const {
+			return value * detail::RatioAsDouble<RatioType>();
+		}
+
+		constexpr operator Freq<std::ratio<1>>() const {
+			return Freq<std::ratio<1>>(getHz());
+		}
+
+		template<PeriodType PeriodT>
+		explicit constexpr operator PeriodT() const {
+			using ConvRatio = std::ratio_multiply<
+				RatioType,
+				detail::InverseRatio<typename PeriodT::RatioType>
+			>;
+
+			return PeriodT((1.0 / value) * detail::RatioAsDouble<ConvRatio>());
+		}
 	};
+
+	template<detail::RatioType RatioT>
+	struct Period: public detail::ValueWrapper<double> {
+		using ValueWrapper::ValueWrapper;
+		using RatioType = RatioT::type;
+
+		[[nodiscard]] constexpr double getSeconds() const {
+			return value * detail::RatioAsDouble<RatioType>();
+		}
+
+		constexpr operator Period<std::ratio<1>>() const {
+			return Period<std::ratio<1>>(getSeconds());
+		}
+
+		template<FreqType FreqT>
+		explicit constexpr operator FreqT() const {
+			using ConvRatio = std::ratio_multiply<
+				detail::InverseRatio<typename FreqT::RatioType>,
+				detail::InverseRatio<RatioType>
+			>;
+
+			return FreqT((1.0 / value) * detail::RatioAsDouble<ConvRatio>());
+		}
+	};
+
+
+	using Hz = Freq<std::ratio<1>>;
+	using kHz = Freq<std::kilo>;
+
+	using Seconds = Period<std::ratio<1>>;
+	using Millis = Period<std::milli>;
+
+	inline namespace Literals {
+		inline namespace TimeLiterals {
+			inline namespace FreqLiterals {
+				inline auto operator""_Hz(long double val) {return Hz(static_cast<double>(val));}
+				inline auto operator""_Hz(unsigned long long val) {return Hz(static_cast<double>(val));}
+				inline auto operator""_kHz(long double val) {return kHz(static_cast<double>(val));}
+				inline auto operator""_kHz(unsigned long long val) {return kHz(static_cast<double>(val));}
+			}
+			inline namespace PeriodLiterals {
+				inline auto operator""_s(long double val) {return Seconds(static_cast<double>(val));}
+				inline auto operator""_s(unsigned long long val) {return Seconds(static_cast<double>(val));}
+				inline auto operator""_ms(long double val) {return Millis(static_cast<double>(val));}
+				inline auto operator""_ms(unsigned long long val) {return Millis(static_cast<double>(val));}
+			}
+		}
+
+	}
+
 }
 
 #endif //AXXEGRO_FREQPERIOD_HPP

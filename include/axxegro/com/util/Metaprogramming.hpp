@@ -7,6 +7,7 @@
 
 #include <type_traits>
 #include <concepts>
+#include <ranges>
 
 namespace al {
 
@@ -31,7 +32,10 @@ namespace al {
 	static_assert(not IsNarrowingConversion<float, double>);
 	static_assert(IsNarrowingConversion<unsigned, int>);
 	static_assert(not IsNarrowingConversion<unsigned, long long>);
-	
+
+	template <class R, class Value>
+	concept RangeOf = std::ranges::range<R> && std::same_as<std::ranges::range_value_t<R>, Value>;
+
 }
 
 #endif //AXXEGRO_METAPROGRAMMING_HPP

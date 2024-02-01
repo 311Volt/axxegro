@@ -3,6 +3,7 @@
 #define AXXEGRO_GFX_HPP
 
 #include "gfx/Bitmap.hpp"
+#include "gfx/TargetBitmap.hpp"
 #include "gfx/Blender.hpp"
 #include "gfx/Color.hpp"
 #include "gfx/PixelFormat.hpp"

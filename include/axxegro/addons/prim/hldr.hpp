@@ -14,14 +14,14 @@
 
 
 namespace al {
-	constexpr al::Color PRIM_DEFAULT_COLOR = al::RGB(255,255,255);
-	constexpr float PRIM_DEFAULT_THICKNESS = 1.0f;
+	constexpr al::Color PrimDefaultColor = al::RGB(255, 255, 255);
+	constexpr float PrimDefaultThickness = 1.0f;
 
 	inline void DrawLine(
 		const Vec2f& a,
 		const Vec2f& b,
-		const Color& color = PRIM_DEFAULT_COLOR,
-		float thickness = PRIM_DEFAULT_THICKNESS
+		const Color& color = PrimDefaultColor,
+		float thickness = PrimDefaultThickness
 	) {
 		InternalRequire<PrimitivesAddon>();
 		al_draw_line(a.x, a.y, b.x, b.y, color, thickness);
@@ -31,8 +31,8 @@ namespace al {
 		const Vec2f& a,
 		const Vec2f& b,
 		const Vec2f& c,
-		const Color& color = PRIM_DEFAULT_COLOR, 
-		float thickness = PRIM_DEFAULT_THICKNESS
+		const Color& color = PrimDefaultColor,
+		float thickness = PrimDefaultThickness
 	) {
 		InternalRequire<PrimitivesAddon>();
 		al_draw_triangle(a.x, a.y, b.x, b.y, c.x, c.y, color, thickness);
@@ -42,7 +42,7 @@ namespace al {
 		const Vec2f& a,
 		const Vec2f& b,
 		const Vec2f& c,
-		const Color& color = PRIM_DEFAULT_COLOR
+		const Color& color = PrimDefaultColor
 	) {
 		InternalRequire<PrimitivesAddon>();
 		al_draw_filled_triangle(a.x, a.y, b.x, b.y, c.x, c.y, color);
@@ -50,8 +50,8 @@ namespace al {
 
 	inline void DrawRectangle(
 		const RectF& r,
-		const Color& color = PRIM_DEFAULT_COLOR,
-		float thickness = PRIM_DEFAULT_THICKNESS
+		const Color& color = PrimDefaultColor,
+		float thickness = PrimDefaultThickness
 	) {
 		InternalRequire<PrimitivesAddon>();
 		al_draw_rectangle(r.a.x, r.a.y, r.b.x, r.b.y, color, thickness);
@@ -59,7 +59,7 @@ namespace al {
 
 	inline void DrawFilledRectangle(
 		const RectF& rect,
-		const Color& color = PRIM_DEFAULT_COLOR
+		const Color& color = PrimDefaultColor
 	) {
 		InternalRequire<PrimitivesAddon>();
 		al_draw_filled_rectangle(rect.a.x, rect.a.y, rect.b.x, rect.b.y, color);
@@ -68,8 +68,8 @@ namespace al {
 	inline void DrawRoundRect(
 		const RectF& rect,
 		const Vec2f& radius = {0, 0},
-		const Color& color = PRIM_DEFAULT_COLOR,
-		float thickness = PRIM_DEFAULT_THICKNESS
+		const Color& color = PrimDefaultColor,
+		float thickness = PrimDefaultThickness
 	) {
 		InternalRequire<PrimitivesAddon>();
 		al_draw_rounded_rectangle(
@@ -82,7 +82,7 @@ namespace al {
 	inline void DrawFilledRoundRect(
 		const RectF& rect,
 		const Vec2f& radius = {0, 0},
-		const Color& color = PRIM_DEFAULT_COLOR
+		const Color& color = PrimDefaultColor
 	) {
 		InternalRequire<PrimitivesAddon>();
 		al_draw_filled_rounded_rectangle(
@@ -97,8 +97,8 @@ namespace al {
 		float radius,
 		float startTheta,
 		float deltaTheta,
-		const Color& color = PRIM_DEFAULT_COLOR,
-		float thickness = PRIM_DEFAULT_THICKNESS
+		const Color& color = PrimDefaultColor,
+		float thickness = PrimDefaultThickness
 	) {
 		InternalRequire<PrimitivesAddon>();
 		al_draw_pieslice(
@@ -114,7 +114,7 @@ namespace al {
 		float radius,
 		float startTheta,
 		float deltaTheta,
-		const Color& color = PRIM_DEFAULT_COLOR
+		const Color& color = PrimDefaultColor
 	) {
 		InternalRequire<PrimitivesAddon>();
 		al_draw_filled_pieslice(
@@ -128,8 +128,8 @@ namespace al {
 	inline void DrawEllipse(
 		const Vec2f& center,
 		const Vec2f& radius,
-		const Color& color = PRIM_DEFAULT_COLOR,
-		float thickness = PRIM_DEFAULT_THICKNESS
+		const Color& color = PrimDefaultColor,
+		float thickness = PrimDefaultThickness
 	) {
 		InternalRequire<PrimitivesAddon>();
 		al_draw_ellipse(
@@ -142,7 +142,7 @@ namespace al {
 	inline void DrawFilledEllipse(
 		const Vec2f& center,
 		const Vec2f& radius,
-		const Color& color = PRIM_DEFAULT_COLOR
+		const Color& color = PrimDefaultColor
 	) {
 		InternalRequire<PrimitivesAddon>();
 		al_draw_filled_ellipse(
@@ -155,8 +155,8 @@ namespace al {
 	inline void DrawCircle(
 		const Vec2f& center,
 		float radius,
-		const Color& color = PRIM_DEFAULT_COLOR,
-		float thickness = PRIM_DEFAULT_THICKNESS
+		const Color& color = PrimDefaultColor,
+		float thickness = PrimDefaultThickness
 	) {
 		InternalRequire<PrimitivesAddon>();
 		al_draw_circle(
@@ -169,7 +169,7 @@ namespace al {
 	inline void DrawFilledCircle(
 		const Vec2f& center,
 		float radius,
-		const Color& color = PRIM_DEFAULT_COLOR
+		const Color& color = PrimDefaultColor
 	) {
 		InternalRequire<PrimitivesAddon>();
 		al_draw_filled_circle(
@@ -184,8 +184,8 @@ namespace al {
 		float radius,
 		float startTheta,
 		float deltaTheta,
-		const Color& color = PRIM_DEFAULT_COLOR,
-		float thickness = PRIM_DEFAULT_THICKNESS
+		const Color& color = PrimDefaultColor,
+		float thickness = PrimDefaultThickness
 	) {
 		InternalRequire<PrimitivesAddon>();
 		al_draw_arc(
@@ -201,8 +201,8 @@ namespace al {
 		const Vec2f& radius,
 		float startTheta,
 		float deltaTheta,
-		const Color& color = PRIM_DEFAULT_COLOR,
-		float thickness = PRIM_DEFAULT_THICKNESS
+		const Color& color = PrimDefaultColor,
+		float thickness = PrimDefaultThickness
 	) {
 		InternalRequire<PrimitivesAddon>();
 		al_draw_elliptical_arc(
@@ -215,8 +215,8 @@ namespace al {
 
 	inline void DrawSpline(
 		const std::array<Vec2f, 4>& points,
-		const Color& color = PRIM_DEFAULT_COLOR,
-		float thickness = PRIM_DEFAULT_THICKNESS
+		const Color& color = PrimDefaultColor,
+		float thickness = PrimDefaultThickness
 	) {
 		InternalRequire<PrimitivesAddon>();
 		std::vector<float> pts(8);

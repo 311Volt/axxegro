@@ -36,6 +36,9 @@ target_link_libraries(${PROJECT_NAME} INTERFACE ${Allegro_LIBRARIES})
 target_include_directories(${PROJECT_NAME} INTERFACE ${Allegro_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} INTERFACE "include")
 
+
+include("cmake/CopyResources.cmake")
+
 option(AXXEGRO_BUILD_EXAMPLES "Build example programs" ${AXXEGRO_MASTER_PROJECT})
 if(AXXEGRO_BUILD_EXAMPLES)
 	add_subdirectory("examples")
@@ -48,6 +51,9 @@ if(DOXYGEN_FOUND)
 	set(DOXYGEN_GENERATE_HTML YES)
 	set(DOXYGEN_OUTPUT_DIRECTORY "docs")
 	set(DOXYGEN_QUIET YES)
+	set(DOXYGEN_ALPHABETICAL_INDEX NO)
+	set(DOXYGEN_EXTRACT_ALL YES)
+	set(DOXYGEN_PREDEFINED "ALLEGRO_UNSTABLE")
 	set(DOXYGEN_WARN_IF_UNDOCUMENTED NO)
 
 	if(AXXEGRO_BUILD_DOCS)
@@ -62,5 +68,6 @@ if(DOXYGEN_FOUND)
 else(DOXYGEN_FOUND)
 	message("Doxygen not found, won't generate docs")
 endif(DOXYGEN_FOUND)
+
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)

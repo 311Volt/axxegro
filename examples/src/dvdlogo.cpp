@@ -1,6 +1,5 @@
 #include <axxegro/axxegro.hpp>
 
-#include <algorithm>
 
 /**
  * @file
@@ -12,7 +11,7 @@ int main()
 {
 	al::Display disp(1024, 768, ALLEGRO_MIN_LINEAR|ALLEGRO_MIPMAP);
 
-	al::Bitmap dvdLogo("data/dvdlogo.png");
+	al::Bitmap dvdLogo = al::LoadBitmap("data/dvdlogo.png");
 	
 	al::Vec2<float> speed(256, 256); // in px/s
 	al::Vec2<float> logoSize(128, 128); // in px

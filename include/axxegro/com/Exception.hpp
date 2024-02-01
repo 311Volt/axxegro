@@ -60,6 +60,7 @@ namespace al
 	AXXEGRO_DEF_EXCEPTION(Exception, EventDispatcherError);
 	AXXEGRO_DEF_EXCEPTION(Exception, EventQueueError);
 	AXXEGRO_DEF_EXCEPTION(Exception, EventSourceError);
+	AXXEGRO_DEF_EXCEPTION(Exception, VertexDeclError);
 	AXXEGRO_DEF_EXCEPTION(Exception, HardwareBufferError);
 		AXXEGRO_DEF_EXCEPTION(HardwareBufferError, VertexBufferError);
 		AXXEGRO_DEF_EXCEPTION(HardwareBufferError, IndexBufferError);

@@ -15,21 +15,26 @@
 
 namespace al {
 
-	namespace FramerateLimiterMode {
-		struct None{};
-		struct Auto{};
-		struct VSync{};
+	namespace FPSLimit {
+		struct NoneT{};
+		inline constexpr NoneT None{};
+
+		struct AutoT{};
+		inline constexpr AutoT Auto{};
+
+		struct VSyncT{};
+		inline constexpr VSyncT VSync{};
 	}
 
 	using FramerateLimit = std::variant<
-	    FramerateLimiterMode::None,
-		FramerateLimiterMode::Auto,
-		Freq
+	    FPSLimit::NoneT,
+		FPSLimit::AutoT,
+		Hz
 	>;
 
 	struct FramerateLimiter {
 
-		explicit FramerateLimiter(FramerateLimit limit = FramerateLimiterMode::None{})
+		explicit FramerateLimiter(FramerateLimit limit = FPSLimit::None)
 			: timer(1_Hz)
 		{
 			queue.registerSource(timer.getEventSource());
@@ -39,12 +44,13 @@ namespace al {
 		void setLimit(FramerateLimit limit) {
 			limitValue = limit;
 
-			if(std::holds_alternative<FramerateLimiterMode::Auto>(limit)) {
+			if(std::holds_alternative<FPSLimit::AutoT>(limit)) {
 				limitValue = al::CurrentDisplay.findGoodFramerateLimit();
 			}
 
-			if(std::holds_alternative<Freq>(limitValue)) {
-				timer.setFreq(std::get<Freq>(limitValue));
+			if(std::holds_alternative<Hz>(limitValue)) {
+				timer.setFreq(std::get<Hz>(limitValue));
+				timer.stop();
 				timer.start();
 			} else {
 				timer.stop();
@@ -52,9 +58,9 @@ namespace al {
 		}
 
 		void wait() {
-			if(std::holds_alternative<FramerateLimiterMode::None>(limitValue)) {
+			if(std::holds_alternative<FPSLimit::NoneT>(limitValue)) {
 				return;
-			} else if(std::holds_alternative<Freq>(limitValue)) {
+			} else if(std::holds_alternative<Hz>(limitValue)) {
 				queue.wait();
 				queue.flush();
 			}

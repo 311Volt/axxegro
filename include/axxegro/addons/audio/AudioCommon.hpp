@@ -22,11 +22,17 @@ namespace al
 		return (depth & 0x07) + 1;
 	}
 
+	/**
+	 * @brief Describes the buffer configuration of an audio stream.
+	 */
 	struct BufferConfig {
 		unsigned numChunks;
 		unsigned fragmentsPerChunk;
 	};
 
+	/**
+	 * @brief Describes playback parameters of samples and audio streams.
+	 */
 	struct PlaybackParams {
 		float gain = 1.0;
 		float pan = 0.0;
@@ -47,6 +53,9 @@ namespace al
 		}
 	};
 
+	/**
+	 * @brief A runtime description of an audio sample type.
+	 */
 	struct AudioFragmentFormat {
 		ALLEGRO_AUDIO_DEPTH depth = ALLEGRO_AUDIO_DEPTH_FLOAT32;
 		ALLEGRO_CHANNEL_CONF chanConf = ALLEGRO_CHANNEL_CONF_2;
@@ -78,7 +87,9 @@ namespace al
 		}
 	};
 
-
+	/**
+	 * @brief A description of an audio format.
+	 */
 	struct AudioFormat {
 		unsigned frequency = 44100;
 		ALLEGRO_AUDIO_DEPTH depth = ALLEGRO_AUDIO_DEPTH_FLOAT32;
@@ -90,149 +101,146 @@ namespace al
 		}
 	};
 
+	namespace detail {
 
-	template<typename Derived>
-	struct AddPlaybackParamsQuery
-	{
-		PlaybackParams getPlaybackParams()
+		template<typename Derived>
+		struct AddPlaybackParamsQuery
 		{
-			auto& self = static_cast<Derived&>(*this);
-			return {
-				.gain = self.getGain(),
-				.pan = self.getPan(),
-				.speed = self.getSpeed(),
-				.loop = self.getPlayMode(),
-			};
-		}
+			PlaybackParams getPlaybackParams() {
+				auto& self = static_cast<Derived&>(*this);
+				return {
+					.gain = self.getGain(),
+					.pan = self.getPan(),
+					.speed = self.getSpeed(),
+					.loop = self.getPlayMode(),
+				};
+			}
 
-		bool setPlaybackParams(PlaybackParams params)
+			bool setPlaybackParams(PlaybackParams params) {
+				auto& self = static_cast<Derived&>(*this);
+				if(!self.setGain(params.gain)) return false;
+				if(!self.setPan(params.pan)) return false;
+				if(!self.setSpeed(params.speed)) return false;
+				if(!self.setPlayMode(params.loop)) return false;
+				return true;
+			}
+		};
+
+		template<typename Derived>
+		struct AddAudioFormatQuery
 		{
-			auto& self = static_cast<Derived&>(*this);
-			if(!self.setGain(params.gain)) return false;
-			if(!self.setPan(params.pan)) return false;
-			if(!self.setSpeed(params.speed)) return false;
-			if(!self.setPlayMode(params.loop)) return false;
-			return true;
-		}
-	};
+			AudioFormat getAudioFormat() {
+				auto& self = static_cast<Derived&>(*this);
+				return {
+					.frequency = self.getFrequency(),
+					.depth = self.getDepth(),
+					.chanConf = self.getChannelConf()
+				};
+			}
+		};
 
-	template<typename Derived>
-	struct AddAudioFormatQuery
-	{
-		AudioFormat getAudioFormat()
-		{
-			auto& self = static_cast<Derived&>(*this);
-			return {
-				.frequency = self.getFrequency(),
-				.depth = self.getDepth(),
-				.chanConf = self.getChannelConf()
-			};
-		}
-	};
+		template<ALLEGRO_AUDIO_DEPTH AudioDepth>
+		struct AudioSampleType {
+			using Type=void;
+		};
+		template<>
+		struct AudioSampleType<ALLEGRO_AUDIO_DEPTH_INT8> {
+			using Type = int8_t;
+		};
+		template<>
+		struct AudioSampleType<ALLEGRO_AUDIO_DEPTH_INT16> {
+			using Type = int16_t;
+		};
+		template<>
+		struct AudioSampleType<ALLEGRO_AUDIO_DEPTH_UINT8> {
+			using Type = uint8_t;
+		};
+		template<>
+		struct AudioSampleType<ALLEGRO_AUDIO_DEPTH_UINT16> {
+			using Type = uint16_t;
+		};
+		template<>
+		struct AudioSampleType<ALLEGRO_AUDIO_DEPTH_FLOAT32> {
+			using Type = float;
+		};
+		template<ALLEGRO_CHANNEL_CONF ChanConf, ALLEGRO_AUDIO_DEPTH AudioDepth>
+		struct AudioFragmentType {
+			using Type = void;
+		};
 
-	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
-	struct AudioSampleType {
-		using Type=void;
-	};
 
-	template<>
-	struct AudioSampleType<ALLEGRO_AUDIO_DEPTH_INT8> {
-		using Type = int8_t;
-	};
-	template<>
-	struct AudioSampleType<ALLEGRO_AUDIO_DEPTH_INT16> {
-		using Type = int16_t;
-	};
-	template<>
-	struct AudioSampleType<ALLEGRO_AUDIO_DEPTH_UINT8> {
-		using Type = uint8_t;
-	};
-	template<>
-	struct AudioSampleType<ALLEGRO_AUDIO_DEPTH_UINT16> {
-		using Type = uint16_t;
-	};
-	template<>
-	struct AudioSampleType<ALLEGRO_AUDIO_DEPTH_FLOAT32> {
-		using Type = float;
-	};
+		template<ALLEGRO_AUDIO_DEPTH AudioDepth>
+		struct AudioFragmentType<ALLEGRO_CHANNEL_CONF_1, AudioDepth> {
+			using Type = typename AudioSampleType<AudioDepth>::Type;
+		};
+		template<ALLEGRO_AUDIO_DEPTH AudioDepth>
+		struct AudioFragmentType<ALLEGRO_CHANNEL_CONF_2, AudioDepth> {
+			using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 2>;
+		};
+		template<ALLEGRO_AUDIO_DEPTH AudioDepth>
+		struct AudioFragmentType<ALLEGRO_CHANNEL_CONF_3, AudioDepth> {
+			using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 3>;
+		};
+		template<ALLEGRO_AUDIO_DEPTH AudioDepth>
+		struct AudioFragmentType<ALLEGRO_CHANNEL_CONF_4, AudioDepth> {
+			using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 4>;
+		};
+		template<ALLEGRO_AUDIO_DEPTH AudioDepth>
+		struct AudioFragmentType<ALLEGRO_CHANNEL_CONF_5_1, AudioDepth> {
+			using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 6>;
+		};
+		template<ALLEGRO_AUDIO_DEPTH AudioDepth>
+		struct AudioFragmentType<ALLEGRO_CHANNEL_CONF_6_1, AudioDepth> {
+			using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 7>;
+		};
+		template<ALLEGRO_AUDIO_DEPTH AudioDepth>
+		struct AudioFragmentType<ALLEGRO_CHANNEL_CONF_7_1, AudioDepth> {
+			using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 8>;
+		};
 
-	template<ALLEGRO_CHANNEL_CONF ChanConf, ALLEGRO_AUDIO_DEPTH AudioDepth>
-	struct AudioFragmentType {
-		using Type = void;
-	};
+		template<int N>
+		concept ValidChannelCount = N > 0 && N <= 9 && N != 5;
 
-	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
-	struct AudioFragmentType<ALLEGRO_CHANNEL_CONF_1, AudioDepth> {
-		using Type = typename AudioSampleType<AudioDepth>::Type;
-	};
-	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
-	struct AudioFragmentType<ALLEGRO_CHANNEL_CONF_2, AudioDepth> {
-		using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 2>;
-	};
-	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
-	struct AudioFragmentType<ALLEGRO_CHANNEL_CONF_3, AudioDepth> {
-		using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 3>;
-	};
-	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
-	struct AudioFragmentType<ALLEGRO_CHANNEL_CONF_4, AudioDepth> {
-		using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 4>;
-	};
-	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
-	struct AudioFragmentType<ALLEGRO_CHANNEL_CONF_5_1, AudioDepth> {
-		using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 6>;
-	};
-	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
-	struct AudioFragmentType<ALLEGRO_CHANNEL_CONF_6_1, AudioDepth> {
-		using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 7>;
-	};
-	template<ALLEGRO_AUDIO_DEPTH AudioDepth>
-	struct AudioFragmentType<ALLEGRO_CHANNEL_CONF_7_1, AudioDepth> {
-		using Type = Vec<typename AudioSampleType<AudioDepth>::Type, 8>;
-	};
+		template<typename T>
+		concept ValidSampleType = std::disjunction_v<
+				std::is_same<T, int8_t>,
+				std::is_same<T, int16_t>,
+				std::is_same<T, uint8_t>,
+				std::is_same<T, uint16_t>,
+				std::is_same<T, float>>;
 
-	template<int N>
-	concept ValidChannelCount = N > 0 && N <= 9 && N != 5;
+		template<typename T>
+		concept ValidMultiChannelFragmentType = detail::ValidSampleType<typename T::ElementType> && requires {
+			{T::NumElements} -> std::convertible_to<int>;
+		};
 
-	template<typename T>
-	concept ValidSampleType = std::disjunction_v<
-	        std::is_same<T, int8_t>,
-			std::is_same<T, int16_t>,
-			std::is_same<T, uint8_t>,
-			std::is_same<T, uint16_t>,
-			std::is_same<T, float>>;
+		template<typename T>
+		concept ValidFragmentType = detail::ValidSampleType<T> || detail::ValidMultiChannelFragmentType<T>;
 
-	template<typename T>
-	concept ValidMultiChannelFragmentType = ValidSampleType<typename T::ElementType> && requires {
-		{T::NumElements} -> std::convertible_to<int>;
-	};
+		template<al::detail::ValidSampleType T>
+		inline constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf = ALLEGRO_AUDIO_DEPTH_INT8;
 
-	template<typename T>
-	concept ValidFragmentType = ValidSampleType<T> || ValidMultiChannelFragmentType<T>;
+		template<> inline constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<int8_t> = ALLEGRO_AUDIO_DEPTH_INT8;
+		template<> inline constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<uint8_t> = ALLEGRO_AUDIO_DEPTH_UINT8;
+		template<> inline constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<int16_t> = ALLEGRO_AUDIO_DEPTH_INT16;
+		template<> inline constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<uint16_t> = ALLEGRO_AUDIO_DEPTH_UINT16;
+		template<> inline constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<float> = ALLEGRO_AUDIO_DEPTH_FLOAT32;
 
-	template<ValidSampleType T>
-	constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf = ALLEGRO_AUDIO_DEPTH_INT8;
+		template<al::detail::ValidSampleType TSample, ALLEGRO_CHANNEL_CONF TPChanConf>
+		struct FragmentTraits {
+			static constexpr ALLEGRO_AUDIO_DEPTH Depth = AudioDepthOf<TSample>;
+			static constexpr ALLEGRO_CHANNEL_CONF ChanConf = TPChanConf;
+			static constexpr int NumChannels = GetChannelCount(ChanConf);
+			using SampleType = TSample;
+			using FragmentType = typename AudioFragmentType<TPChanConf, Depth>::Type;
+		};
 
-	template<> constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<int8_t> = ALLEGRO_AUDIO_DEPTH_INT8;
-	template<> constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<uint8_t> = ALLEGRO_AUDIO_DEPTH_UINT8;
-	template<> constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<int16_t> = ALLEGRO_AUDIO_DEPTH_INT16;
-	template<> constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<uint16_t> = ALLEGRO_AUDIO_DEPTH_UINT16;
-	template<> constexpr ALLEGRO_AUDIO_DEPTH AudioDepthOf<float> = ALLEGRO_AUDIO_DEPTH_FLOAT32;
+		template<detail::ValidMultiChannelFragmentType TFrag, al::detail::ValidSampleType TNewSmp>
+		using ConvertFragSampleType = Vec<TNewSmp, TFrag::NumElements>;
+	}
 
 	inline constexpr ALLEGRO_CHANNEL_CONF Mono = ALLEGRO_CHANNEL_CONF_1;
 	inline constexpr ALLEGRO_CHANNEL_CONF Stereo = ALLEGRO_CHANNEL_CONF_2;
-
-	template<ValidMultiChannelFragmentType TFrag, ValidSampleType TNewSmp>
-	using ConvertFragSampleType = Vec<TNewSmp, TFrag::NumElements>;
-
-	template<ValidSampleType TSample, ALLEGRO_CHANNEL_CONF TPChanConf>
-	struct FragmentTraits {
-		static constexpr ALLEGRO_AUDIO_DEPTH Depth = AudioDepthOf<TSample>;
-		static constexpr ALLEGRO_CHANNEL_CONF ChanConf = TPChanConf;
-		static constexpr int NumChannels = GetChannelCount(ChanConf);
-		using SampleType = TSample;
-		using FragmentType = typename AudioFragmentType<TPChanConf, Depth>::Type;
-	};
-
 }
 
 #endif //AXXEGRO_AUDIOCOMMON_HPP

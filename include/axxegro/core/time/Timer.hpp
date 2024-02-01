@@ -2,11 +2,10 @@
 #define INCLUDE_AXXEGRO_TIME_TIMER
 
 #include "../../common.hpp"
+#include "../event/EventSource.hpp"
 #include "FreqPeriod.hpp"
 
 namespace al {
-	constexpr double PeriodToFreq(double period) {return 1.0 / period;}
-	constexpr double FreqToPeriod(double freq) {return 1.0 / freq;}
 
 	class TimerEventSource: public EventSource {
 	public:
@@ -23,14 +22,12 @@ namespace al {
 
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_TIMER, al_destroy_timer);
 
-	using TimerPeriod = std::chrono::duration<double, std::ratio<1, 1>>;
-
 	class Timer: public Resource<ALLEGRO_TIMER> {
 	public:
 
 		template<FreqOrPeriod SpeedT>
 		explicit Timer(SpeedT speed)
-				: Resource(al_create_timer(speed.getPeriodSecs()))
+				: Resource(al_create_timer(Hz(speed).getHz()))
 		{
 			evSrc = std::make_unique<TimerEventSource>(ptr());
 		}
@@ -61,18 +58,19 @@ namespace al {
 		}
 
 
-		[[nodiscard]] Period getPeriod() const {
-			return {std::chrono::duration<double>(getPeriodSecs())};
-		}
-		void setPeriod(const Period& period) {
-			setPeriodSecs(period.getPeriodSecs());
+		[[nodiscard]] Seconds getPeriod() const {
+			return Seconds(getPeriodSecs());
 		}
 
-		[[nodiscard]] Freq getFreq() const {
-			return Freq::Hz(1.0 / getPeriodSecs());
+		void setPeriod(const Seconds& period) {
+			setPeriodSecs(period.getSeconds());
 		}
-		void setFreq(Freq freq) {
-			setPeriodSecs(freq.getPeriodSecs());
+
+		[[nodiscard]] Hz getFreq() const {
+			return Hz(Seconds(getPeriodSecs()));
+		}
+		void setFreq(const Hz& freq) {
+			setPeriod(Seconds(freq));
 		}
 
 		[[nodiscard]] double getPeriodSecs() const {
@@ -83,10 +81,10 @@ namespace al {
 		}
 
 		[[nodiscard]] double getFreqHz() const {
-			return getPeriod().getFreqHz();
+			return 1.0 / getPeriodSecs();
 		}
 		void setFreqHz(double value) {
-			setPeriodSecs(FreqToPeriod(value));
+			setPeriodSecs(1.0 / value);
 		}
 	private:
 		std::unique_ptr<TimerEventSource> evSrc;

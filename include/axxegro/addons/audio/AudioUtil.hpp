@@ -15,12 +15,12 @@ namespace al {
 		{std::span(r)};
 	};
 
-	template<ValidMultiChannelFragmentType TFrag, typename... TArgs>
+	template<detail::ValidMultiChannelFragmentType TFrag, typename... TArgs>
 	requires (
 			(RangeConvertibleToSpan<TArgs> && ...) &&
 			sizeof...(TArgs) == TFrag::NumElements
 			)
-	bool UnzipChannels(const std::span<TFrag> inputFragments, TArgs&&... outputChannels) {
+	bool UnzipChannels(const std::span<const TFrag> inputFragments, TArgs&&... outputChannels) {
 		using SampleType = typename TFrag::ElementType;
 		static constexpr int NumChannels = TFrag::NumElements;
 
@@ -39,7 +39,6 @@ namespace al {
 		return true;
 	}
 
-
 	template<std::signed_integral T>
 	inline float AsFloatSample(T val)
 	{
@@ -52,8 +51,8 @@ namespace al {
 		return 2.0f * (static_cast<float>(val) / std::numeric_limits<T>::max() - 0.5f);
 	}
 
-	template<typename T> requires (ValidFragmentType<T> && std::integral<T>)
-	bool ConvertFragmentsToFloat(const std::span<T> src, std::span<float> dst)
+	template<typename T> requires (detail::ValidFragmentType<T> && std::integral<T>)
+	bool ConvertFragmentsToFloat(const std::span<const T> src, std::span<float> dst)
 	{
 		if(src.size() != dst.size()) {
 			return false;
@@ -64,8 +63,8 @@ namespace al {
 		return true;
 	}
 
-	template<ValidMultiChannelFragmentType TFrag>
-	bool ConvertFragmentsToFloat(const std::span<TFrag> src, std::span<ConvertFragSampleType<TFrag, float>> dst) {
+	template<detail::ValidMultiChannelFragmentType TFrag>
+	bool ConvertFragmentsToFloat(const std::span<const TFrag> src, std::span<detail::ConvertFragSampleType<TFrag, float>> dst) {
 		static constexpr int NumChannels = TFrag::NumElements;
 		if(src.size() != dst.size()) {
 			return false;

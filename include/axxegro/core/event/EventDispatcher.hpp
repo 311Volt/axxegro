@@ -12,37 +12,40 @@
 namespace al {
 	using EventDiscretizerID = uint32_t;
 
-	struct EventDiscretizedValue {
-		EventDiscretizerID id;
-		int64_t value;
+	namespace detail {
 
-		[[nodiscard]] std::size_t hash() const {
-			std::size_t ret = 0;
-			HashCombine(ret, id);
-			HashCombine(ret, value);
-			return ret;
-		}
+		struct EventDiscretizedValue {
+			EventDiscretizerID id;
+			int64_t value;
 
-		friend auto operator<=>(const EventDiscretizedValue&, const EventDiscretizedValue&) = default;
-	};
-
-	struct EventHandlerCoord {
-		std::optional<EventType> type;
-		std::optional<EventDiscretizedValue> value;
-
-		friend auto operator<=>(const EventHandlerCoord&, const EventHandlerCoord&) = default;
-	};
-
-	struct EventHandlerCoordHash {
-		std::size_t operator()(const EventHandlerCoord& hc) const {
-			std::size_t ret = 1437;
-			HashCombine(ret, hc.type);
-			if(hc.value.has_value()) {
-				HashCombine(ret, hc.value->hash());
+			[[nodiscard]] std::size_t hash() const {
+				std::size_t ret = 0;
+				HashCombine(ret, id);
+				HashCombine(ret, value);
+				return ret;
 			}
-			return ret;
-		}
-	};
+
+			friend auto operator<=>(const EventDiscretizedValue&, const EventDiscretizedValue&) = default;
+		};
+
+		struct EventHandlerCoord {
+			std::optional<EventType> type;
+			std::optional<EventDiscretizedValue> value;
+
+			friend auto operator<=>(const EventHandlerCoord&, const EventHandlerCoord&) = default;
+		};
+
+		struct EventHandlerCoordHash {
+			std::size_t operator()(const EventHandlerCoord& hc) const {
+				std::size_t ret = 1437;
+				HashCombine(ret, hc.type);
+				if(hc.value.has_value()) {
+					HashCombine(ret, hc.value->hash());
+				}
+				return ret;
+			}
+		};
+	}
 
 	enum EventHandledStatus {
 		EventHandled,
@@ -180,9 +183,9 @@ namespace al {
 			if(!isDiscretizerRelevant(eventType, discrId)) {
 				relevantDiscretizers[eventType].push_back(discrId);
 			}
-			auto key = EventHandlerCoord {
+			auto key = detail::EventHandlerCoord {
 				.type = eventType,
-				.value = EventDiscretizedValue {.id = discrId, .value = value}
+				.value = detail::EventDiscretizedValue {.id = discrId, .value = value}
 			};
 			handlers[key] = std::make_unique<EventHandler<EventT>>(std::move(handler));
 			return *this;
@@ -190,7 +193,7 @@ namespace al {
 
 		template<EventDataType EventT>
 		EventDispatcher& setEventHandler(EventType eventType, EventHandler<EventT> handler) {
-			auto key = EventHandlerCoord {
+			auto key = detail::EventHandlerCoord {
 				.type = eventType,
 				.value = std::nullopt
 			};
@@ -199,7 +202,7 @@ namespace al {
 		}
 
 		EventDispatcher& setEventHandler(EventType eventType, GenericEventHandler handler) {
-			auto key = EventHandlerCoord {
+			auto key = detail::EventHandlerCoord {
 				.type = eventType,
 				.value = std::nullopt
 			};
@@ -209,11 +212,11 @@ namespace al {
 
 		template<UserEventType EventT>
 		EventDispatcher& setUserEventHandler(EventHandler<EventT> handler) {
-			return setEventHandler<EventT>(EventT::EventTypeID, std::move(handler));
+			return setEventHandler<EventT>(UserEventTypeIDGetter<EventT>{}(), std::move(handler));
 		}
 
 		EventDispatcher& setCatchallHandler(GenericEventHandler handler) {
-			handlers[EventHandlerCoord{}] = std::make_unique<GenericEventHandler>(std::move(handler));
+			handlers[detail::EventHandlerCoord{}] = std::make_unique<GenericEventHandler>(std::move(handler));
 			return *this;
 		}
 
@@ -273,14 +276,14 @@ namespace al {
 			return nullptr;
 		}
 
-		IEventHandler* findEventHandlerByCoord(const EventHandlerCoord& coord) {
+		IEventHandler* findEventHandlerByCoord(const detail::EventHandlerCoord& coord) {
 			if(auto itEntry = handlers.find(coord); itEntry != handlers.end()) {
 				return itEntry->second.get();
 			}
 			return nullptr;
 		}
 
-		EventHandledStatus tryDispatchCoord(const Event& event, const EventHandlerCoord& coord) {
+		EventHandledStatus tryDispatchCoord(const Event& event, const detail::EventHandlerCoord& coord) {
 			if(auto* handler = findEventHandlerByCoord(coord)) {
 				return handler->handle(event);
 			}
@@ -288,7 +291,7 @@ namespace al {
 		}
 
 		EventHandledStatus tryDispatchByValue(const Event& event) {
-			EventHandlerCoord coord = {
+			detail::EventHandlerCoord coord = {
 				.type = event.type,
 				.value = std::nullopt
 			};
@@ -297,7 +300,7 @@ namespace al {
 				return EventNotHandled;
 			}
 			for(const auto id: *ids) {
-				coord.value = EventDiscretizedValue {.id = id, .value = discretizers[id](event)};
+				coord.value = detail::EventDiscretizedValue {.id = id, .value = discretizers[id](event)};
 				if(tryDispatchCoord(event, coord) == EventHandled) {
 					return EventHandled;
 				}
@@ -318,7 +321,7 @@ namespace al {
 
 		std::vector<EventDiscretizer> discretizers;
 		std::unordered_map<EventType, std::vector<EventDiscretizerID>> relevantDiscretizers;
-		std::unordered_map<EventHandlerCoord, std::unique_ptr<IEventHandler>, EventHandlerCoordHash> handlers;
+		std::unordered_map<detail::EventHandlerCoord, std::unique_ptr<IEventHandler>, detail::EventHandlerCoordHash> handlers;
 
 	};
 

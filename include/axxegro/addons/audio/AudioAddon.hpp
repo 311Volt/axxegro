@@ -6,7 +6,6 @@
 #define AXXEGRO_AUDIOADDON_HPP
 
 #include <allegro5/allegro_audio.h>
-#include <allegro5/allegro_acodec.h>
 
 #include "../../com/Initializable.hpp"
 
@@ -19,12 +18,6 @@ namespace al {
 		using DependsOn = InitDependencies<CoreAllegro>;
 	};
 
-	struct AudioCodecAddon {
-		static constexpr char name[] = "Audio codec addon";
-		[[nodiscard]] static bool isInitialized() {return al_is_acodec_addon_initialized();}
-		[[nodiscard]] static bool init() {return al_init_acodec_addon();}
-		using DependsOn = InitDependencies<AudioAddon>;
-	};
 
 }
 

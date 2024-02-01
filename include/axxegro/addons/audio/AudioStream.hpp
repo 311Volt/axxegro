@@ -5,6 +5,10 @@
 
 namespace al {
 
+	namespace detail { 
+		class AudioStreamLoader;
+	}
+
 	class BaseAudioStream;
 	struct AudioStreamEventSource: public EventSource {
 	public:
@@ -19,8 +23,8 @@ namespace al {
 	class BaseAudioStream:
 			RequiresInitializables<AudioAddon>,
 			public Resource<ALLEGRO_AUDIO_STREAM>,
-			public AddPlaybackParamsQuery<BaseAudioStream>,
-			public AddAudioFormatQuery<BaseAudioStream> {
+			public al::detail::AddPlaybackParamsQuery<BaseAudioStream>,
+			public al::detail::AddAudioFormatQuery<BaseAudioStream> {
     public:
 
 		explicit BaseAudioStream(
@@ -44,21 +48,7 @@ namespace al {
 			}
 		}
 
-		explicit BaseAudioStream(const std::string& filename, BufferConfig bufConfig = {
-			.numChunks = 2,
-			.fragmentsPerChunk = 2048
-		})
-			: 	Resource<ALLEGRO_AUDIO_STREAM>(nullptr),
-				bufferConfig(bufConfig),
-				evSource(new AudioStreamEventSource(*this))
-		{
-			InternalRequire<AudioCodecAddon>();
-			if(auto* p = al_load_audio_stream(filename.c_str(), bufConfig.numChunks, bufConfig.fragmentsPerChunk)) {
-				setPtr(p);
-			} else {
-				throw AudioError("Cannot load audio stream from file %s", filename.c_str());
-			}
-		}
+		
 
 //		static AudioStream& Play(const std::string& filename); //5.2.8 unstable
 
@@ -173,6 +163,19 @@ namespace al {
 	protected:
 		BufferConfig bufferConfig;
 		using Resource::Resource;
+
+		friend class detail::AudioStreamLoader;
+		explicit BaseAudioStream(ALLEGRO_AUDIO_STREAM* ptr, BufferConfig claimedBufConfig = {
+			.numChunks = 2,
+			.fragmentsPerChunk = 2048
+		})
+			: 	Resource<ALLEGRO_AUDIO_STREAM>(ptr),
+				bufferConfig(claimedBufConfig),
+				evSource(new AudioStreamEventSource(*this))
+		{
+			
+		}
+
 	private:
 
 		std::unique_ptr<EventSource> evSource;
@@ -185,35 +188,25 @@ namespace al {
 
 
 
-	template<ValidSampleType TSample, ALLEGRO_CHANNEL_CONF TPChanConf>
+	template<detail::ValidSampleType TSample, ALLEGRO_CHANNEL_CONF TPChanConf>
 	class AudioStream : public BaseAudioStream {
 	public:
 
-		using Traits = FragmentTraits<TSample, TPChanConf>;
+		using Traits = detail::FragmentTraits<TSample, TPChanConf>;
 
-		explicit AudioStream(Freq freq = Hz(44100), BufferConfig bufConfig = {})
+		explicit AudioStream(Hz freq = Hz(44100), BufferConfig bufConfig = {})
 			: BaseAudioStream({
-				.frequency = (unsigned)freq.getFreqHz(),
+				.frequency = (unsigned)freq.getHz(),
 				.depth = Traits::Depth,
 				.chanConf = Traits::ChanConf}, bufConfig)
 		{
 
 		}
 
-		explicit AudioStream(const std::string& filename, BufferConfig bufConfig = {})
-			: BaseAudioStream(filename, bufConfig)
-		{
-			if(getDepth() != Traits::Depth || getChannelConf() != Traits::ChanConf) {
-				throw AudioError(
-					"Audio file %s has wrong format (expected %s, got %s)",
-					AudioFormat{getFrequency(), Traits::Depth, Traits::ChanConf}.str().c_str(),
-					getAudioFormat().str().c_str()
-				);
-			}
-		}
+		
 
 #ifdef ALLEGRO_UNSTABLE
-		bool setChannelMatrix(const std::span<Vec<float, Traits::NumChannels>> matrix) {
+		bool setChannelMatrix(const std::span<const Vec<float, Traits::NumChannels>> matrix) {
 			if constexpr(decltype(matrix)::value_type::IsContiguous) {
 				return setChannelMatrixData(reinterpret_cast<float*>(matrix.data()));
 			}
@@ -241,7 +234,20 @@ namespace al {
 				}
 			};
 		}
+	private:
+		friend class detail::AudioStreamLoader;
 
+		explicit AudioStream(ALLEGRO_AUDIO_STREAM* ptr, BufferConfig claimedBufConfig = {})
+			: BaseAudioStream(ptr, claimedBufConfig)
+		{
+			if(getDepth() != Traits::Depth || getChannelConf() != Traits::ChanConf) {
+				throw AudioError(
+					"Wrong audio format (expected %s, got %s)",
+					AudioFormat{getFrequency(), Traits::Depth, Traits::ChanConf}.str().c_str(),
+					getAudioFormat().str().c_str()
+				);
+			}
+		}
 	};
 
 }

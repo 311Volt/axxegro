@@ -3,14 +3,13 @@
 
 #include "../../common.hpp"
 #include "Color.hpp"
+#include "Pixel.hpp"
 
-#include "../Transform.hpp"
 #include "axxegro/com/Exception.hpp"
 #include "axxegro/com/Resource.hpp"
-#include <allegro5/bitmap.h>
 #include <memory>
+#include <span>
 
-#include "../../addons/image.hpp"
 /**
  * @file
  * An ALLEGRO_BITMAP wrapper plus utilities.
@@ -19,9 +18,12 @@
 namespace al {
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_BITMAP, al_destroy_bitmap);
 
-	class BitmapLockedRegion;
+	class BaseLockedBitmapRegion;
 	class Bitmap;
 	class SubBitmap;
+
+	template<typename T, bool TPReadOnly>
+	class LockedBitmapRegion;
 
 	/**
 	 * @brief Provides a RAII-style mechanism for setting target bitmaps.
@@ -79,21 +81,6 @@ namespace al {
 			clearToColor(color);
 		}
 
-		/** 
-		 * @brief Loads a bitmap from a file. 
-		 * @param filename Path to the file with the image.
-		 **/
-		explicit Bitmap(const std::string& filename)
-				: Resource(nullptr)
-		{
-			InternalRequire<ImageAddon>();
-			if(auto* p = al_load_bitmap(filename.c_str())) {
-				setPtr(p);
-			} else {
-				throw ResourceLoadError("Cannot load bitmap from %s - file missing, corrupted or in an unsupported format", filename.c_str());
-			}
-		}
-
 		/// @return The width of the bitmap in pixels.
 		[[nodiscard]] int width() const {
 			return al_get_bitmap_width(ptr());
@@ -114,7 +101,7 @@ namespace al {
 		 * and the bottom left corner at (width, height). Useful for the drawScaled() family
 		 * of methods.
 		 **/
-		[[nodiscard]] Rect<int> rect() const {
+		[[nodiscard]] RectI rect() const {
 			return {{0, 0}, size()};
 		}
 
@@ -122,15 +109,15 @@ namespace al {
 		   always called with flags=0. use transforms/texcoords for flipping. */
 
 		/// @brief Corresponds to al_draw_bitmap(). Refer to Allegro5 documentation for more info on this and other drawX() methods.
-		void draw(Vec2<float> p0) const {
+		void draw(Vec2f p0) const {
 			al_draw_bitmap(ptr(), p0.x, p0.y, 0);
 		}
 
-		void drawTinted(Vec2<float> p0, Color tint) const {
+		void drawTinted(Vec2f p0, Color tint) const {
 			al_draw_tinted_bitmap(ptr(), tint, p0.x, p0.y, 0);
 		}
 
-		void drawRegion(Rect<float> srcRegion, Vec2<float> dst) const {
+		void drawRegion(RectF srcRegion, Vec2f dst) const {
 			al_draw_bitmap_region(
 					ptr(),
 					srcRegion.a.x, srcRegion.a.y,
@@ -140,7 +127,7 @@ namespace al {
 			);
 		}
 
-		void drawScaled(Rect<float> srcRect, Rect<float> dstRect) const {
+		void drawScaled(RectF srcRect, RectF dstRect) const {
 			al_draw_scaled_bitmap(
 					ptr(),
 					srcRect.a.x, srcRect.a.y,
@@ -150,7 +137,7 @@ namespace al {
 					0
 			);
 		}
-		void drawRotated(Vec2<float> centerSrc, Vec2<float> centerDst, float angle) const {
+		void drawRotated(Vec2f centerSrc, Vec2f centerDst, float angle) const {
 			al_draw_rotated_bitmap(
 					ptr(),
 					centerSrc.x, centerSrc.y,
@@ -160,7 +147,7 @@ namespace al {
 			);
 		}
 
-		void drawTintedScaled(Color tint, Rect<float> srcRect, Rect<float> dstRect) const {
+		void drawTintedScaled(Color tint, RectF srcRect, RectF dstRect) const {
 			al_draw_tinted_scaled_bitmap(
 					ptr(),
 					tint,
@@ -172,7 +159,7 @@ namespace al {
 			);
 		}
 
-		void drawTintedRegion(Rect<float> srcRegion, Vec2<float> dst, Color tint) const {
+		void drawTintedRegion(RectF srcRegion, Vec2f dst, Color tint) const {
 			al_draw_tinted_bitmap_region(
 					ptr(),
 					tint,
@@ -183,7 +170,7 @@ namespace al {
 			);
 		}
 
-		void drawTintedRotated(Color tint, Vec2<float> centerSrc, Vec2<float> centerDst, float angle) const {
+		void drawTintedRotated(Color tint, Vec2f centerSrc, Vec2f centerDst, float angle) const {
 			al_draw_tinted_rotated_bitmap(
 					ptr(),
 					tint,
@@ -194,7 +181,7 @@ namespace al {
 			);
 		}
 
-		void drawScaledRotated(Vec2<float> centerSrc, Vec2<float> centerDst, Vec2<float> scale, float angle) const {
+		void drawScaledRotated(Vec2f centerSrc, Vec2f centerDst, Vec2f scale, float angle) const {
 			al_draw_scaled_rotated_bitmap(
 					ptr(),
 					centerSrc.x, centerSrc.y,
@@ -205,7 +192,7 @@ namespace al {
 			);
 		}
 
-		void drawTintedScaledRotated(Color tint, Vec2<float> centerSrc, Vec2<float> centerDst, Vec2<float> scale, float angle) const {
+		void drawTintedScaledRotated(Color tint, Vec2f centerSrc, Vec2f centerDst, Vec2f scale, float angle) const {
 			al_draw_tinted_scaled_rotated_bitmap(
 					ptr(),
 					tint,
@@ -217,7 +204,7 @@ namespace al {
 			);
 		}
 
-		void drawTintedScaledRotatedRegion(Rect<float> srcRegion, Color tint, Vec2<float> centerSrc, Vec2<float> centerDst, Vec2<float> scale, float angle) const {
+		void drawTintedScaledRotatedRegion(RectF srcRegion, Color tint, Vec2f centerSrc, Vec2f centerDst, Vec2f scale, float angle) const {
 			al_draw_tinted_scaled_rotated_bitmap_region(
 					ptr(),
 					srcRegion.a.x, srcRegion.a.y,
@@ -258,13 +245,45 @@ namespace al {
 		 * 
 		 * @return A second identical Bitmap.
 		 */
-		[[nodiscard]] Bitmap clone() const {
+		[[nodiscard]] auto clone() const {
 			return Bitmap(al_clone_bitmap(ptr()));
 		}
 
-		[[nodiscard]] SubBitmap createSubBitmap(Rect<int> rect);
+		[[nodiscard]] SubBitmap createSubBitmap(RectI rect);
 
-		BitmapLockedRegion lock(int format = ALLEGRO_PIXEL_FORMAT_ARGB_8888, int flags = ALLEGRO_LOCK_READWRITE);
+		BaseLockedBitmapRegion lockDynamic(int format = ALLEGRO_PIXEL_FORMAT_ARGB_8888, int flags = ALLEGRO_LOCK_READWRITE);
+
+		template<FormattedPixelType T>
+		LockedBitmapRegion<T, false> lock(RectI region = {0,0,-1,-1}) {
+			return lockImpl<T, T::PixelFormat, false>(region, ALLEGRO_LOCK_READWRITE);
+		}
+
+		template<typename T, ALLEGRO_PIXEL_FORMAT TPPixelFormat>
+		LockedBitmapRegion<T, false> lock(RectI region = {0,0,-1,-1}) {
+			return lockImpl<T, TPPixelFormat, false>(region, ALLEGRO_LOCK_READWRITE);
+		}
+
+		template<FormattedPixelType T>
+		LockedBitmapRegion<T, true> lockReadOnly(RectI region = {0,0,-1,-1}) {
+			return lockImpl<T, T::PixelFormat, true>(region, ALLEGRO_LOCK_READONLY);
+		}
+
+		template<typename T, ALLEGRO_PIXEL_FORMAT TPPixelFormat>
+		LockedBitmapRegion<T, true> lockReadOnly(RectI region = {0,0,-1,-1}) {
+			return lockImpl<T, TPPixelFormat, true>(region, ALLEGRO_LOCK_READONLY);
+		}
+
+		template<FormattedPixelType T>
+		LockedBitmapRegion<T, false> lockWriteOnly(RectI region = {0,0,-1,-1}) {
+			return lockImpl<T, T::PixelFormat, false>(region, ALLEGRO_LOCK_WRITEONLY);
+		}
+
+		template<typename T, ALLEGRO_PIXEL_FORMAT TPPixelFormat>
+		LockedBitmapRegion<T, false> lockWriteOnly(RectI region = {0,0,-1,-1}) {
+			return lockImpl<T, TPPixelFormat, false>(region, ALLEGRO_LOCK_WRITEONLY);
+		}
+
+
 
 		static int GetNewBitmapFlags() {
 			return al_get_new_bitmap_flags();
@@ -275,6 +294,10 @@ namespace al {
 
 		friend class Video;
 	protected:
+
+		template<typename T, ALLEGRO_PIXEL_FORMAT TPPixelFormat, bool TPReadOnly>
+		requires CanRepresentPixelFormat<T, TPPixelFormat>
+		LockedBitmapRegion<T, TPReadOnly> lockImpl(RectI region, int flags);
 	};
 
 	inline ScopedTargetBitmap::ScopedTargetBitmap(Bitmap& bmp)
@@ -298,38 +321,88 @@ namespace al {
 		}
 	};
 
+
+	class SubBitmap: public Bitmap {
+	public:
+		[[nodiscard]] Vec2i parentXY() const {
+			return {al_get_bitmap_x(ptr()), al_get_bitmap_y(ptr())};
+		}
+		Bitmap& getParent() {
+			return parent;
+		}
+
+		bool reparent(Bitmap& bitmap, RectI rect = {0, 0, -1, -1}) {
+			if(rect.width() < 0) {
+				rect = mrect;
+			}
+			al_reparent_bitmap(bitmap.ptr(), ptr(), rect.a.x, rect.a.y, rect.width(), rect.height());
+			return true;
+		}
+
+		SubBitmap(SubBitmap&&) = delete;
+		SubBitmap& operator=(SubBitmap&&) = delete;
+
+		friend class Bitmap;
+
+	private:
+		SubBitmap(Bitmap& parent, const RectI rect)
+			: Bitmap(al_create_sub_bitmap(parent.ptr(), rect.a.x, rect.a.y, rect.width(), rect.height())),
+			  mrect(rect),
+			  parent(parent.ptr(), ResourceModel::NonOwning)
+		{
+			if(!ptr()) {
+				throw ResourceLoadError(
+					"Error while creating a sub-bitmap of a %dx%d bitmap with position (%d, %d) and size %dx%d",
+					parent.width(), parent.height(),
+					rect.a.x, rect.a.y,
+					rect.width(), rect.height()
+				);
+			}
+		}
+
+		RectI mrect;
+		Bitmap parent;
+	};
+
+	inline SubBitmap Bitmap::createSubBitmap(RectI rect) {
+		return SubBitmap(*this, rect);
+	}
+
+
 	/**
 	 * @brief Provides bitmap locking.
 	 */
-	class BitmapLockedRegion {
+	class BaseLockedBitmapRegion {
 	public:
-		BitmapLockedRegion(Bitmap& bmp, int format, int flags) {
+		BaseLockedBitmapRegion(Bitmap& bmp, int format, int flags) {
 			this->bmp = bmp.ptr();
 			reg = al_lock_bitmap(this->bmp, format, flags);
 			if(!reg) {
 				throw BitmapLockError("Error while locking bitmap. Make sure the bitmap isn't locked already and that you have specified a correct format.");
 			}
+			regionSize = bmp.size();
 		}
 
-		BitmapLockedRegion(Bitmap& bmp, Rect<int> region, int format, int flags) {
+		BaseLockedBitmapRegion(Bitmap& bmp, RectI region, int format, int flags) {
 			this->bmp = bmp.ptr();
-			if(region.a.x < 0 || region.a.y < 0 || region.b.x >= bmp.width() || region.b.y >= bmp.height()) {
+			if(region.a.x < 0 || region.a.y < 0 || region.b.x > bmp.width() || region.b.y > bmp.height()) {
 				throw BitmapLockError("Can't lock a region that extends past the bitmap");
 			}
 			reg = al_lock_bitmap_region(this->bmp, region.a.x, region.a.y, region.width(), region.height(), format, flags);
 			if(!reg) {
 				throw BitmapLockError("Error while locking bitmap. Make sure the bitmap isn't locked already and that you have specified a correct format.");
 			}
+			regionSize = region.size();
 		}
 
-		~BitmapLockedRegion() {
+		~BaseLockedBitmapRegion() {
 			al_unlock_bitmap(bmp);
 		}
 		
-		BitmapLockedRegion(BitmapLockedRegion&) = delete;
-		BitmapLockedRegion(BitmapLockedRegion&&) = delete; //TODO maybe moving should be allowed?
-		BitmapLockedRegion& operator=(BitmapLockedRegion&) = delete;
-		BitmapLockedRegion& operator=(BitmapLockedRegion&&) = delete;
+		BaseLockedBitmapRegion(BaseLockedBitmapRegion&) = delete;
+		BaseLockedBitmapRegion& operator=(BaseLockedBitmapRegion&) = delete;
+		BaseLockedBitmapRegion(BaseLockedBitmapRegion&&) = delete;
+		BaseLockedBitmapRegion& operator=(BaseLockedBitmapRegion&&) = delete;
 
 		void* data() {
 			return reg->data;
@@ -347,6 +420,15 @@ namespace al {
 		[[nodiscard]] int getPixelSize() const {
 			return reg->pixel_size;
 		}
+		[[nodiscard]] Vec2i size() const {
+			return regionSize;
+		}
+		[[nodiscard]] int width() const {
+			return regionSize.x;
+		}
+		[[nodiscard]] int height() const {
+			return regionSize.y;
+		}
 
 		template<typename T>
 		T* rowData(unsigned rowIndex)
@@ -354,152 +436,60 @@ namespace al {
 			//TODO assert correct format
 			return reinterpret_cast<T*>(rawRowData(rowIndex));
 		}
-		
-	private:
+
+	protected:
+		al::Vec2i regionSize;
 		ALLEGRO_LOCKED_REGION* reg;
 		ALLEGRO_BITMAP* bmp;
 	};
 
-	inline al::BitmapLockedRegion al::Bitmap::lock(int format, int flags)
+	inline al::BaseLockedBitmapRegion al::Bitmap::lockDynamic(int format, int flags)
 	{
-		return BitmapLockedRegion(*this, format, flags);
+		return BaseLockedBitmapRegion(*this, format, flags);
 	}
 
 
-	class SubBitmap: public Bitmap {
+	template<typename PixelT, bool TPReadOnly>
+	class LockedBitmapRegion: public BaseLockedBitmapRegion {
 	public:
-		Vec2i parentXY() {
-			return {al_get_bitmap_x(ptr()), al_get_bitmap_y(ptr())};
-		}
-		Bitmap& getParent() {
-			return parent;
-		}
-		bool reparent(Bitmap& bitmap, Rect<int> rect = {0, 0, -1, -1}) {
-			if(rect.width() < 0) {
-				rect = mrect;
-			}
-			al_reparent_bitmap(bitmap.ptr(), ptr(), rect.a.x, rect.a.y, rect.width(), rect.height());
-			return true;
-		}
+		using RowSpanT = std::conditional_t<
+		    TPReadOnly,
+			std::span<const PixelT>,
+			std::span<PixelT>
+		>;
 
-		SubBitmap(SubBitmap&&) = delete;
-		SubBitmap& operator=(SubBitmap&&) = delete;
-
-		friend class Bitmap;
+		[[nodiscard]] RowSpanT row(unsigned rowIdx) {
+			return RowSpanT(
+				reinterpret_cast<PixelT*>(rawRowData(rowIdx)),
+				reinterpret_cast<PixelT*>(rawRowData(rowIdx)) + width()
+			);
+		}
 
 	private:
-		SubBitmap(Bitmap& parent, const Rect<int> rect)
-			: Bitmap(al_create_sub_bitmap(parent.ptr(), rect.a.x, rect.a.y, rect.width(), rect.height())),
-			  mrect(rect),
-			  parent(parent.ptr(), ResourceModel::NonOwning) 
+		friend class Bitmap;
+		LockedBitmapRegion(Bitmap& bmp, RectI region, int format, int flags)
+			: BaseLockedBitmapRegion(bmp, region, format, flags)
 		{
-			if(!ptr()) {
-				throw ResourceLoadError(
-					"Error while creating a sub-bitmap of a %dx%d bitmap with position (%d, %d) and size %dx%d",
-					parent.width(), parent.height(),
-					rect.a.x, rect.a.y,
-					rect.width(), rect.height()
+
+			unsigned expected = sizeof(PixelT);
+			unsigned actual = getPixelSize();
+			if(expected != actual) {
+				throw BitmapLockError(
+					"expected %u-byte pixels, got %u-byte pixels (this should never happen)",
+					expected, actual
 				);
 			}
 		}
-
-		Rect<int> mrect;
-		Bitmap parent;
 	};
 
-	inline SubBitmap Bitmap::createSubBitmap(Rect<int> rect) {
-		return SubBitmap(*this, rect);
+	template<typename T, ALLEGRO_PIXEL_FORMAT TPPixelFormat, bool TPReadOnly>
+	requires CanRepresentPixelFormat<T, TPPixelFormat>
+	LockedBitmapRegion<T, TPReadOnly> Bitmap::lockImpl(RectI region, int flags) {
+		if(region.width() <= 0) {
+			region = this->rect();
+		}
+		return LockedBitmapRegion<T, TPReadOnly>(*this, region, TPPixelFormat, flags);
 	}
-
-
-#define AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC [[maybe_unused]] auto* unused_____ = ptr();
-
-	class CTargetBitmap: public Bitmap {
-	public:
-		CTargetBitmap() : Bitmap(nullptr) {}
-		
-		/**
-		 * @brief Use the transform for subsequent drawing operations
-		 * on the target bitmap.
-		 * https://liballeg.org/a5docs/trunk/transformations.html#al_use_transform
-		 */
-		void useTransform(const Transform& transform) { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
-			al_use_transform(&transform);
-		}
-
-		/**
-		 * @brief Use the projection transformation for subsequent
-		 * drawing operations on the target bitmap.
-		 * https://liballeg.org/a5docs/trunk/transformations.html#al_use_projection_transform
-		 */
-		void useProjectionTransform(const Transform& transform) { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
-			al_use_projection_transform(&transform);
-		}
-		
-		void resetTransform() {
-			useTransform(al::Transform::Identity());
-		}
-		void resetProjection() {
-			useProjectionTransform(al::Transform::Orthographic({0,0}, size().as<float>(), -1, 1));
-		}
-
-		Transform currentTransform() { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
-			return al_get_current_transform();
-		}
-		Transform currentInverseTransform() { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
-			return al_get_current_inverse_transform();
-		}
-		Transform currentProjectionTransform() { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
-			return al_get_current_projection_transform();
-		}
-
-		void setRenderState(ALLEGRO_RENDER_STATE state, int value) { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
-			al_set_render_state(state, value);
-		}
-		void setAlphaTest(bool value) {
-			setRenderState(ALLEGRO_ALPHA_TEST, value);
-		}
-		void setAlphaFunction(ALLEGRO_RENDER_FUNCTION value) {
-			setRenderState(ALLEGRO_ALPHA_FUNCTION, value);
-		}
-		void setAlphaTestValue(uint8_t value) {
-			setRenderState(ALLEGRO_ALPHA_TEST_VALUE, value);
-		}
-		void setWriteMaskFlags(ALLEGRO_WRITE_MASK_FLAGS value) {
-			setRenderState(ALLEGRO_WRITE_MASK, value);
-		}
-		void setDepthTest(bool value) {
-			setRenderState(ALLEGRO_DEPTH_TEST, value);
-		}
-		void setDepthFunction(ALLEGRO_RENDER_FUNCTION value) {
-			setRenderState(ALLEGRO_DEPTH_FUNCTION, value);
-		}
-
-		void clearDepthBuffer(float x) { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
-			al_clear_depth_buffer(x);
-		}
-		void setClippingRectangle(al::Rect<int> r) { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
-			al_set_clipping_rectangle(r.a.x, r.a.y, r.width(), r.height());
-		}
-		[[nodiscard]] al::Rect<int> getClippingRectangle() const { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
-			int x,y,w,h;
-			al_get_clipping_rectangle(&x, &y, &w, &h);
-			return al::Rect<int>::XYWH(x,y,w,h);
-		}
-		void resetClippingRectangle() { AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
-			al_reset_clipping_rectangle();
-		}
-
-	private:
-		[[nodiscard]] ALLEGRO_BITMAP* getPointer() const override
-		{
-			return al_get_target_bitmap();
-		}
-	};
-
-#undef AXXEGRO_SUPPRESS_CAN_BE_MADE_STATIC
-
-	inline CTargetBitmap TargetBitmap;
 }
 
 

@@ -13,8 +13,11 @@
 
 //Define a data structure for the event.
 struct ExampleEvent {
-	//Let axxegro know its type ID
-	static constexpr al::EventType EventTypeID = 1437;
+	/* You may optionally let axxegro know its type ID here, like this:
+	 *		static constexpr al::EventType EventTypeID = 1437;
+	 * This must be a value between 1024 and (1<<30) and will exclude this type
+	 * from event type ID auto-generation.
+	 */
 
 	float a,b;
 	std::string msg;
@@ -27,7 +30,6 @@ struct ExampleEvent {
  * allocation needed.
  */
 struct SimpleEvent {
-	static constexpr al::EventType EventTypeID = 1438;
 	int a, b;
 };
 
@@ -71,8 +73,8 @@ int main()
 
 		//reading the data we put in
 		messages.push_back(al::Format(
-			"[%.2f] Received example event: %.1f %.1f \"%s\"",
-			meta.timestamp,
+			"[%.2f] Received example event (id=%d): %.1f %.1f \"%s\"",
+			meta.timestamp, meta.type,
 			ev.a, ev.b, ev.msg.c_str()
 		));
 
@@ -83,7 +85,7 @@ int main()
 		));
 	});
 
-	//a handler for the simple event
+	//a handler for the simple event. note that you can skip some parameters in the lambda
 	evLoop.eventDispatcher.setUserEventHandler<SimpleEvent>([&](const SimpleEvent& ev){
 		messages.push_back(al::Format("simple event received: %d, %d", ev.a, ev.b));
 	});

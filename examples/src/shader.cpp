@@ -20,7 +20,7 @@ int main()
 
 	al::Display disp(800, 600, ALLEGRO_OPENGL | ALLEGRO_PROGRAMMABLE_PIPELINE);
 
-	al::Bitmap blueNoise("data/bluenoise.png");
+	al::Bitmap blueNoise = al::LoadBitmap("data/bluenoise.png");
 
 	al::EventLoop evLoop(al::DemoEventLoopConfig);
 

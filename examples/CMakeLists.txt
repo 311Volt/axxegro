@@ -1,26 +1,7 @@
 
 add_custom_target(axxegro_examples ALL)
-
-if(${CMAKE_VERSION} VERSION_LESS "3.26.0")
-    add_custom_command(TARGET axxegro_examples POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CMAKE_SOURCE_DIR}/examples/data/ ${CMAKE_CURRENT_BINARY_DIR}/data
-            )
-else ()
-    add_custom_command(TARGET axxegro_examples POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
-            ${CMAKE_SOURCE_DIR}/examples/data/ ${CMAKE_CURRENT_BINARY_DIR}/data
-            )
-endif()
-
-
-# if(WIN32)
-#     add_custom_command(TARGET axxegro_examples POST_BUILD
-#         COMMAND ${CMAKE_COMMAND} -E copy_directory
-#         ${CMAKE_SOURCE_DIR}/examples/dll/ ${CMAKE_CURRENT_BINARY_DIR}
-#     )
-# endif()
-
+axxegro_add_copy_resources_command(axxegro_examples "examples/data" "data")
+axxegro_add_copy_dlls_command(axxegro_examples "dll" "")
 
 function(axxegro_add_example name)
     add_executable("axx_ex_${name}" "src/${name}.cpp")
@@ -42,3 +23,4 @@ axxegro_add_example("video")
 axxegro_add_example("subbitmap")
 axxegro_add_example("benchmark")
 axxegro_add_example("microphone")
+axxegro_add_example("buffers")
