@@ -6,7 +6,22 @@
 
 #include <span>
 
+#include "Transform.hpp"
+
 namespace al {
+
+	template<typename T>
+	concept ShaderUniformScalarElement = std::same_as<T, int> || std::same_as<T, float> || std::same_as<T, bool>;
+
+	template<typename TVec>
+	concept ShaderUniformVectorElement = requires {
+		requires TVec::NumElements > 1;
+		requires std::same_as<typename TVec::ElementType, int> || std::same_as<typename TVec::ElementType, float>;
+	};
+
+	template<typename T>
+	concept ShaderUniformElement = ShaderUniformScalarElement<T> || ShaderUniformVectorElement<T>;
+
 
 	AXXEGRO_DEFINE_DELETER(ALLEGRO_SHADER, al_destroy_shader);
 
@@ -60,7 +75,7 @@ namespace al {
 		}
 		void use() {
 			if(!al_use_shader(ptr())) {
-				throw ShaderError("Cannot use shader: " + std::string(getLog()));
+				throw ShaderError("Cannot use shader: \n" + std::string(getLog()));
 			}
 		}
 
@@ -84,47 +99,78 @@ namespace al {
 			attachVertexShader(GetDefaultSource(getPlatform(), ALLEGRO_PIXEL_SHADER));
 		}
 
-		static bool SetBool(const std::string &name, bool value) {
-			return al_set_shader_bool(name.c_str(), value);
-		}
-		
-		static bool SetInt(const std::string &name, int value) {
-			return al_set_shader_int(name.c_str(), value);
+		//scalar uniforms
+		template<typename T>
+			requires ShaderUniformScalarElement<T>
+		static bool TrySetUniform(const std::string& name, T value) {
+			if constexpr (std::is_same_v<T, bool>) {
+				return al_set_shader_bool(name.c_str(), value);
+			} else if constexpr (std::is_same_v<T, int>) {
+				return al_set_shader_int(name.c_str(), value);
+			} else if constexpr (std::is_same_v<T, float>) {
+				return al_set_shader_float(name.c_str(), value);
+			}
+			return false;
 		}
 
-		static bool SetFloat(const std::string &name, float value) {
-			return al_set_shader_float(name.c_str(), value);
+		//vector uniforms
+		template<typename T, int N>
+			requires ShaderUniformVectorElement<Vec<T, N>>
+		static bool TrySetUniform(const std::string& name, const Vec<T, N>& vec)
+		{
+			if constexpr(std::is_same_v<T, int>) {
+				return al_set_shader_int_vector(name.c_str(), N, vec.data(), 1);
+			} else if constexpr(std::is_same_v<T, float>) {
+				return al_set_shader_float_vector(name.c_str(), N, vec.data(), 1);
+			}
+			return false;
 		}
 
-		static bool SetSampler(const std::string& name, al::Bitmap& bitmap, int unit) {
+		//array of vector uniforms
+		template<std::ranges::contiguous_range TRange>
+			requires ShaderUniformVectorElement<std::remove_cvref_t<std::ranges::range_value_t<TRange>>>
+		static bool TrySetUniform(const std::string& name, TRange&& elements) {
+			using TElement = typename std::remove_cvref_t<std::ranges::range_value_t<TRange>>::ElementType;
+			constexpr int NumElements = TElement::NumElements;
+
+			if constexpr(std::is_same_v<TElement, int>) {
+				return al_set_shader_int_vector(name.c_str(), NumElements, std::ranges::data(elements), std::ranges::size(elements));
+			} else if constexpr(std::is_same_v<TElement, float>) {
+				return al_set_shader_float_vector(name.c_str(), NumElements, std::ranges::data(elements), std::ranges::size(elements));
+			}
+			return false;
+		}
+
+		//array of scalar uniforms
+		template<std::ranges::contiguous_range TRange>
+			requires requires {
+				requires not VectorType<std::remove_cvref_t<TRange>>;
+				requires ShaderUniformScalarElement<std::remove_cvref_t<std::ranges::range_value_t<TRange>>>;
+			}
+		static bool TrySetUniform(const std::string& name, TRange&& elements) {
+			using TElement = std::remove_cvref_t<std::ranges::range_value_t<TRange>>;
+
+			if constexpr(std::is_same_v<TElement, int>) {
+				return al_set_shader_int_vector(name.c_str(), 1, std::ranges::data(elements), std::ranges::size(elements));
+			} else if constexpr(std::is_same_v<TElement, float>) {
+				return al_set_shader_float_vector(name.c_str(), 1, std::ranges::data(elements), std::ranges::size(elements));
+			}
+			return false;
+		}
+
+		static bool TrySetUniform(const std::string& name, const Transform& mtx) {
+			return al_set_shader_matrix(name.c_str(), &mtx);
+		}
+
+
+		static bool TrySetUniform(const std::string& name, al::Bitmap& bitmap, int unit) {
 			return al_set_shader_sampler(name.c_str(), bitmap.ptr(), unit);
 		}
 
-		template<typename Vec>
-		static bool SetVector(const std::string& name, const Vec& vec)
-		{
-			if constexpr(std::is_same_v<typename Vec::ValueType, int>) {
-				return al_set_shader_int_vector(name.c_str(), Vec::NumElements, (int*)&vec, 1);
-			} else if constexpr(std::is_same_v<typename Vec::ValueType, float>) {
-				return al_set_shader_float_vector(name.c_str(), Vec::NumElements, (float*)&vec, 1);
-			} else {
-				AXXEGRO_STATIC_ASSERT_FALSE(Vec, "Cannot set shader vector array uniform for this type");
-			}
-		}
-
-		template<typename Vec>
-		static bool SetVector(const std::string& name, const std::span<Vec> vec)
-		{
-			if constexpr(std::is_same_v<typename Vec::ValueType, int>) {
-				return al_set_shader_int_vector(name.c_str(), Vec::NumElements, (int*)vec.data(), vec.size());
-			} else if constexpr(std::is_same_v<typename Vec::ValueType, float>) {
-				return al_set_shader_float_vector(name.c_str(), Vec::NumElements, (float*)vec.data(), vec.size());
-			} else if constexpr(std::is_same_v<Vec, int>) {
-				return al_set_shader_int_vector(name.c_str(), 1, vec.data(), vec.size());
-			} else if constexpr(std::is_same_v<Vec, float>) {
-				return al_set_shader_float_vector(name.c_str(), 1, vec.data(), vec.size());
-			} else {
-				AXXEGRO_STATIC_ASSERT_FALSE(Vec, "Cannot set shader vector array uniform for this type");
+		template<typename... Ts>
+		static void SetUniform(const std::string& name, Ts&&... values) {
+			if(not TrySetUniform(name, std::forward<Ts>(values)...)) {
+				throw ShaderError("Cannot set uniform \"%s\": no such uniform or type mismatch", name.c_str());
 			}
 		}
 	};

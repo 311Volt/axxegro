@@ -57,12 +57,12 @@ int main()
 	sh.build();
 	sh.use();
 	
-	al::Shader::SetSampler("blue_noise", blueNoise, 1);
-	al::Shader::SetVector("scr_size", al::CurrentDisplay.size());
+	al::Shader::SetUniform("blue_noise", blueNoise, 1);
+	al::Shader::SetUniform("scr_size", al::CurrentDisplay.size());
 
 	evLoop.run([&](){
-		al::Shader::SetVector("mouse_pos", al::GetMousePos());
-		al::Shader::SetVector("dither_offset", al::Vec2f(randf64(), randf64()));
+		al::Shader::SetUniform("mouse_pos", al::GetMousePos());
+		al::Shader::SetUniform("dither_offset", al::Vec2f(randf64(), randf64()));
 
 		al::DrawFilledRectangle(al::CurrentDisplay.rect());
 
