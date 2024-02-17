@@ -163,14 +163,20 @@ namespace al {
 		}
 
 
-		static bool TrySetUniform(const std::string& name, al::Bitmap& bitmap, int unit) {
+		static bool TrySetSampler(const std::string& name, Bitmap& bitmap, int unit) {
 			return al_set_shader_sampler(name.c_str(), bitmap.ptr(), unit);
 		}
 
-		template<typename... Ts>
-		static void SetUniform(const std::string& name, Ts&&... values) {
-			if(not TrySetUniform(name, std::forward<Ts>(values)...)) {
+		template<typename T>
+		static void SetUniform(const std::string& name, T&& value) {
+			if(not TrySetUniform(name, std::forward<T>(value))) {
 				throw ShaderError("Cannot set uniform \"%s\": no such uniform or type mismatch", name.c_str());
+			}
+		}
+
+		static void SetSampler(const std::string& name, Bitmap& bitmap, int unit) {
+			if(not TrySetSampler(name, bitmap, unit)) {
+				throw ShaderError("Cannot set sampler %s at unit %d", name.c_str(), unit);
 			}
 		}
 	};

@@ -41,7 +41,7 @@ namespace al {
  * This function is intended for use as a global terminate handler function.
  */
 	inline void Terminate() {
-		InternalRequire<NativeDialogAddon>();
+
 		std::string errMsg = "The program exited unexpectedly because of an error.";
 
 		std::string exMsg;
@@ -54,7 +54,8 @@ namespace al {
 		} catch(const std::string& msg) {
 			exMsg = "Unhandled exception: " + std::string(msg);
 		} catch(std::exception& e) {
-			errMsg = "The program exited unexpectedly after throwing an instance of " + detail::DemangleTypeName(typeid(e).name()) + ":";
+			errMsg = "The program exited unexpectedly after throwing an instance of "
+				+ detail::DemangleTypeName(typeid(e).name()) + ":";
 			exMsg = e.what();
 		}
 

@@ -43,11 +43,11 @@ namespace al {
 			al_append_native_text_log(ptr(), fmt, args...);
 		}
 		
-		void write(const std::string& text) {
-			writef("%s", text.c_str());
+		void write(const char* text) {
+			writef("%s", text);
 		}
-		void writeln(const std::string& text) {
-			writef("%s\n", text.c_str());
+		void writeln(const char* text) {
+			writef("%s\n", text);
 		}
 	};
 

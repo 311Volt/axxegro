@@ -16,7 +16,7 @@ namespace al {
 
 	struct FileDialogResult {
 		const std::vector<std::string> paths;
-		bool wasCancelled() {
+		[[nodiscard]] bool wasCancelled() const {
 			return paths.empty();
 		}
 	};
@@ -46,6 +46,7 @@ namespace al {
 			}
 			return {paths};
 		}
+
 		std::future<FileDialogResult> showAsync() {
 			return std::async(&FileDialog::show, this);
 		}

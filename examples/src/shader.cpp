@@ -57,7 +57,7 @@ int main()
 	sh.build();
 	sh.use();
 	
-	al::Shader::SetUniform("blue_noise", blueNoise, 1);
+	al::Shader::SetSampler("blue_noise", blueNoise, 1);
 	al::Shader::SetUniform("scr_size", al::CurrentDisplay.size());
 
 	evLoop.run([&](){

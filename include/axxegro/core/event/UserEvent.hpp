@@ -29,9 +29,7 @@ namespace al {
 	constexpr bool IsIDConstantAllowed = ID < detail::AutoEventTypeIDBegin;
 
 	template<typename T>
-	concept UserEventType = requires {
-		requires std::copy_constructible<T> || std::move_constructible<T>;
-	};
+	concept UserEventType = std::copy_constructible<T> || std::move_constructible<T>;
 
 	template<typename T>
 	concept UserEventTypeWithConstID = UserEventType<T> && requires {
