@@ -100,9 +100,9 @@ namespace al {
 
 		using EventType = EventT;
 
-		using HandlerType = std::function<EventHandledStatus(const EventType&, const AnyEvent&)>;
+		using HandlerType = std::function<EventHandledStatus(const EventType&, const EventInfo&)>;
 		using SimplifiedHandlerType = std::function<EventHandledStatus(const EventType&)>;
-		using NoReturnHandlerType = std::function<void(const EventType&, const AnyEvent&)>;
+		using NoReturnHandlerType = std::function<void(const EventType&, const EventInfo&)>;
 		using NoReturnSimplifiedHandlerType = std::function<void(const EventType&)>;
 		using MinimalHandlerType = std::function<void(void)>;
 
@@ -112,7 +112,7 @@ namespace al {
 
 		template<std::convertible_to<SimplifiedHandlerType> THandler>
 		EventHandler(THandler handler) {
-			handler_ = [handler](const EventType& ev, [[maybe_unused]] const AnyEvent&) {
+			handler_ = [handler](const EventType& ev, [[maybe_unused]] const EventInfo&) {
 				return handler(ev);
 			};
 		}
@@ -120,7 +120,7 @@ namespace al {
 		template<std::convertible_to<NoReturnHandlerType> THandler>
 			requires (!std::convertible_to<THandler, HandlerType>)
 		EventHandler(THandler handler) {
-			handler_ = [handler](const EventType& ev, const AnyEvent& meta) {
+			handler_ = [handler](const EventType& ev, const EventInfo& meta) {
 				handler(ev, meta);
 				return EventHandled;
 			};
@@ -129,7 +129,7 @@ namespace al {
 		template<std::convertible_to<NoReturnSimplifiedHandlerType> THandler>
 			requires (!std::convertible_to<THandler, SimplifiedHandlerType>)
 		EventHandler(THandler handler) {
-			handler_ = [handler](const EventType& ev, [[maybe_unused]] const AnyEvent&) {
+			handler_ = [handler](const EventType& ev, [[maybe_unused]] const EventInfo&) {
 				handler(ev);
 				return EventHandled;
 			};
@@ -137,7 +137,7 @@ namespace al {
 
 		template<std::convertible_to<MinimalHandlerType> THandler>
 		EventHandler(THandler handler) {
-			handler_ = [handler]([[maybe_unused]] const EventType& ev, [[maybe_unused]] const AnyEvent&) {
+			handler_ = [handler]([[maybe_unused]] const EventType& ev, [[maybe_unused]] const EventInfo&) {
 				handler();
 				return EventHandled;
 			};
@@ -147,7 +147,7 @@ namespace al {
 			return handler_(EventDataGetter<EventT>{}(ev), ev.any);
 		}
 	protected:
-		std::function<EventHandledStatus(const EventType&, const AnyEvent&)> handler_;
+		std::function<EventHandledStatus(const EventType&, const EventInfo&)> handler_;
 	};
 
 	enum StandardEventDiscretizers {
@@ -220,37 +220,37 @@ namespace al {
 			return *this;
 		}
 
-		EventDispatcher& onKeyDown(int keycode, EventHandler<KeyboardEvent> handler) {
+		EventDispatcher& onKeyDown(int keycode, EventHandler<LegacyKeyboardEvent> handler) {
 			setEventHandlerForValue(ALLEGRO_EVENT_KEY_DOWN, ByKeycode, keycode, std::move(handler));
 			return *this;
 		}
 
-		EventDispatcher& onKeyUp(int keycode, EventHandler<KeyboardEvent> handler) {
+		EventDispatcher& onKeyUp(int keycode, EventHandler<LegacyKeyboardEvent> handler) {
 			setEventHandlerForValue(ALLEGRO_EVENT_KEY_UP, ByKeycode, keycode, std::move(handler));
 			return *this;
 		}
 
-		EventDispatcher& onKeyChar(int unichar, EventHandler<KeyboardEvent> handler) {
+		EventDispatcher& onKeyChar(int unichar, EventHandler<LegacyKeyboardEvent> handler) {
 			setEventHandlerForValue(ALLEGRO_EVENT_KEY_CHAR, ByUnichar, unichar, std::move(handler));
 			return *this;
 		}
 
-		EventDispatcher& onKeyCharKeycode(int keycode, EventHandler<KeyboardEvent> handler) {
+		EventDispatcher& onKeyCharKeycode(int keycode, EventHandler<LegacyKeyboardEvent> handler) {
 			setEventHandlerForValue(ALLEGRO_EVENT_KEY_CHAR, ByKeycode, keycode, std::move(handler));
 			return *this;
 		}
 
-		EventDispatcher& onMouseDown(int button, EventHandler<MouseEvent> handler) {
+		EventDispatcher& onMouseDown(int button, EventHandler<LegacyMouseEvent> handler) {
 			setEventHandlerForValue(ALLEGRO_EVENT_MOUSE_BUTTON_DOWN, ByMouseBtn, button, std::move(handler));
 			return *this;
 		}
 
-		EventDispatcher& onMouseUp(int button, EventHandler<MouseEvent> handler) {
+		EventDispatcher& onMouseUp(int button, EventHandler<LegacyMouseEvent> handler) {
 			setEventHandlerForValue(ALLEGRO_EVENT_MOUSE_BUTTON_UP, ByMouseBtn, button, std::move(handler));
 			return *this;
 		}
 
-		EventDispatcher& onMouseMove(EventHandler<MouseEvent> handler) {
+		EventDispatcher& onMouseMove(EventHandler<LegacyMouseEvent> handler) {
 			setEventHandler(ALLEGRO_EVENT_MOUSE_AXES, std::move(handler));
 			return *this;
 		}

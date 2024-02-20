@@ -169,7 +169,7 @@ namespace al {
 			{
 				using FragT = typename Traits::FragmentType;
 
-				return [fn, this](const RawAudioRecorderEvent& ev, [[maybe_unused]] const al::AnyEvent& meta) {
+				return [fn, this](const RawAudioRecorderEvent& ev, [[maybe_unused]] const al::EventInfo& meta) {
 					if(ev.source != this->ptr()) {
 						throw AudioError("Audio recorder event is being handled by a handler created by another recorder");
 					}
@@ -207,7 +207,7 @@ namespace al {
 		EventHandler<RawAudioRecorderEvent> createChunkEventHandler(
 			std::function<void(const std::span<const typename Traits::FragmentType>)> fn
 		) {
-			return [fn, this](const RawAudioRecorderEvent& ev, [[maybe_unused]] const al::AnyEvent& meta) {
+			return [fn, this](const RawAudioRecorderEvent& ev, [[maybe_unused]] const al::EventInfo& meta) {
 				using ImplFragT = typename ImplTraits::FragmentType;
 
 				if(ev.source != this->ptr()) {

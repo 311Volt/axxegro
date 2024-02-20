@@ -10,9 +10,9 @@
  */
 #define ALLEGRO_UNSTABLE
 #include <axxegro/axxegro.hpp>
+#include <axxegro/addons/audio/AudioAddon.hpp>
 
 #include <queue>
-#include <ranges>
 #include <numbers>
 #include <thread>
 #include <atomic>

@@ -165,7 +165,7 @@ namespace al {
 
 	};
 
-	inline UserEventSource& GetUserEventSource(const AnyEvent& any) {
+	inline UserEventSource& GetUserEventSource(const EventInfo& any) {
 		if(any.type < 1024) {
 			throw EventSourceError("GetUserEventSource called on non-user event");
 		}

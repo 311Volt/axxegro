@@ -35,6 +35,11 @@ namespace al {
 		return false;
 	}
 
+
+	template<typename... Ts>
+	struct Overloaded {
+		using Ts::operator()...;
+	};
 }
 
 

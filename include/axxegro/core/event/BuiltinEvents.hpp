@@ -14,46 +14,46 @@ namespace al {
 	using Event = ALLEGRO_EVENT;
 	using EventType = ALLEGRO_EVENT_TYPE;
 
-	using AnyEvent = ALLEGRO_ANY_EVENT;
+	using EventInfo = ALLEGRO_ANY_EVENT;
 
-	using DisplayEvent = ALLEGRO_DISPLAY_EVENT;
-	using JoystickEvent = ALLEGRO_JOYSTICK_EVENT;
-	using KeyboardEvent = ALLEGRO_KEYBOARD_EVENT;
-	using MouseEvent = ALLEGRO_MOUSE_EVENT;
-	using TimerEvent = ALLEGRO_TIMER_EVENT;
-	using TouchEvent = ALLEGRO_TOUCH_EVENT;
+	using LegacyDisplayEvent = ALLEGRO_DISPLAY_EVENT;
+	using LegacyJoystickEvent = ALLEGRO_JOYSTICK_EVENT;
+	using LegacyKeyboardEvent = ALLEGRO_KEYBOARD_EVENT;
+	using LegacyMouseEvent = ALLEGRO_MOUSE_EVENT;
+	using LegacyTimerEvent = ALLEGRO_TIMER_EVENT;
+	using LegacyTouchEvent = ALLEGRO_TOUCH_EVENT;
 
 	template<typename T>
 	concept BuiltinEventType =
-		std::same_as<T, DisplayEvent> ||
-		std::same_as<T, JoystickEvent> ||
-		std::same_as<T, KeyboardEvent> ||
-		std::same_as<T, MouseEvent> ||
-		std::same_as<T, TimerEvent> ||
-		std::same_as<T, TouchEvent>;
+		std::same_as<T, LegacyDisplayEvent> ||
+		std::same_as<T, LegacyJoystickEvent> ||
+		std::same_as<T, LegacyKeyboardEvent> ||
+		std::same_as<T, LegacyMouseEvent> ||
+		std::same_as<T, LegacyTimerEvent> ||
+		std::same_as<T, LegacyTouchEvent>;
 
-	template<> struct EventDataGetter<DisplayEvent> {
-		const DisplayEvent& operator()(const Event& ev) {return ev.display;}
+	template<> struct EventDataGetter<LegacyDisplayEvent> {
+		const LegacyDisplayEvent& operator()(const Event& ev) {return ev.display;}
 	};
 
-	template<> struct EventDataGetter<JoystickEvent> {
-		const JoystickEvent& operator()(const Event& ev) {return ev.joystick;}
+	template<> struct EventDataGetter<LegacyJoystickEvent> {
+		const LegacyJoystickEvent& operator()(const Event& ev) {return ev.joystick;}
 	};
 
-	template<> struct EventDataGetter<KeyboardEvent> {
-		const KeyboardEvent& operator()(const Event& ev) {return ev.keyboard;}
+	template<> struct EventDataGetter<LegacyKeyboardEvent> {
+		const LegacyKeyboardEvent& operator()(const Event& ev) {return ev.keyboard;}
 	};
 
-	template<> struct EventDataGetter<MouseEvent> {
-		const MouseEvent& operator()(const Event& ev) {return ev.mouse;}
+	template<> struct EventDataGetter<LegacyMouseEvent> {
+		const LegacyMouseEvent& operator()(const Event& ev) {return ev.mouse;}
 	};
 
-	template<> struct EventDataGetter<TimerEvent> {
-		const TimerEvent& operator()(const Event& ev) {return ev.timer;}
+	template<> struct EventDataGetter<LegacyTimerEvent> {
+		const LegacyTimerEvent& operator()(const Event& ev) {return ev.timer;}
 	};
 
-	template<> struct EventDataGetter<TouchEvent> {
-		const TouchEvent& operator()(const Event& ev) {return ev.touch;}
+	template<> struct EventDataGetter<LegacyTouchEvent> {
+		const LegacyTouchEvent& operator()(const Event& ev) {return ev.touch;}
 	};
 
 }

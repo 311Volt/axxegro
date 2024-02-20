@@ -70,7 +70,7 @@ namespace al {
 		}
 		
 		///@brief Pops the event at the front of the queue and returns it.
-		EventOwner pop() {
+		[[nodiscard]] EventOwner pop() {
 			if(empty()) {
 				throw EventQueueError("pop() called on an empty event queue. always check the queue with empty()");
 			}
@@ -80,7 +80,7 @@ namespace al {
 		}
 
 		///@brief Returns the event at the front of the queue without popping it.
-		EventOwner peek() {
+		[[nodiscard]] EventOwner peek() {
 			if(empty()) {
 				throw EventQueueError("peek() called on an empty event queue. always check the queue with empty()");
 			}
@@ -89,7 +89,7 @@ namespace al {
 			return EventOwner(ret);
 		}
 
-		std::optional<EventOwner> tryPop() {
+		[[nodiscard]] std::optional<EventOwner> tryPop() {
 			if(empty()) {
 				return {};
 			}
@@ -121,7 +121,7 @@ namespace al {
 		 * When an event appears, it is popped and returned.
 		 * @return The event.
 		 */
-		EventOwner wait() {
+		[[nodiscard]] EventOwner wait() {
 			ALLEGRO_EVENT ret;
 			al_wait_for_event(ptr(), &ret);
 			return EventOwner(ret);

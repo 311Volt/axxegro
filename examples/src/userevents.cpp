@@ -1,5 +1,6 @@
 #include <axxegro/axxegro.hpp>
-#include <axxegro/core/event/EventDispatcher.hpp>
+
+
 
 #include <queue>
 
@@ -69,7 +70,7 @@ int main()
 	evLoop.eventQueue.registerSource(mySource);
 
 	//a handler for ExampleEvent
-	evLoop.eventDispatcher.setUserEventHandler<ExampleEvent>([&](const ExampleEvent& ev, const al::AnyEvent& meta){
+	evLoop.eventDispatcher.setUserEventHandler<ExampleEvent>([&](const ExampleEvent& ev, const al::EventInfo& meta){
 
 		//reading the data we put in
 		messages.push_back(al::Format(

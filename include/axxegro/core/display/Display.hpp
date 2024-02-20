@@ -95,6 +95,7 @@ namespace al {
 			if(!ptr()) {
 				throw DisplayCreationError("Could not create a %dx%d Allegro display.", w, h);
 			}
+
 			al_reset_new_display_options();
 			initPointers();
 		}

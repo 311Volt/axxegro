@@ -53,6 +53,7 @@ namespace al
 	AXXEGRO_DEF_EXCEPTION(Exception, AddonError);
 	AXXEGRO_DEF_EXCEPTION(Exception, DisplayError);
 	AXXEGRO_DEF_EXCEPTION(Exception, DisplayCreationError);
+	AXXEGRO_DEF_EXCEPTION(Exception, EventError);
 	AXXEGRO_DEF_EXCEPTION(Exception, BitmapLockError);
 	AXXEGRO_DEF_EXCEPTION(Exception, ResourceLoadError);
 	AXXEGRO_DEF_EXCEPTION(Exception, InvalidTransformError);

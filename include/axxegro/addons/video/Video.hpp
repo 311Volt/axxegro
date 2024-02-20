@@ -37,7 +37,6 @@ namespace al {
 		explicit Video(const std::string& filename)
 		 : Resource<ALLEGRO_VIDEO>(nullptr) {
 
-			ensureVideoAddonInitialized();
 			setPtr(al_open_video(filename.c_str()));
 			if(!ptr()) {
 				throw ResourceLoadError("Cannot open video: %s", filename.c_str());

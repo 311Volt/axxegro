@@ -76,7 +76,7 @@ namespace al {
 			}
 
 			if(config.enableQuitTriggers & QuitOnDisplayClosedBit) {
-				eventDispatcher.setEventHandler<DisplayEvent>(ALLEGRO_EVENT_DISPLAY_CLOSE, [this](){
+				eventDispatcher.setEventHandler<LegacyDisplayEvent>(ALLEGRO_EVENT_DISPLAY_CLOSE, [this](){
 					setExitFlag();
 				});
 			}
@@ -86,7 +86,7 @@ namespace al {
 				});
 			}
 			if(config.autoAcknowledgeResize) {
-				eventDispatcher.setEventHandler<DisplayEvent>(ALLEGRO_EVENT_DISPLAY_RESIZE, [](){
+				eventDispatcher.setEventHandler<LegacyDisplayEvent>(ALLEGRO_EVENT_DISPLAY_RESIZE, [](){
 					CurrentDisplay.acknowledgeResize();
 				});
 			}
