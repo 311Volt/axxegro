@@ -7,7 +7,6 @@
 
 #include <span>
 #include <cstddef>
-#include <algorithm>
 
 namespace al {
 
@@ -37,9 +36,12 @@ namespace al {
 
 
 	template<typename... Ts>
-	struct Overloaded {
+	struct Overloaded: Ts... {
 		using Ts::operator()...;
 	};
+
+
+
 }
 
 

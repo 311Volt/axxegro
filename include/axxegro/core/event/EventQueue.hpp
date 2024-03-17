@@ -30,7 +30,7 @@ namespace al {
 			return *this;
 		}
 		
-		EventOwner(EventOwner&& other) {
+		EventOwner(EventOwner&& other) noexcept {
 			this->operator=(std::move(other));
 		}
 		
@@ -121,7 +121,7 @@ namespace al {
 		 * When an event appears, it is popped and returned.
 		 * @return The event.
 		 */
-		[[nodiscard]] EventOwner wait() {
+		EventOwner wait() {
 			ALLEGRO_EVENT ret;
 			al_wait_for_event(ptr(), &ret);
 			return EventOwner(ret);

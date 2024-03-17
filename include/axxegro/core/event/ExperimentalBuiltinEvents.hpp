@@ -23,7 +23,6 @@ namespace al {
 	class Video;
 	class Menu;
 
-
 	namespace detail::MouseEventMixins {
 		struct MousePosition {
 			Vec2i pos;
@@ -226,6 +225,7 @@ namespace al {
 	}
 
 	using AnyEvent = ALLEGRO_EVENT;
+	using EventMeta = ALLEGRO_ANY_EVENT;
 
 	using Event2 = std::variant<
 		JoystickAxisEvent,
@@ -468,19 +468,30 @@ namespace al {
 		}
 	}
 
+	namespace detail {
+
+		template<typename T>
+		concept IsVoid = std::is_void_v<T>;
+
+		template<typename T>
+		concept IsNotVoid = not std::is_void_v<T>;
+
+	}
+
 	template<typename TVis>
 	auto VisitEvent(const AnyEvent& anyEv, TVis&& visitor) {
-		auto translatedEvent = TranslateEvent(anyEv);
-		return std::visit([&](auto&& event) {
+		auto visitorWrapper = [&](auto&& event) {
 			if constexpr(requires{visitor(event, anyEv.any);}) {
 				return visitor(event, anyEv.any);
 			} else if constexpr(requires{visitor(event);}) {
 				return visitor(event);
 			}
-		}, translatedEvent);
+		};
+
+		auto translatedEvent = TranslateEvent(anyEv);
+
+		return std::visit(visitorWrapper, translatedEvent);
 	}
-
-
 
 }
 

@@ -65,7 +65,6 @@ int main()
 	//create the event loop
 	al::EventLoop evLoop(al::DemoEventLoopConfig);
 
-
 	MyEventSource mySource;
 	evLoop.eventQueue.registerSource(mySource);
 
@@ -90,7 +89,6 @@ int main()
 	evLoop.eventDispatcher.setUserEventHandler<SimpleEvent>([&](const SimpleEvent& ev){
 		messages.push_back(al::Format("simple event received: %d, %d", ev.a, ev.b));
 	});
-
 	
 	evLoop.eventDispatcher
 		.onKeyCharKeycode(ALLEGRO_KEY_A, [&](){mySource.customEmitEvent();})

@@ -10,7 +10,6 @@
  */
 #define ALLEGRO_UNSTABLE
 #include <axxegro/axxegro.hpp>
-#include <axxegro/addons/audio/AudioAddon.hpp>
 
 #include <queue>
 #include <numbers>
@@ -225,6 +224,7 @@ public:
 
 int main()
 {
+	return 0;
 	al::Display disp(640, 480);
 	std::set_terminate(al::Terminate);
 

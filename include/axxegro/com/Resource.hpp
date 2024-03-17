@@ -1,6 +1,7 @@
 #ifndef __AXXEGRO_RESOURCE_H__
 #define __AXXEGRO_RESOURCE_H__
 
+
 /**
  * @file
  * Resource is the base for classes that wrap around an Allegro object
@@ -34,6 +35,8 @@
 #include <type_traits>
 #include <memory>
 #include <variant>
+#include <mutex>
+
 #include "axxegro/com/util/Metaprogramming.hpp"
 
 namespace al {
@@ -94,22 +97,19 @@ namespace al {
 			}
 		}
 
-		T* ptr()
-		{
+		T* ptr() {
 			return getPointer();
 		}
 
-		T* ptr() const
-		{
+		T* ptr() const {
 			return getPointer();
 		}
 	protected:
-		void setPtr(T* p)
-		{
+		void setPtr(T* p) {
 			ptr_ = p;
 		}
 
-		ResourceModel getResourceModel() {
+		[[nodiscard]] ResourceModel getResourceModel() const {
 			if(dtor) {
 				return ResourceModel::Owning;
 			} else {
@@ -117,8 +117,7 @@ namespace al {
 			}
 		}
 	private:
-		virtual T* getPointer() const
-		{
+		virtual T* getPointer() const {
 			return ptr_;
 		}
 	};
